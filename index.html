@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#030712" />
-    <meta name="description" content="WAE OS Enterprise · Neon Rider 3D V10 — Combat Feel & Mastery con control táctil por arrastre, telegráficos de peligro, progresión de Maestría, campaña, facciones, Guardianes y combate cinematográfico." />
-    <title>WAE Neon Rider 3D · V10 Combat Feel & Mastery</title>
+    <meta name="description" content="WAE OS Enterprise · Neon Rider 3D V10.1 — UX Hardening con experiencia móvil refinada, controles táctiles claros, Maestría, campaña, facciones, Guardianes y combate cinematográfico." />
+    <title>WAE Neon Rider 3D · V10.1 UX Hardening</title>
   </head>
   <body>
     <main id="app" aria-label="WAE Neon Rider 3D">
@@ -13,14 +13,14 @@
 
       <div class="wae-game-seal" aria-label="wae os Enterprise">
         <span class="wae-game-seal__mark">W</span>
-        <div><strong>wae os Enterprise</strong><small>ORIGINAL GAME SEAL · V10</small></div>
+        <div><strong>wae os Enterprise</strong><small>ORIGINAL GAME SEAL · V10.1</small></div>
       </div>
 
       <header class="brand-seal" aria-label="WAE OS Enterprise">
         <div class="brand-mark">W</div>
         <div>
           <strong>WAE OS ENTERPRISE</strong>
-          <span>NEON RIDER · COMBAT FEEL & MASTERY V10</span>
+          <span>NEON RIDER · UX HARDENING V10.1</span>
         </div>
       </header>
 
@@ -94,9 +94,9 @@
 
       <section id="start-screen" class="overlay">
         <div class="panel">
-          <span class="eyebrow">WAE V10 / DOMINA EL COMBATE</span>
+          <span class="eyebrow">WAE V10.1 / ENTRA Y JUEGA</span>
           <h1>NEON RIDER <em>3D</em></h1>
-          <p>Muévete, dispara, esquiva y sobrevive. Los enemigos avisan antes de atacar, tu habilidad construye Maestría y cada Guardián vencido abre el siguiente salto.</p>
+          <p>Arrastra para moverte, mantén Fuego y usa Pulso, Esquiva o Misil cuando estén listos. Sobrevive, completa el objetivo y derrota al Guardián.</p>
           <div class="feature-strip"><span>CONTROL POR ARRASTRE</span><span>MAESTRÍA</span><span>ATAQUES LEGIBLES</span><span>4 FACCIONES</span><span>GUARDIANES</span></div>
           <div class="start-meta"><button id="open-hangar-btn" type="button">HANGAR · H</button><button id="open-galaxy-btn" type="button">MAPA GALÁCTICO · G</button></div>
           <div class="control-hints"><span><kbd>WASD</kbd> / <kbd>↑↓←→</kbd> mover</span><span><kbd>ESPACIO</kbd> fuego</span><span><kbd>Q/E</kbd> Pulso Nova</span><span><kbd>SHIFT/X</kbd> Esquiva</span><span><kbd>R</kbd> Misil WAE</span></div>
@@ -124,20 +124,20 @@
 
       <section id="perk-screen" class="overlay perk-overlay hidden"><div class="perk-panel"><span class="eyebrow">SECTOR DOMINADO / MEJORA TU RUN</span><h2>ELIGE UNA MEJORA</h2><p>La elección dura únicamente esta partida. Combina mejoras para crear una build distinta en cada intento.</p><div id="perk-grid" class="perk-grid"></div></div></section>
       <section id="route-screen" class="overlay route-overlay hidden"><div class="route-panel"><span id="route-sector" class="route-sector">SECTOR 2</span><span class="eyebrow">SIGUIENTE SALTO / RIESGO VS RECOMPENSA</span><h2>ELIGE TU RUTA</h2><p>Ruta estable: protege tu partida. Cacería: más élites y recompensa. Anomalía: máximo riesgo y máximo premio.</p><div id="route-grid" class="route-grid"></div></div></section>
-      <section id="pause-screen" class="overlay hidden"><div class="panel panel--small"><span class="eyebrow">SISTEMA EN ESPERA</span><h2>MISIÓN PAUSADA</h2><p>La partida quedó congelada exactamente donde la dejaste.</p><button id="resume-btn" class="primary-btn" type="button">CONTINUAR</button></div></section>
+      <section id="pause-screen" class="overlay hidden"><div class="panel panel--small"><span class="eyebrow">PAUSA</span><h2>MISIÓN PAUSADA</h2><p>Tu partida está segura.</p><button id="resume-btn" class="primary-btn" type="button">CONTINUAR PARTIDA</button></div></section>
 
       <section id="game-over-screen" class="overlay hidden">
         <div class="panel panel--small">
-          <span class="eyebrow danger">RUN TERMINADA</span><h2>TU MAESTRÍA CONTINÚA</h2><p id="final-score">Puntuación alcanzada: 0</p>
+          <span class="eyebrow danger">PARTIDA TERMINADA</span><h2>TU MAESTRÍA CONTINÚA</h2><p id="final-score">Puntuación alcanzada: 0</p>
           <div class="result-grid result-grid--three"><div><span>Sector</span><strong id="final-sector">1</strong></div><div><span>Récord</span><strong id="final-high-score">0</strong></div><div><span>WAE Cores</span><strong id="final-cores">0</strong></div></div>
           <div class="legend-stats legend-stats--three"><div><span>ÉLITES</span><strong id="elite-kills">0</strong></div><div><span>MINI-BOSSES</span><strong id="minibosses-defeated">0</strong></div><div><span>GUARDIANES</span><strong id="guardians-defeated">0</strong></div></div>
           <div class="campaign-summary"><div><span>RANGO</span><strong id="final-campaign-rank">PILOTO</strong></div><div><span>RENOMBRE</span><strong id="final-renown">0</strong></div><div><span>OBJETIVOS</span><strong id="final-objectives">0</strong></div></div>
-          <button id="restart-btn" class="primary-btn" type="button">OTRA PARTIDA</button><button id="gameover-hangar-btn" class="secondary-btn" type="button">MEJORAR EN HANGAR</button>
+          <button id="restart-btn" class="primary-btn" type="button">VOLVER A JUGAR</button><button id="gameover-hangar-btn" class="secondary-btn" type="button">MEJORAR NAVE</button>
         </div>
       </section>
 
       <section id="fatal-screen" class="overlay hidden"><div class="panel panel--small"><span class="eyebrow danger">WEBGL NO DISPONIBLE</span><h2>NO SE PUDO INICIAR EL MOTOR 3D</h2><p id="fatal-message">Este dispositivo o navegador no pudo crear el contexto gráfico.</p></div></section>
     </main>
-    <script type="module" src="/src/v10/main.js"></script>
+    <script type="module" src="/src/v10/boot.js"></script>
   </body>
 </html>
