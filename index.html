@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#030712" />
-    <meta name="description" content="WAE OS Enterprise · Neon Rider 3D V4 — arcade espacial WebGL con sectores, jefes, misiones y overdrive." />
-    <title>WAE Neon Rider 3D · V4</title>
+    <meta name="description" content="WAE OS Enterprise · Neon Rider 3D V5 — arcade espacial WebGL con hangar, naves, armas, mapa galáctico, sectores, bosses y progresión persistente." />
+    <title>WAE Neon Rider 3D · V5</title>
   </head>
   <body>
     <main id="app" aria-label="WAE Neon Rider 3D">
@@ -15,7 +15,7 @@
         <div class="brand-mark">W</div>
         <div>
           <strong>WAE OS ENTERPRISE</strong>
-          <span>NEON RIDER · COMBAT CORE V4</span>
+          <span>NEON RIDER · GALACTIC CORE V5</span>
         </div>
       </header>
 
@@ -47,6 +47,12 @@
         </div>
       </aside>
 
+      <div class="meta-strip" aria-live="polite">
+        <div class="meta-pill"><span>LOADOUT</span><strong id="loadout-label">FALCON MK-I · PULSE TWIN</strong></div>
+        <div class="meta-pill meta-pill--cores"><span>CORES</span><strong id="profile-cores">0</strong></div>
+        <div class="meta-pill"><span>SALTO</span><strong id="selected-sector-label">SECTOR 1</strong></div>
+      </div>
+
       <div id="announcer" class="announcer" role="status"></div>
       <div id="power-status" class="power-status hidden" role="status"></div>
 
@@ -69,19 +75,65 @@
 
       <section id="start-screen" class="overlay">
         <div class="panel">
-          <span class="eyebrow">WAE COMBAT CORE / ENDLESS SECTORS</span>
+          <span class="eyebrow">WAE GALACTIC CORE / PILOT CAREER</span>
           <h1>NEON RIDER <em>3D</em></h1>
-          <p>Sobrevive sectores cada vez más agresivos. Encadena bajas, llena HEAT para activar OVERDRIVE, completa misiones y destruye al Guardián antes de entrar al siguiente sector.</p>
+          <p>Construye tu hangar, elige nave y armamento, selecciona un punto de salto y domina sectores cada vez más violentos. Cada misión y Guardián alimenta tu progreso permanente.</p>
           <div class="feature-strip">
-            <span>COMBOS</span><span>OVERDRIVE</span><span>DRONES</span><span>BOSSES</span><span>CORES</span>
+            <span>4 NAVES</span><span>4 ARMAS</span><span>OVERDRIVE</span><span>BOSSES</span><span>GALAXIA</span>
+          </div>
+          <div class="start-meta">
+            <button id="open-hangar-btn" type="button">HANGAR · H</button>
+            <button id="open-galaxy-btn" type="button">MAPA GALÁCTICO · G</button>
           </div>
           <div class="control-hints">
             <span><kbd>WASD</kbd> / <kbd>↑↓←→</kbd> mover</span>
             <span><kbd>ESPACIO</kbd> disparar</span>
             <span><kbd>P</kbd> pausa</span>
           </div>
-          <button id="start-btn" class="primary-btn" type="button">ENTRAR AL SECTOR 1</button>
-          <small>Partidas rápidas · progresión persistente · sin pay-to-win</small>
+          <button id="start-btn" class="primary-btn" type="button">INICIAR · SECTOR 1</button>
+          <small>Progresión por habilidad · equipamiento desbloqueable jugando · sin pay-to-win</small>
+        </div>
+      </section>
+
+      <section id="hangar-screen" class="overlay meta-overlay hidden">
+        <div class="meta-panel">
+          <div class="meta-panel-header">
+            <div>
+              <span class="eyebrow">WAE ORBITAL HANGAR</span>
+              <h2>CONSTRUYE TU LOADOUT</h2>
+              <p>Invierte WAE Cores ganados en combate. Cada nave cambia estadísticas reales y cada sistema de armas modifica la cobertura de fuego.</p>
+              <div class="meta-balance">WAE CORES · <strong id="hangar-cores">0</strong></div>
+            </div>
+            <button id="close-hangar-btn" class="meta-close" type="button" aria-label="Cerrar hangar">×</button>
+          </div>
+
+          <section class="catalog-section">
+            <div class="catalog-title"><h3>NAVES</h3><span>VELOCIDAD · ESCUDO · CADENCIA · HEAT</span></div>
+            <div id="ship-grid" class="loadout-grid"></div>
+          </section>
+
+          <section class="catalog-section">
+            <div class="catalog-title"><h3>SISTEMAS DE ARMAS</h3><span>COBERTURA VS CADENCIA</span></div>
+            <div id="weapon-grid" class="loadout-grid"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="galaxy-screen" class="overlay meta-overlay hidden">
+        <div class="meta-panel">
+          <div class="meta-panel-header">
+            <div>
+              <span class="eyebrow">WAE GALACTIC NAVIGATION</span>
+              <h2>MAPA DE SECTORES</h2>
+              <p>Repite sectores dominados para farmear Cores o salta al frente más lejano que hayas desbloqueado.</p>
+              <div class="meta-balance">MEJOR SECTOR · <strong id="galaxy-best-sector">1</strong></div>
+            </div>
+            <button id="close-galaxy-btn" class="meta-close" type="button" aria-label="Cerrar mapa galáctico">×</button>
+          </div>
+          <div class="galaxy-stage">
+            <div id="galaxy-grid" class="galaxy-grid"></div>
+          </div>
+          <p class="galaxy-legend"><strong>Punto de salto:</strong> el sector seleccionado será el inicio de tu próxima partida. Los sectores posteriores se desbloquean al derrotar Guardianes.</p>
         </div>
       </section>
 
@@ -97,7 +149,7 @@
       <section id="game-over-screen" class="overlay hidden">
         <div class="panel panel--small">
           <span class="eyebrow danger">MISIÓN TERMINADA</span>
-          <h2>INTENTA ROMPER TU RÉCORD</h2>
+          <h2>VUELVE MÁS FUERTE</h2>
           <p id="final-score">Puntuación alcanzada: 0</p>
           <div class="result-grid result-grid--three">
             <div><span>Sector</span><strong id="final-sector">1</strong></div>
@@ -105,6 +157,7 @@
             <div><span>WAE Cores</span><strong id="final-cores">0</strong></div>
           </div>
           <button id="restart-btn" class="primary-btn" type="button">UNA PARTIDA MÁS</button>
+          <button id="gameover-hangar-btn" class="secondary-btn" type="button">MEJORAR EN HANGAR</button>
         </div>
       </section>
 
@@ -116,6 +169,6 @@
         </div>
       </section>
     </main>
-    <script type="module" src="/src/v4/main.js"></script>
+    <script type="module" src="/src/v5/main.js"></script>
   </body>
 </html>
