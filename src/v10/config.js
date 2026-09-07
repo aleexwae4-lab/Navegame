@@ -38,7 +38,7 @@ export const MASTERY_RANKS = Object.freeze([
 
 export const CONFIG = Object.freeze({
   ...V9_CONFIG,
-  version: '10.0.0',
+  version: '10.1.0',
   profileKey: 'wae_neon_rider_profile_v10',
   legacyProfileKey: V9_CONFIG.profileKey,
   mastery: Object.freeze({
