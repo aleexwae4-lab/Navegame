@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#030712" />
-    <meta name="description" content="WAE OS Enterprise · Neon Rider 3D V5 — arcade espacial WebGL con hangar, naves, armas, mapa galáctico, sectores, bosses y progresión persistente." />
-    <title>WAE Neon Rider 3D · V5</title>
+    <meta name="description" content="WAE OS Enterprise · Neon Rider 3D V6 — shooter roguelite espacial WebGL con hangar, builds, enemigos especializados, bosses por fases, biomas y progresión persistente." />
+    <title>WAE Neon Rider 3D · V6 Rogue Combat</title>
   </head>
   <body>
     <main id="app" aria-label="WAE Neon Rider 3D">
@@ -15,9 +15,11 @@
         <div class="brand-mark">W</div>
         <div>
           <strong>WAE OS ENTERPRISE</strong>
-          <span>NEON RIDER · GALACTIC CORE V5</span>
+          <span>NEON RIDER · ROGUE COMBAT V6</span>
         </div>
       </header>
+
+      <div class="biome-pill"><span>ZONA</span><strong id="biome-label">VACÍO CYAN</strong></div>
 
       <section id="hud" class="hud" aria-live="polite">
         <div class="hud-card"><span>Puntuación</span><strong id="score">0</strong></div>
@@ -41,8 +43,12 @@
           <div class="mission-head"><span>HEAT / OVERDRIVE</span><strong id="combo-label">x1</strong></div>
           <div class="heat-progress"><div id="heat-bar"></div></div>
         </div>
+        <div class="secondary-card">
+          <div class="mission-head"><span>PULSO NOVA · Q/E</span><strong id="secondary-label">LISTO</strong></div>
+          <div class="secondary-progress"><div id="secondary-bar"></div></div>
+        </div>
         <div id="boss-card" class="boss-card hidden">
-          <div class="mission-head"><span>GUARDIÁN DE SECTOR</span><strong id="boss-hp-text">100%</strong></div>
+          <div class="mission-head"><span>GUARDIÁN <b id="boss-phase">FASE 1</b></span><strong id="boss-hp-text">100%</strong></div>
           <div class="boss-progress"><div id="boss-bar"></div></div>
         </div>
       </aside>
@@ -53,6 +59,7 @@
         <div class="meta-pill"><span>SALTO</span><strong id="selected-sector-label">SECTOR 1</strong></div>
       </div>
 
+      <div id="active-perks" class="active-perks hidden" aria-label="Perks activos"></div>
       <div id="announcer" class="announcer" role="status"></div>
       <div id="power-status" class="power-status hidden" role="status"></div>
 
@@ -68,6 +75,7 @@
           <button class="control-btn right" data-control="right" type="button" aria-label="Derecha">▶</button>
           <button class="control-btn down" data-control="down" type="button" aria-label="Abajo">▼</button>
         </div>
+        <button id="secondary-btn" class="secondary-btn ready" type="button" aria-label="Activar Pulso Nova">PULSO<br>NOVA</button>
         <button id="fire-btn" class="fire-btn" data-control="shoot" type="button" aria-label="Disparar láser">
           <span class="fire-core"></span><span>FUEGO</span>
         </button>
@@ -75,11 +83,11 @@
 
       <section id="start-screen" class="overlay">
         <div class="panel">
-          <span class="eyebrow">WAE GALACTIC CORE / PILOT CAREER</span>
+          <span class="eyebrow">WAE ROGUE COMBAT / BUILD YOUR RUN</span>
           <h1>NEON RIDER <em>3D</em></h1>
-          <p>Construye tu hangar, elige nave y armamento, selecciona un punto de salto y domina sectores cada vez más violentos. Cada misión y Guardián alimenta tu progreso permanente.</p>
+          <p>Construye tu hangar y luego construye cada partida. Enfrenta clases enemigas especializadas, usa el Pulso Nova, rompe las tres fases del Guardián y elige una mejora permanente para esa run antes del siguiente bioma.</p>
           <div class="feature-strip">
-            <span>4 NAVES</span><span>4 ARMAS</span><span>OVERDRIVE</span><span>BOSSES</span><span>GALAXIA</span>
+            <span>4 ENEMIGOS</span><span>8 PERKS</span><span>3 FASES</span><span>4 BIOMAS</span><span>PULSO NOVA</span>
           </div>
           <div class="start-meta">
             <button id="open-hangar-btn" type="button">HANGAR · H</button>
@@ -87,11 +95,12 @@
           </div>
           <div class="control-hints">
             <span><kbd>WASD</kbd> / <kbd>↑↓←→</kbd> mover</span>
-            <span><kbd>ESPACIO</kbd> disparar</span>
+            <span><kbd>ESPACIO</kbd> fuego</span>
+            <span><kbd>Q</kbd> / <kbd>E</kbd> Pulso Nova</span>
             <span><kbd>P</kbd> pausa</span>
           </div>
           <button id="start-btn" class="primary-btn" type="button">INICIAR · SECTOR 1</button>
-          <small>Progresión por habilidad · equipamiento desbloqueable jugando · sin pay-to-win</small>
+          <small>Skill-first · builds de run · progresión persistente · sin pay-to-win</small>
         </div>
       </section>
 
@@ -106,12 +115,10 @@
             </div>
             <button id="close-hangar-btn" class="meta-close" type="button" aria-label="Cerrar hangar">×</button>
           </div>
-
           <section class="catalog-section">
             <div class="catalog-title"><h3>NAVES</h3><span>VELOCIDAD · ESCUDO · CADENCIA · HEAT</span></div>
             <div id="ship-grid" class="loadout-grid"></div>
           </section>
-
           <section class="catalog-section">
             <div class="catalog-title"><h3>SISTEMAS DE ARMAS</h3><span>COBERTURA VS CADENCIA</span></div>
             <div id="weapon-grid" class="loadout-grid"></div>
@@ -130,10 +137,17 @@
             </div>
             <button id="close-galaxy-btn" class="meta-close" type="button" aria-label="Cerrar mapa galáctico">×</button>
           </div>
-          <div class="galaxy-stage">
-            <div id="galaxy-grid" class="galaxy-grid"></div>
-          </div>
+          <div class="galaxy-stage"><div id="galaxy-grid" class="galaxy-grid"></div></div>
           <p class="galaxy-legend"><strong>Punto de salto:</strong> el sector seleccionado será el inicio de tu próxima partida. Los sectores posteriores se desbloquean al derrotar Guardianes.</p>
+        </div>
+      </section>
+
+      <section id="perk-screen" class="overlay perk-overlay hidden">
+        <div class="perk-panel">
+          <span class="eyebrow">SECTOR DOMINADO / EVOLUCIÓN DE RUN</span>
+          <h2>ELIGE UNA MEJORA</h2>
+          <p>La elección dura únicamente esta partida. Combina perks para crear una build distinta en cada intento.</p>
+          <div id="perk-grid" class="perk-grid"></div>
         </div>
       </section>
 
@@ -169,6 +183,6 @@
         </div>
       </section>
     </main>
-    <script type="module" src="/src/v5/main.js"></script>
+    <script type="module" src="/src/v6/main.js"></script>
   </body>
 </html>
