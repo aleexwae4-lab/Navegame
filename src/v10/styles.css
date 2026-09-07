@@ -1,0 +1,126 @@
+@import '../v9/styles.css';
+
+.v10-coach {
+  position: fixed;
+  left: 50%;
+  bottom: max(152px, calc(env(safe-area-inset-bottom) + 152px));
+  z-index: 46;
+  max-width: min(88vw, 560px);
+  transform: translate(-50%, 8px) scale(0.98);
+  padding: 8px 12px;
+  border: 1px solid rgba(103, 232, 249, 0.32);
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.88);
+  color: #e0f2fe;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.35;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.32), inset 0 0 24px rgba(34, 211, 238, 0.05);
+  backdrop-filter: blur(12px);
+  transition: opacity 160ms ease, transform 180ms ease;
+}
+
+.v10-coach.show {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+.v10-impact {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at 50% 60%, transparent 25%, rgba(239, 68, 68, 0.11) 62%, rgba(239, 68, 68, 0.3) 100%);
+  transition: opacity 90ms ease;
+}
+
+.v10-impact[data-grace='true'] {
+  background: radial-gradient(circle at 50% 60%, transparent 25%, rgba(34, 211, 238, 0.09) 62%, rgba(34, 211, 238, 0.24) 100%);
+}
+
+body.v10-impact-active .v10-impact { opacity: 1; }
+body.v10-impact-active #game-container canvas { filter: saturate(1.28) contrast(1.08) brightness(1.08); }
+
+.v10-mastery-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 3px 10px;
+  width: min(420px, 100%);
+  margin: 0 auto 14px;
+  padding: 9px 12px;
+  border: 1px solid rgba(250, 204, 21, 0.18);
+  border-radius: 13px;
+  background: linear-gradient(135deg, rgba(66, 32, 6, 0.3), rgba(2, 6, 23, 0.68));
+  text-align: left;
+}
+
+.v10-mastery-card span {
+  grid-row: 1 / span 2;
+  padding: 6px 8px;
+  border: 1px solid rgba(250, 204, 21, 0.24);
+  border-radius: 9px;
+  color: #fde68a;
+  font-size: 7px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+}
+
+.v10-mastery-card strong {
+  color: #fef3c7;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.v10-mastery-card small {
+  margin: 0 !important;
+  color: #78716c !important;
+  font-size: 7px !important;
+  line-height: 1.35;
+}
+
+#game-container,
+#game-container canvas {
+  touch-action: none;
+}
+
+@media (max-width: 520px) and (orientation: portrait) {
+  /* V10 replaces the V9 pseudo-coach with contextual runtime coaching. */
+  .touch-controls::before { display: none !important; content: none !important; }
+
+  .v10-coach {
+    bottom: max(128px, calc(env(safe-area-inset-bottom) + 128px));
+    max-width: calc(100vw - 28px);
+    padding: 6px 9px;
+    font-size: 6px;
+    letter-spacing: 0.06em;
+  }
+
+  .v10-mastery-card {
+    margin-bottom: 12px;
+    padding: 7px 9px;
+    border-radius: 11px;
+  }
+  .v10-mastery-card span { font-size: 6px; padding: 5px 6px; }
+  .v10-mastery-card strong { font-size: 9px; }
+  .v10-mastery-card small { font-size: 6px !important; }
+
+  /* Leave a larger dead-zone around the center so drag steering feels natural. */
+  .touch-controls { pointer-events: none; }
+  .dpad,
+  .fire-btn,
+  .ability-btn,
+  .dash-btn,
+  .missile-btn { pointer-events: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v10-coach,
+  .v10-impact { transition: none; }
+  body.v10-impact-active #game-container canvas { filter: none; }
+}
