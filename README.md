@@ -1,6 +1,14 @@
 # WAE Neon Rider 3D
 
-Shooter espacial 3D de **WAE OS Enterprise**, evolucionado desde un prototipo WebGL hacia una arquitectura modular con carrera persistente, builds roguelite, rutas de riesgo/recompensa y combate cinematográfico.
+Shooter espacial 3D de **WAE OS Enterprise**, evolucionado desde un prototipo WebGL hacia una arquitectura modular con carrera persistente, builds roguelite, rutas de riesgo/recompensa, combate cinematográfico y campaña galáctica.
+
+## Marca
+
+El juego incorpora un sello persistente visible durante la experiencia con la marca:
+
+**wae os Enterprise**
+
+El sello permanece en portada, combate y pantallas del sistema como firma visual del videojuego.
 
 ## Stack
 
@@ -10,89 +18,107 @@ Shooter espacial 3D de **WAE OS Enterprise**, evolucionado desde un prototipo We
 - WebGL + Web Audio API
 - Responsive / touch / keyboard
 
-## Cinematic Combat V8
+## Living Galaxy V9
 
-V8 conserva toda la progresión V7 y añade una capa de lectura, espectáculo y prioridad táctica:
+V9 conserva todo Cinematic Combat V8 y añade una capa de universo persistente:
 
-- Slow-motion contextual en impactos y cambios de fase importantes.
-- FOV/cámara dinámica durante momentos cinematográficos.
-- Telegraph visual antes del ataque firma de cada Guardián.
-- Misil WAE guiado (`R` o botón táctil):
-  - adquiere automáticamente el blanco prioritario;
-  - prioriza Guardianes, mini-bosses y élites;
-  - posee cooldown independiente;
-  - inflige daño alto a drones y Guardianes.
-- Wingman autónomo integrado a la nave:
-  - orbita alrededor del jugador;
-  - adquiere blancos automáticamente;
-  - aporta daño de soporte durante la run.
-- 4 mini-bosses asociados a biomas:
-  - Void Breaker.
-  - Solar Lancer.
-  - Rift Phantom.
-  - Emerald Citadel.
-- Mini-bosses con HP reforzado, patrones de fuego propios y recompensas de Cores.
-- Encuentros especiales durante sector:
-  - Ala de Ases.
-  - Tormenta de Cores.
-  - Última Línea.
-- HUD nuevo para Misil WAE, mini-boss, encuentro activo y alertas cinematográficas.
-- Persistencia V8 de mini-bosses derrotados y misiles disparados.
-- Migración de perfil V7 → V8 sin perder Cores, naves, armas, loadout, perks de carrera histórica o mejor sector.
+- 4 facciones ligadas a los biomas:
+  - Dominio Helix — velocidad vectorial.
+  - Forja Solar — artillería térmica.
+  - Pacto de la Falla — cazadores élite.
+  - Legión Verdant — guerra de desgaste.
+- Cada facción modifica parámetros reales del combate:
+  - velocidad enemiga;
+  - velocidad de proyectiles;
+  - daño recibido;
+  - presencia de élites.
+- Objetivo secundario por sector con recompensa independiente.
+- 5 familias de objetivos secundarios:
+  - combo;
+  - caza de élites;
+  - uso táctico del Misil WAE;
+  - supervivencia con escudo alto;
+  - puntuación de sector.
+- Recompensas de objetivos en WAE Cores + Renombre.
+- Campaña persistente con:
+  - Renombre;
+  - capítulos;
+  - rango;
+  - victorias totales;
+  - victorias por facción;
+  - objetivos completados.
+- Rangos de campaña:
+  - Piloto.
+  - As de Sector.
+  - Vanguardia.
+  - Comandante Estelar.
+  - Leyenda WAE.
+- Pantalla Galaxia Viva con historial de victorias por facción.
+- HUD de facción, doctrina, rango, capítulo y objetivo secundario.
+- Migración V8 → V9 sin perder progreso anterior.
 
-## Sistemas heredados de V7
+## Sistemas heredados
+
+### V8 · Cinematic Combat
+
+- Slow-motion contextual.
+- FOV/cámara dinámica.
+- Telegraphs de Guardianes.
+- Misil WAE guiado (`R`).
+- Wingman autónomo.
+- 4 mini-bosses.
+- Encuentros especiales.
+
+### V7 · Legendary Run
 
 - Phase Dash (`SHIFT` / `X`).
-- Enemigos élite y recompensas premium.
+- Enemigos élite.
 - Rutas Estable, Cacería Élite y Anomalía Volátil.
 - Eventos raros.
-- Guardianes únicos por bioma con ataques firma.
-- Estadísticas persistentes de élites y Guardianes derrotados.
+- Guardianes únicos por bioma.
 
-## Sistemas heredados de V6
+### V6 · Rogue Combat
 
-- 4 clases enemigas: Raider, Sentinel, Sniper y Swarm.
+- Raider, Sentinel, Sniper y Swarm.
 - Pulso Nova (`Q` / `E`).
 - Guardianes con 3 fases.
-- 8 perks roguelite por run.
-- 4 biomas rotativos.
+- 8 perks roguelite.
 - HEAT + OVERDRIVE.
 
-## Galactic Core heredado de V5
+### V5 · Galactic Core
 
 - Hangar orbital.
-- 4 naves con estadísticas reales.
-- 4 sistemas de armas con 2–5 líneas de fuego.
-- WAE Cores obtenidos jugando.
-- Mapa galáctico y selección de punto de salto.
-- Persistencia de loadout, desbloqueos y mejor sector.
+- 4 naves.
+- 4 sistemas de armas.
+- WAE Cores.
+- Mapa galáctico y punto de salto.
 
-## Bucle de juego V8
+## Bucle de juego V9
 
 ```text
 Hangar / mapa / loadout
         ↓
+facción + doctrina + objetivo secundario
+        ↓
 combate + Wingman
         ↓
-élites / evento raro / mini-boss
+élites / evento / mini-boss
         ↓
 HEAT + OVERDRIVE + Phase Dash
         ↓
 Pulso Nova + Misil WAE
         ↓
-telegraph → Guardián F1/F2/F3
+Guardián F1/F2/F3
         ↓
-slow-motion / momento crítico
+perk + ruta riesgo/recompensa
         ↓
-elegir perk
+Cores + Renombre + victoria de facción
         ↓
-elegir ruta de riesgo/recompensa
-        ↓
-nuevo bioma + build acumulada
+nuevo sector / capítulo / rango
         ↓
 run hasta game over
         ↓
-Cores → Hangar → nueva run
+progreso persistente → nueva run
 ```
 
 ## Controles
@@ -121,34 +147,30 @@ npm run check
 npm run build
 ```
 
-`check` valida sintaxis acumulada de V3 a V8. Vite valida el entrypoint productivo activo en `src/v8/main.js`.
+`check` valida sintaxis acumulada de V3 a V9. Vite valida el entrypoint productivo activo en `src/v9/main.js`.
 
 ## Arquitectura
 
 ```text
 src/
-  audio.js
-  config.js
-  game.js
-  main.js
-  styles.css
   v4/            # Combat Core
   v5/            # Galactic Core / Hangar / loadout
   v6/            # Rogue Combat / perks / biomas
   v7/            # Legendary Run / élites / rutas / Guardianes
-  v8/
-    config.js     # mini-bosses, encuentros y balance cinematográfico
-    game.js       # misiles, Wingman, telegraphs, slow-motion y mini-bosses
-    main.js       # HUD V8, controles y feedback cinematográfico
-    styles.css    # capa visual Cinematic Combat
+  v8/            # Cinematic Combat / misiles / Wingman / mini-bosses
+  v9/
+    config.js     # facciones, objetivos, rangos y balance de campaña
+    game.js       # Living Galaxy: campaña, Renombre y doctrinas
+    main.js       # HUD V9, Galaxia Viva y progreso de facción
+    styles.css    # sello wae os Enterprise y capa visual de campaña
 ```
 
 ## Siguiente frontera de producto
 
-1. Música adaptativa real por intensidad, bioma y fase de Guardián.
+1. Música adaptativa por intensidad, facción y fase.
 2. Gamepad completo y vibración contextual.
-3. Modelos GLTF/GLB optimizados y VFX de mayor fidelidad.
-4. Misiones narrativas y campaña ligera.
-5. Leaderboard backend, cuentas multi-dispositivo y temporadas.
-6. Telemetría de balance: duración, muertes, pick-rate, win-rate y economía de Cores.
-7. Accesibilidad: remapeo, intensidad de flashes, shake y modos de contraste.
+3. Logros y desafíos de maestría.
+4. Leaderboard backend y perfil multi-dispositivo.
+5. Modelos GLTF/GLB y VFX de mayor fidelidad.
+6. Telemetría de balance y economía.
+7. Accesibilidad configurable: flashes, shake, contraste y remapeo.
