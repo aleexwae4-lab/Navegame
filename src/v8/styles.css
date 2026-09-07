@@ -1,0 +1,142 @@
+@import '../v7/styles.css';
+
+.cinematic-banner {
+  position: fixed;
+  top: 18%;
+  left: 50%;
+  z-index: 40;
+  transform: translate(-50%, -12px) scale(0.96);
+  padding: 10px 16px;
+  border: 1px solid rgba(254, 240, 138, 0.38);
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.82);
+  color: #fef9c3;
+  font-size: clamp(9px, 1.8vw, 13px);
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 0 34px rgba(250, 204, 21, 0.12);
+  transition: opacity 120ms ease, transform 160ms ease;
+}
+
+.cinematic-banner.show {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+body.cinematic-active #game-container canvas {
+  filter: saturate(1.25) contrast(1.06) brightness(1.05);
+}
+
+.missile-card {
+  padding: 10px 12px;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(7, 89, 133, 0.58), rgba(2, 6, 23, 0.84));
+}
+
+.missile-progress {
+  height: 7px;
+  margin-top: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.13);
+}
+
+#missile-bar {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0284c7, #38bdf8, #e0f2fe);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.55);
+  transition: width 150ms linear;
+}
+
+.missile-btn {
+  position: absolute;
+  right: 172px;
+  bottom: 84px;
+  width: 58px;
+  height: 58px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(3, 105, 161, 0.28), rgba(2, 6, 23, 0.86) 66%);
+  color: #bae6fd;
+  font: inherit;
+  font-size: 7px;
+  font-weight: 950;
+  letter-spacing: 0.05em;
+  box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.08);
+  transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.missile-btn.ready {
+  border-color: rgba(125, 211, 252, 0.95);
+  box-shadow: inset 0 0 24px rgba(14, 165, 233, 0.24), 0 0 26px rgba(14, 165, 233, 0.35);
+}
+
+.missile-btn:active { transform: scale(0.94); }
+.missile-btn:disabled { opacity: 0.36; }
+
+.miniboss-card {
+  padding: 10px 12px;
+  border: 1px solid rgba(249, 115, 22, 0.26);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(124, 45, 18, 0.72), rgba(24, 8, 3, 0.88));
+  box-shadow: inset 0 0 24px rgba(249, 115, 22, 0.05);
+}
+
+.miniboss-name {
+  display: block;
+  margin-bottom: 4px;
+  color: #fed7aa;
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+}
+
+.miniboss-progress {
+  height: 8px;
+  margin-top: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(254, 215, 170, 0.1);
+}
+
+#miniboss-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #ea580c, #fb923c, #fed7aa);
+  box-shadow: 0 0 16px rgba(249, 115, 22, 0.52);
+  transition: width 120ms linear;
+}
+
+.encounter-pill {
+  position: fixed;
+  top: max(132px, calc(env(safe-area-inset-top) + 132px));
+  left: 50%;
+  z-index: 8;
+  transform: translateX(-50%);
+  padding: 4px 9px;
+  border: 1px solid rgba(34, 211, 238, 0.15);
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.5);
+  color: #a5f3fc;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.legend-stats--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+@media (max-width: 760px) {
+  .cinematic-banner { top: 15%; width: max-content; max-width: calc(100vw - 30px); }
+  .encounter-pill { top: max(112px, calc(env(safe-area-inset-top) + 112px)); }
+  .missile-btn { right: 142px; bottom: 74px; width: 52px; height: 52px; font-size: 6px; }
+  .legend-stats--three { grid-template-columns: 1fr; }
+}
