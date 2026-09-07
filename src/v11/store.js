@@ -2,6 +2,7 @@ import { CURRENCY, PREMIUM_PRODUCTS, STORE_POLICY } from './catalog.js';
 
 const $ = (selector) => document.querySelector(selector);
 const money = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: CURRENCY, maximumFractionDigits: 0 }).format(value);
+let previousOverlayId = 'start-screen';
 
 function statLabel(key) {
   return ({ speed: 'VEL', shield: 'ESC', fireRate: 'CAD', power: 'POT', damage: 'DAÑO', cadence: 'CAD', coverage: 'COB', special: 'ESP' })[key] ?? key.toUpperCase();
@@ -17,6 +18,17 @@ function productCard(item) {
       <div class="v11-product__buy"><strong>${money(item.priceMxn)}</strong><button type="button" data-buy-sku="${item.sku}">COMPRAR</button></div>
     </div>
   </article>`;
+}
+
+function visibleOverlayId() {
+  const visible = [...document.querySelectorAll('.overlay')].find((el) => el.id !== 'v11-store' && !el.classList.contains('hidden'));
+  return visible?.id ?? 'start-screen';
+}
+
+function restorePreviousOverlay(overlay) {
+  overlay.classList.add('hidden');
+  const target = document.getElementById(previousOverlayId) ?? $('#start-screen');
+  target?.classList.remove('hidden');
 }
 
 function installStore() {
@@ -55,16 +67,13 @@ function installStore() {
   document.addEventListener('click', (event) => {
     const open = event.target.closest('[data-open-v11-store]');
     if (open) {
+      previousOverlayId = visibleOverlayId();
       document.querySelectorAll('.overlay').forEach((el) => { if (el.id !== 'v11-store') el.classList.add('hidden'); });
       overlay.classList.remove('hidden');
       return;
     }
     if (event.target.closest('#v11-store-close')) {
-      overlay.classList.add('hidden');
-      const gameOver = $('#game-over-screen');
-      const start = $('#start-screen');
-      if (gameOver && !gameOver.classList.contains('hidden')) return;
-      start?.classList.remove('hidden');
+      restorePreviousOverlay(overlay);
       return;
     }
     const filter = event.target.closest('[data-store-filter]');
