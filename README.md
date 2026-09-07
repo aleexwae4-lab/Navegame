@@ -1,14 +1,12 @@
 # WAE Neon Rider 3D
 
-Shooter espacial 3D de **WAE OS Enterprise**, evolucionado desde un prototipo WebGL hacia una arquitectura modular con carrera persistente, builds roguelite, rutas de riesgo/recompensa, combate cinematográfico, campaña galáctica y progresión de Maestría.
+Shooter espacial 3D de **WAE OS Enterprise** con combate arcade, campaña persistente, Maestría y una capa comercial premium.
 
 ## Marca
 
-El videojuego mantiene un sello persistente con la marca:
+El videojuego mantiene el sello persistente:
 
 **wae os Enterprise**
-
-El sello permanece en portada, combate y pantallas clave como firma visual oficial del juego.
 
 ## Stack
 
@@ -18,155 +16,91 @@ El sello permanece en portada, combate y pantallas clave como firma visual ofici
 - WebGL + Web Audio API
 - Responsive / touch / keyboard
 
+## V11 · Galactic Commerce
+
+V11 añade la primera capa comercial del juego sin modificar el motor de combate V10.1.
+
+### Catálogo premium
+
+**6 naves premium**
+
+- Viper R Black Edition — $49 MXN
+- Aegis Sovereign — $89 MXN
+- Nova Imperium — $149 MXN
+- WAE Eclipse X — $249 MXN
+- WAE Obsidian One — $399 MXN
+- WAE Celestial Crown — $699 MXN
+
+**6 armas premium**
+
+- Trident VX-R — $39 MXN
+- Storm Omega — $69 MXN
+- Eclipse Cannon — $99 MXN
+- Helix Railgun — $129 MXN
+- Nova Destroyer — $179 MXN
+- WAE Singularity — $249 MXN
+
+Cada producto tiene SKU, rareza, serie, precio MXN, descripción, acento visual y estadísticas de potencia.
+
+### Storefront
+
+- Tienda accesible desde Inicio, Hangar y Game Over.
+- Filtros Todo / Naves / Armas.
+- Fichas con rareza, serie, estadísticas y precio.
+- Navegación de retorno conserva la pantalla desde la que se abrió la tienda.
+- Compra directa como modelo comercial; sin loot boxes ni resultados aleatorios.
+
+### Seguridad comercial
+
+El checkout real está **intencionalmente desactivado** en V11. Ningún producto premium se concede desde cliente o `localStorage`.
+
+Cada producto declara:
+
+```text
+fulfillment = server_entitlement_required
+```
+
+El siguiente paso de monetización debe verificar pago en backend y generar un entitlement de servidor antes de desbloquear una nave o arma. Esto evita que un usuario pueda autoconcederse contenido premium editando el navegador.
+
+Para competición futura, los rankings deberán poder separar loadouts premium y estándar si las estadísticas de pago afectan ventaja jugable.
+
 ## V10.1 · UX Hardening
 
-V10.1 conserva íntegramente el balance y la progresión V10. El objetivo del release es mejorar experiencia de usuario sin alterar combate, economía ni dificultad:
-
-- Capa UX desacoplada del motor mediante `boot.js` + `ux.js`.
-- Viewport móvil estabilizado con `visualViewport`, `100dvh` y safe areas.
-- Bloqueo de scroll, overscroll, selección y gestos accidentales durante la partida.
-- Guía inicial de tres pasos: mover, disparar y usar habilidades.
-- Copy simplificado en portada, pausa y game over.
-- Controles táctiles más compactos para recuperar área útil de juego.
-- D-pad más discreto cuando el jugador usa arrastre.
-- Arrastre táctil con dead-zone reducida y filtrado de diagonales accidentales.
-- Botones de Pulso, Esquiva y Misil muestran directamente `LISTO` o segundos de recarga.
-- Estados `disabled` visualmente claros sin volver a introducir barras grandes.
-- Micro-haptics opcionales en acciones táctiles.
-- Paneles móviles limitados al alto real disponible para evitar cortes en Android.
-- Mejor comportamiento de foco táctil y `prefers-reduced-motion`.
-- El sello **wae os Enterprise** permanece visible y no invade la zona de controles.
-
-## V10 · Combat Feel & Mastery
-
-V10 conserva Living Galaxy V9 y prioriza sensación de control, legibilidad y aprendizaje:
-
-- Control táctil por arrastre sobre el área libre de combate.
-- D-pad tradicional disponible en paralelo.
-- Soporte multitáctil: mover con un dedo y mantener FUEGO con otro.
-- Protección de lanzamiento durante los primeros segundos de cada run.
-- Daño reducido durante esa ventana para evitar muertes instantáneas al aprender.
-- Telegraph visual de entrada para enemigos nuevos.
-- Telegraph breve antes de disparos enemigos mediante anillo 3D.
-- Feedback de impacto con flash contextual, vibración heredada, camera kick y micro slow-motion.
-- Tutorial contextual progresivo que enseña:
-  - movimiento;
-  - fuego sostenido;
-  - Pulso Nova;
-  - Esquiva;
-  - Misil WAE.
-- El tutorial se completa y persiste para no repetir instrucciones indefinidamente.
-- Sistema persistente de **Maestría**.
-- Maestría obtenida por:
-  - combo 10;
-  - objetivos secundarios;
-  - hitos de bajas;
-  - mini-bosses;
-  - Guardianes;
-  - sectores perfectos sin recibir daño.
-- Rangos de Maestría:
-  - Cadete;
-  - Piloto;
-  - As;
-  - Cazador Estelar;
-  - Guardián WAE;
-  - Leyenda.
-- La Maestría se muestra fuera del combate para mantener el HUD móvil limpio.
-- Migración V9 → V10 conservando progreso anterior.
-
-## V9 · Living Galaxy
-
-- 4 facciones ligadas a los biomas:
-  - Dominio Helix — velocidad vectorial.
-  - Forja Solar — artillería térmica.
-  - Pacto de la Falla — cazadores élite.
-  - Legión Verdant — guerra de desgaste.
-- Cada facción modifica velocidad enemiga, proyectiles, daño o presencia de élites.
-- Objetivo secundario por sector.
-- Recompensas en WAE Cores + Renombre.
-- Campaña persistente con Renombre, capítulos, rango y victorias por facción.
-- Pantalla Galaxia Viva.
+- UX desacoplada del motor mediante `boot.js` + `ux.js`.
+- Viewport Android estabilizado con safe areas y `visualViewport`.
+- Controles táctiles compactos.
+- Arrastre refinado y D-pad alternativo.
+- Pulso, Esquiva y Misil muestran `LISTO` o recarga directamente en botón.
+- Pausa y game over simplificados.
+- Sin cambios de balance, dificultad ni economía del juego base.
 
 ## Sistemas heredados
 
-### V8 · Cinematic Combat
-
-- Slow-motion contextual.
-- FOV/cámara dinámica.
-- Telegraphs de Guardianes.
-- Misil WAE guiado (`R`).
-- Wingman autónomo.
-- 4 mini-bosses.
-- Encuentros especiales.
-
-### V7 · Legendary Run
-
-- Phase Dash (`SHIFT` / `X`).
-- Enemigos élite.
-- Rutas Estable, Cacería Élite y Anomalía Volátil.
-- Eventos raros.
-- Guardianes únicos por bioma.
-
-### V6 · Rogue Combat
-
-- Raider, Sentinel, Sniper y Swarm.
-- Pulso Nova (`Q` / `E`).
-- Guardianes con 3 fases.
-- 8 perks roguelite.
-- HEAT + OVERDRIVE.
-
-### V5 · Galactic Core
-
-- Hangar orbital.
-- 4 naves.
-- 4 sistemas de armas.
-- WAE Cores.
-- Mapa galáctico y punto de salto.
-
-## Bucle de juego V10
-
-```text
-JUGAR
-  ↓
-mover + fuego + aprender controles
-  ↓
-objetivo + enemigos telegráficos
-  ↓
-combo / Pulso / Esquiva / Misil
-  ↓
-élites / evento / mini-boss
-  ↓
-Guardián F1/F2/F3
-  ↓
-perk + ruta
-  ↓
-Cores + Renombre + Maestría
-  ↓
-nuevo sector / capítulo / rango
-  ↓
-run hasta game over
-  ↓
-progreso persistente → nueva run
-```
+- **V10:** Combat Feel & Mastery, telegraphs, protección inicial y Maestría.
+- **V9:** Living Galaxy, facciones, Renombre y campaña.
+- **V8:** Cinematic Combat, Misil WAE, Wingman y mini-bosses.
+- **V7:** Legendary Run, élites, rutas y Guardianes.
+- **V6:** Rogue Combat, perks, Pulso Nova y HEAT/OVERDRIVE.
+- **V5:** Galactic Core, Hangar, naves, armas y WAE Cores.
 
 ## Controles
 
 ### Móvil
 
-- Arrastrar en el espacio libre — mover nave.
+- Arrastrar — mover nave.
 - D-pad — movimiento alternativo.
-- FUEGO — mantener para disparo continuo.
+- FUEGO — disparo continuo.
 - PULSO — limpia proyectiles y daña amenazas.
-- ESQUIVA — Phase Dash con invulnerabilidad breve.
-- MISIL — busca automáticamente el objetivo prioritario.
+- ESQUIVA — Phase Dash.
+- MISIL — objetivo prioritario automático.
 
 ### Teclado
 
 - `WASD` / flechas — movimiento.
-- `ESPACIO` — disparo principal.
+- `ESPACIO` — fuego.
 - `Q` / `E` — Pulso Nova.
-- `SHIFT` / `X` — Esquiva / Phase Dash.
-- `R` — Misil WAE guiado.
+- `SHIFT` / `X` — Esquiva.
+- `R` — Misil WAE.
 - `P` / `Esc` — pausa.
 - `M` — audio.
 - `H` — Hangar.
@@ -186,33 +120,34 @@ npm run check
 npm run build
 ```
 
-`check` valida sintaxis acumulada de V3 a V10.1, incluida la capa UX. Vite valida el entrypoint productivo activo en `src/v10/boot.js`.
+`check` valida sintaxis acumulada de V3 a V11. Vite valida el entrypoint productivo activo en `src/v11/boot.js`.
 
-## Arquitectura
+## Arquitectura actual
 
 ```text
 src/
-  v4/             # Combat Core
-  v5/             # Galactic Core / Hangar / loadout
-  v6/             # Rogue Combat / perks / biomas
-  v7/             # Legendary Run / élites / rutas / Guardianes
-  v8/             # Cinematic Combat / misiles / Wingman / mini-bosses
-  v9/             # Living Galaxy / facciones / campaña / Renombre
+  v4/ ... v9/     # evolución histórica del motor
   v10/
-    config.js      # balance V10 y rangos de Maestría
-    game.js        # telegraphs, launch grace, mastery y coaching
-    main.js        # UI y bindings principales V10
-    ux.js          # ergonomía móvil, viewport, estados y precisión táctil V10.1
-    boot.js        # entrypoint desacoplado: motor + UX
-    styles.css     # HUD player-first y hardening responsive
+    config.js
+    game.js
+    main.js
+    ux.js
+    boot.js
+    styles.css
+  v11/
+    catalog.js     # productos, SKUs, precios y política de fulfillment
+    store.js       # storefront, filtros y checkout protegido
+    styles.css     # presentación premium responsive
+    boot.js        # V10.1 + Galactic Commerce
 ```
 
-## Siguiente frontera de producto
+## Siguiente paso comercial
 
-1. Música adaptativa por intensidad, facción y fase.
-2. Gamepad completo y vibración contextual.
-3. Logros con desafíos específicos y recompensas cosméticas.
-4. Leaderboard backend y perfil multi-dispositivo.
-5. Modelos GLTF/GLB y VFX de mayor fidelidad.
-6. Telemetría anónima de balance y economía.
-7. Accesibilidad configurable: flashes, shake, contraste y remapeo.
+1. Cuenta de usuario y sesión.
+2. Backend de entitlements.
+3. Proveedor de pagos.
+4. Webhook de pago verificado.
+5. Tabla de órdenes y recibos.
+6. Desbloqueo server-authoritative de productos.
+7. Equipamiento real de naves/armas premium en el motor.
+8. Restaurar compras por cuenta y multi-dispositivo.
