@@ -9,6 +9,7 @@ export default defineConfig({
   preview: {
     host: '0.0.0.0',
     port: 4173,
+    allowedHosts: ['wae-neon-rider-live.onrender.com'],
   },
   build: {
     target: 'es2022',
