@@ -28,6 +28,7 @@ export class NeonRiderGame {
     this.rapidFireTimer = 0;
     this.spawnTimer = 0;
     this.cameraKick = 0;
+    this.hudTimer = 0;
 
     this.asteroids = [];
     this.lasers = [];
@@ -57,6 +58,7 @@ export class NeonRiderGame {
       this.container.replaceChildren(this.renderer.domElement);
 
       this.createLights();
+      this.createReusableResources();
       this.createShip();
       this.createStarfield();
       this.createNebulae();
@@ -79,6 +81,19 @@ export class NeonRiderGame {
     cyan.position.set(-12, -5, 10);
     magenta.position.set(12, 6, -12);
     this.scene.add(ambient, key, cyan, magenta);
+  }
+
+  createReusableResources() {
+    this.resources = {
+      laserGeometry: new THREE.CylinderGeometry(0.1, 0.1, 2.7, 8),
+      laserMaterial: new THREE.MeshBasicMaterial({ color: 0x22d3ee }),
+      asteroidMaterial: new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.84, metalness: 0.18, flatShading: true }),
+      shieldGeometry: new THREE.OctahedronGeometry(0.75, 0),
+      shieldMaterial: new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.94 }),
+      rapidGeometry: new THREE.TorusGeometry(0.65, 0.18, 8, 18),
+      rapidMaterial: new THREE.MeshBasicMaterial({ color: 0xfacc15, transparent: true, opacity: 0.94 }),
+    };
+    this.resources.laserGeometry.rotateX(Math.PI / 2);
   }
 
   createShip() {
@@ -211,6 +226,7 @@ export class NeonRiderGame {
     this.rapidFireTimer = 0;
     this.spawnTimer = 0.45;
     this.cameraKick = 0;
+    this.hudTimer = 0;
     this.clearInput();
     this.ship.visible = true;
     this.ship.position.set(0, 0, CONFIG.world.shipZ);
@@ -250,10 +266,21 @@ export class NeonRiderGame {
   }
 
   clearEntities() {
-    for (const list of [this.asteroids, this.lasers, this.particles, this.powerups]) {
-      for (const entity of list) this.scene.remove(entity);
-      list.length = 0;
+    for (const asteroid of this.asteroids) {
+      this.scene.remove(asteroid);
+      asteroid.geometry.dispose();
     }
+    for (const laser of this.lasers) this.scene.remove(laser);
+    for (const powerup of this.powerups) this.scene.remove(powerup);
+    for (const particle of this.particles) {
+      this.scene.remove(particle);
+      particle.geometry.dispose();
+      particle.material.dispose();
+    }
+    this.asteroids.length = 0;
+    this.lasers.length = 0;
+    this.powerups.length = 0;
+    this.particles.length = 0;
   }
 
   spawnAsteroid() {
@@ -270,8 +297,7 @@ export class NeonRiderGame {
       );
     }
     geometry.computeVertexNormals();
-    const material = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.84, metalness: 0.18, flatShading: true });
-    const asteroid = new THREE.Mesh(geometry, material);
+    const asteroid = new THREE.Mesh(geometry, this.resources.asteroidMaterial);
     asteroid.position.set(
       THREE.MathUtils.randFloat(CONFIG.world.xMin, CONFIG.world.xMax),
       THREE.MathUtils.randFloat(CONFIG.world.yMin, CONFIG.world.yMax),
@@ -289,11 +315,8 @@ export class NeonRiderGame {
 
   fire() {
     if (this.fireCooldown > 0 || this.state !== 'playing') return;
-    const geometry = new THREE.CylinderGeometry(0.1, 0.1, 2.7, 8);
-    geometry.rotateX(Math.PI / 2);
-    const material = new THREE.MeshBasicMaterial({ color: 0x22d3ee });
     for (const offsetX of [-3.2, 3.2]) {
-      const laser = new THREE.Mesh(geometry, material);
+      const laser = new THREE.Mesh(this.resources.laserGeometry, this.resources.laserMaterial);
       laser.position.set(this.ship.position.x + offsetX, this.ship.position.y - 0.06, this.ship.position.z - 1.05);
       laser.userData.radius = CONFIG.laser.radius;
       this.scene.add(laser);
@@ -330,9 +353,9 @@ export class NeonRiderGame {
   maybeDropPowerup(position) {
     if (Math.random() > CONFIG.powerups.dropChance) return;
     const type = Math.random() < 0.55 ? 'shield' : 'rapid';
-    const geometry = type === 'shield' ? new THREE.OctahedronGeometry(0.75, 0) : new THREE.TorusGeometry(0.65, 0.18, 8, 18);
-    const color = type === 'shield' ? 0x34d399 : 0xfacc15;
-    const mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.94 }));
+    const geometry = type === 'shield' ? this.resources.shieldGeometry : this.resources.rapidGeometry;
+    const material = type === 'shield' ? this.resources.shieldMaterial : this.resources.rapidMaterial;
+    const mesh = new THREE.Mesh(geometry, material);
     mesh.position.copy(position);
     mesh.userData = { type, radius: 1.0, age: 0 };
     this.scene.add(mesh);
@@ -406,7 +429,7 @@ export class NeonRiderGame {
   }
 
   updateStarfield(delta, elapsed) {
-    const speed = this.state === 'playing' ? 58 * this.speedMultiplier() : 13;
+    const speed = this.state === 'playing' ? 58 * this.speedMultiplier() : this.state === 'paused' ? 0 : 13;
     const attribute = this.starfield.geometry.attributes.position;
     for (let i = 2; i < attribute.array.length; i += 3) {
       attribute.array[i] += speed * delta;
@@ -431,6 +454,11 @@ export class NeonRiderGame {
     this.fireCooldown = Math.max(0, this.fireCooldown - delta);
     this.rapidFireTimer = Math.max(0, this.rapidFireTimer - delta);
     this.comboTimer = Math.max(0, this.comboTimer - delta);
+    this.hudTimer -= delta;
+    if (this.hudTimer <= 0) {
+      this.hudTimer = 0.2;
+      this.callbacks.onHud?.(this.snapshot());
+    }
     if (this.comboTimer === 0 && this.combo !== 0) {
       this.combo = 0;
       this.callbacks.onHud?.(this.snapshot());
@@ -475,6 +503,7 @@ export class NeonRiderGame {
           this.createExplosion(impactPosition, 0x22d3ee, 18);
           this.audio.play('explosion');
           this.scene.remove(asteroid);
+          asteroid.geometry.dispose();
           this.asteroids.splice(j, 1);
           this.scene.remove(laser);
           this.lasers.splice(i, 1);
@@ -503,6 +532,7 @@ export class NeonRiderGame {
       const collisionRadius = asteroid.userData.radius + CONFIG.ship.radius;
       if (asteroid.position.distanceToSquared(this.ship.position) <= collisionRadius * collisionRadius) {
         this.scene.remove(asteroid);
+        asteroid.geometry.dispose();
         this.asteroids.splice(i, 1);
         this.hitShip(asteroid);
         continue;
@@ -510,6 +540,7 @@ export class NeonRiderGame {
 
       if (asteroid.position.z > CONFIG.world.cullZ) {
         this.scene.remove(asteroid);
+        asteroid.geometry.dispose();
         this.asteroids.splice(i, 1);
         this.score += 8;
         const previousLevel = this.level;
@@ -600,14 +631,14 @@ export class NeonRiderGame {
   loop() {
     if (!this.renderer || !this.scene || !this.camera) return;
     const elapsed = performance.now() * 0.001;
-    const delta = this.state === 'playing' ? Math.min(this.clock.getDelta(), 0.04) : 1 / 60;
+    const delta = this.state === 'playing' ? Math.min(this.clock.getDelta(), 0.04) : this.state === 'paused' ? 0 : 1 / 60;
 
     this.animateThrusters(elapsed);
     this.updateStarfield(delta, elapsed);
     this.updateParticles(delta);
 
     if (this.state === 'playing') this.updatePlaying(delta, elapsed);
-    else if (this.state === 'idle' || this.state === 'gameover') this.updateIdle(elapsed);
+    else if (this.state === 'idle') this.updateIdle(elapsed);
 
     this.renderer.render(this.scene, this.camera);
   }
