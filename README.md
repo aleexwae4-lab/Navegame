@@ -1,14 +1,14 @@
 # WAE Neon Rider 3D
 
-Shooter espacial 3D de **WAE OS Enterprise**, evolucionado desde un prototipo WebGL hacia una arquitectura modular con carrera persistente, builds roguelite, rutas de riesgo/recompensa, combate cinematográfico y campaña galáctica.
+Shooter espacial 3D de **WAE OS Enterprise**, evolucionado desde un prototipo WebGL hacia una arquitectura modular con carrera persistente, builds roguelite, rutas de riesgo/recompensa, combate cinematográfico, campaña galáctica y progresión de Maestría.
 
 ## Marca
 
-El juego incorpora un sello persistente visible durante la experiencia con la marca:
+El videojuego mantiene un sello persistente con la marca:
 
 **wae os Enterprise**
 
-El sello permanece en portada, combate y pantallas del sistema como firma visual del videojuego.
+El sello permanece en portada, combate y pantallas clave como firma visual oficial del juego.
 
 ## Stack
 
@@ -18,44 +18,55 @@ El sello permanece en portada, combate y pantallas del sistema como firma visual
 - WebGL + Web Audio API
 - Responsive / touch / keyboard
 
-## Living Galaxy V9
+## V10 · Combat Feel & Mastery
 
-V9 conserva todo Cinematic Combat V8 y añade una capa de universo persistente:
+V10 conserva Living Galaxy V9 y prioriza sensación de control, legibilidad y aprendizaje:
+
+- Control táctil por arrastre sobre el área libre de combate.
+- D-pad tradicional disponible en paralelo.
+- Soporte multitáctil: mover con un dedo y mantener FUEGO con otro.
+- Protección de lanzamiento durante los primeros segundos de cada run.
+- Daño reducido durante esa ventana para evitar muertes instantáneas al aprender.
+- Telegraph visual de entrada para enemigos nuevos.
+- Telegraph breve antes de disparos enemigos mediante anillo 3D.
+- Feedback de impacto con flash contextual, vibración heredada, camera kick y micro slow-motion.
+- Tutorial contextual progresivo que enseña:
+  - movimiento;
+  - fuego sostenido;
+  - Pulso Nova;
+  - Esquiva;
+  - Misil WAE.
+- El tutorial se completa y persiste para no repetir instrucciones indefinidamente.
+- Sistema persistente de **Maestría**.
+- Maestría obtenida por:
+  - combo 10;
+  - objetivos secundarios;
+  - hitos de bajas;
+  - mini-bosses;
+  - Guardianes;
+  - sectores perfectos sin recibir daño.
+- Rangos de Maestría:
+  - Cadete;
+  - Piloto;
+  - As;
+  - Cazador Estelar;
+  - Guardián WAE;
+  - Leyenda.
+- La Maestría se muestra fuera del combate para mantener el HUD móvil limpio.
+- Migración V9 → V10 conservando progreso anterior.
+
+## V9 · Living Galaxy
 
 - 4 facciones ligadas a los biomas:
   - Dominio Helix — velocidad vectorial.
   - Forja Solar — artillería térmica.
   - Pacto de la Falla — cazadores élite.
   - Legión Verdant — guerra de desgaste.
-- Cada facción modifica parámetros reales del combate:
-  - velocidad enemiga;
-  - velocidad de proyectiles;
-  - daño recibido;
-  - presencia de élites.
-- Objetivo secundario por sector con recompensa independiente.
-- 5 familias de objetivos secundarios:
-  - combo;
-  - caza de élites;
-  - uso táctico del Misil WAE;
-  - supervivencia con escudo alto;
-  - puntuación de sector.
-- Recompensas de objetivos en WAE Cores + Renombre.
-- Campaña persistente con:
-  - Renombre;
-  - capítulos;
-  - rango;
-  - victorias totales;
-  - victorias por facción;
-  - objetivos completados.
-- Rangos de campaña:
-  - Piloto.
-  - As de Sector.
-  - Vanguardia.
-  - Comandante Estelar.
-  - Leyenda WAE.
-- Pantalla Galaxia Viva con historial de victorias por facción.
-- HUD de facción, doctrina, rango, capítulo y objetivo secundario.
-- Migración V8 → V9 sin perder progreso anterior.
+- Cada facción modifica velocidad enemiga, proyectiles, daño o presencia de élites.
+- Objetivo secundario por sector.
+- Recompensas en WAE Cores + Renombre.
+- Campaña persistente con Renombre, capítulos, rango y victorias por facción.
+- Pantalla Galaxia Viva.
 
 ## Sistemas heredados
 
@@ -93,40 +104,49 @@ V9 conserva todo Cinematic Combat V8 y añade una capa de universo persistente:
 - WAE Cores.
 - Mapa galáctico y punto de salto.
 
-## Bucle de juego V9
+## Bucle de juego V10
 
 ```text
-Hangar / mapa / loadout
-        ↓
-facción + doctrina + objetivo secundario
-        ↓
-combate + Wingman
-        ↓
+JUGAR
+  ↓
+mover + fuego + aprender controles
+  ↓
+objetivo + enemigos telegráficos
+  ↓
+combo / Pulso / Esquiva / Misil
+  ↓
 élites / evento / mini-boss
-        ↓
-HEAT + OVERDRIVE + Phase Dash
-        ↓
-Pulso Nova + Misil WAE
-        ↓
+  ↓
 Guardián F1/F2/F3
-        ↓
-perk + ruta riesgo/recompensa
-        ↓
-Cores + Renombre + victoria de facción
-        ↓
+  ↓
+perk + ruta
+  ↓
+Cores + Renombre + Maestría
+  ↓
 nuevo sector / capítulo / rango
-        ↓
+  ↓
 run hasta game over
-        ↓
+  ↓
 progreso persistente → nueva run
 ```
 
 ## Controles
 
+### Móvil
+
+- Arrastrar en el espacio libre — mover nave.
+- D-pad — movimiento alternativo.
+- FUEGO — mantener para disparo continuo.
+- PULSO — limpia proyectiles y daña amenazas.
+- ESQUIVA — Phase Dash con invulnerabilidad breve.
+- MISIL — busca automáticamente el objetivo prioritario.
+
+### Teclado
+
 - `WASD` / flechas — movimiento.
 - `ESPACIO` — disparo principal.
 - `Q` / `E` — Pulso Nova.
-- `SHIFT` / `X` — Phase Dash.
+- `SHIFT` / `X` — Esquiva / Phase Dash.
 - `R` — Misil WAE guiado.
 - `P` / `Esc` — pausa.
 - `M` — audio.
@@ -147,30 +167,31 @@ npm run check
 npm run build
 ```
 
-`check` valida sintaxis acumulada de V3 a V9. Vite valida el entrypoint productivo activo en `src/v9/main.js`.
+`check` valida sintaxis acumulada de V3 a V10. Vite valida el entrypoint productivo activo en `src/v10/main.js`.
 
 ## Arquitectura
 
 ```text
 src/
-  v4/            # Combat Core
-  v5/            # Galactic Core / Hangar / loadout
-  v6/            # Rogue Combat / perks / biomas
-  v7/            # Legendary Run / élites / rutas / Guardianes
-  v8/            # Cinematic Combat / misiles / Wingman / mini-bosses
-  v9/
-    config.js     # facciones, objetivos, rangos y balance de campaña
-    game.js       # Living Galaxy: campaña, Renombre y doctrinas
-    main.js       # HUD V9, Galaxia Viva y progreso de facción
-    styles.css    # sello wae os Enterprise y capa visual de campaña
+  v4/             # Combat Core
+  v5/             # Galactic Core / Hangar / loadout
+  v6/             # Rogue Combat / perks / biomas
+  v7/             # Legendary Run / élites / rutas / Guardianes
+  v8/             # Cinematic Combat / misiles / Wingman / mini-bosses
+  v9/             # Living Galaxy / facciones / campaña / Renombre
+  v10/
+    config.js      # balance V10 y rangos de Maestría
+    game.js        # telegraphs, launch grace, mastery y coaching
+    main.js        # drag steering, feedback y UI de Maestría
+    styles.css     # feedback visual V10 sin saturar el combate
 ```
 
 ## Siguiente frontera de producto
 
 1. Música adaptativa por intensidad, facción y fase.
 2. Gamepad completo y vibración contextual.
-3. Logros y desafíos de maestría.
+3. Logros con desafíos específicos y recompensas cosméticas.
 4. Leaderboard backend y perfil multi-dispositivo.
 5. Modelos GLTF/GLB y VFX de mayor fidelidad.
-6. Telemetría de balance y economía.
+6. Telemetría anónima de balance y economía.
 7. Accesibilidad configurable: flashes, shake, contraste y remapeo.
