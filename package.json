@@ -1,0 +1,21 @@
+{
+  "name": "wae-neon-rider",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "node --check src/config.js && node --check src/audio.js && node --check src/game.js && node --check src/main.js"
+  },
+  "dependencies": {
+    "three": "0.185.1"
+  },
+  "devDependencies": {
+    "vite": "8.2.2"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}
