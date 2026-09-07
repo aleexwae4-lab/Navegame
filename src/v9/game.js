@@ -122,10 +122,8 @@ export class NeonRiderGame extends CinematicGame {
   }
 
   applyBiome(sector = this.sector) {
-    const previousSector = this.sector;
     super.applyBiome(sector);
     this.applyFaction();
-    if (this.sideObjective && previousSector !== sector) this.prepareSectorCampaign();
   }
 
   chooseObjective() {
@@ -182,8 +180,9 @@ export class NeonRiderGame extends CinematicGame {
   }
 
   fireEnemy(origin, speed, spread = 0) {
+    const resolvedSpeed = Number.isFinite(speed) ? speed : CONFIG.drone.bulletSpeed;
     const multiplier = this.currentFaction?.bulletSpeed ?? 1;
-    super.fireEnemy(origin, speed * multiplier, spread);
+    super.fireEnemy(origin, resolvedSpeed * multiplier, spread);
   }
 
   damageShip(damage, position) {
