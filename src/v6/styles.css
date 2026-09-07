@@ -82,7 +82,7 @@
   letter-spacing: 0.08em;
 }
 
-.secondary-btn {
+.ability-btn {
   position: absolute;
   right: 118px;
   bottom: 8px;
@@ -100,13 +100,13 @@
   transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease;
 }
 
-.secondary-btn.ready {
+.ability-btn.ready {
   border-color: rgba(103, 232, 249, 0.88);
   box-shadow: inset 0 0 28px rgba(34, 211, 238, 0.24), 0 0 28px rgba(34, 211, 238, 0.36);
 }
 
-.secondary-btn:active { transform: scale(0.94); }
-.secondary-btn:disabled { opacity: 0.38; }
+.ability-btn:active { transform: scale(0.94); }
+.ability-btn:disabled { opacity: 0.38; }
 
 .perk-overlay {
   background:
@@ -196,5 +196,5 @@
   .perk-card { min-height: 0; }
   .perk-card p { min-height: 0; }
   .active-perks { bottom: max(106px, calc(env(safe-area-inset-bottom) + 106px)); max-width: 76vw; }
-  .secondary-btn { right: 96px; width: 66px; height: 66px; font-size: 8px; }
+  .ability-btn { right: 96px; width: 66px; height: 66px; font-size: 8px; }
 }
