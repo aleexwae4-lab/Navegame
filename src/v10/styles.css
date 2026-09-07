@@ -1,5 +1,39 @@
 @import '../v9/styles.css';
 
+:root {
+  --v101-vh: 100dvh;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: var(--v101-vh);
+  min-height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button:focus-visible {
+  outline: 2px solid rgba(103, 232, 249, 0.78);
+  outline-offset: 3px;
+}
+
 .v10-coach {
   position: fixed;
   left: 50%;
@@ -84,43 +118,328 @@ body.v10-impact-active #game-container canvas { filter: saturate(1.28) contrast(
   line-height: 1.35;
 }
 
+.v101-quickstart {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  width: min(640px, 100%);
+  margin: 0 auto 14px;
+}
+
+.v101-quickstart > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid rgba(103, 232, 249, 0.14);
+  border-radius: 12px;
+  background: rgba(2, 6, 23, 0.48);
+  text-align: left;
+}
+
+.v101-quickstart > div > b {
+  display: grid;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid rgba(103, 232, 249, 0.28);
+  border-radius: 50%;
+  color: #67e8f9;
+  font-size: 9px;
+}
+
+.v101-quickstart span,
+.v101-quickstart strong,
+.v101-quickstart small {
+  display: block;
+  min-width: 0;
+}
+
+.v101-quickstart strong {
+  overflow: hidden;
+  color: #e0f2fe;
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.v101-quickstart small {
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 7px;
+  line-height: 1.25;
+}
+
 #game-container,
 #game-container canvas {
   touch-action: none;
 }
 
+@media (pointer: coarse) {
+  .control-btn,
+  .fire-btn,
+  .ability-btn,
+  .dash-btn,
+  .missile-btn,
+  .icon-btn,
+  .primary-btn,
+  .secondary-btn,
+  .start-meta button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .control-btn:active,
+  .fire-btn:active,
+  .ability-btn:active,
+  .dash-btn:active,
+  .missile-btn:active,
+  .icon-btn:active {
+    filter: brightness(1.24);
+  }
+}
+
 @media (max-width: 520px) and (orientation: portrait) {
-  /* V10 replaces the V9 pseudo-coach with contextual runtime coaching. */
+  /* V10.1 keeps only information that directly helps the current action. */
   .touch-controls::before { display: none !important; content: none !important; }
 
   .v10-coach {
-    bottom: max(128px, calc(env(safe-area-inset-bottom) + 128px));
+    bottom: max(116px, calc(env(safe-area-inset-bottom) + 116px));
     max-width: calc(100vw - 28px);
     padding: 6px 9px;
+    border-radius: 12px;
     font-size: 6px;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.055em;
   }
 
   .v10-mastery-card {
-    margin-bottom: 12px;
-    padding: 7px 9px;
-    border-radius: 11px;
+    margin-bottom: 10px;
+    padding: 6px 8px;
+    border-radius: 10px;
   }
-  .v10-mastery-card span { font-size: 6px; padding: 5px 6px; }
-  .v10-mastery-card strong { font-size: 9px; }
-  .v10-mastery-card small { font-size: 6px !important; }
+  .v10-mastery-card span { font-size: 5px; padding: 4px 5px; }
+  .v10-mastery-card strong { font-size: 8px; }
+  .v10-mastery-card small { font-size: 5.5px !important; }
 
-  /* Leave a larger dead-zone around the center so drag steering feels natural. */
-  .touch-controls { pointer-events: none; }
+  .v101-quickstart {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    margin: 0 auto 10px;
+  }
+  .v101-quickstart > div {
+    gap: 7px;
+    padding: 6px 8px;
+    border-radius: 9px;
+  }
+  .v101-quickstart > div > b {
+    flex-basis: 20px;
+    width: 20px;
+    height: 20px;
+    font-size: 7px;
+  }
+  .v101-quickstart strong { font-size: 7px; }
+  .v101-quickstart small { font-size: 6px; }
+
+  #start-screen .panel,
+  #pause-screen .panel,
+  #game-over-screen .panel,
+  .perk-panel,
+  .route-panel,
+  .meta-panel {
+    max-height: calc(var(--v101-vh) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 18px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+  #start-screen .panel::-webkit-scrollbar,
+  #pause-screen .panel::-webkit-scrollbar,
+  #game-over-screen .panel::-webkit-scrollbar,
+  .perk-panel::-webkit-scrollbar,
+  .route-panel::-webkit-scrollbar,
+  .meta-panel::-webkit-scrollbar { display: none; }
+
+  #start-screen .panel {
+    width: min(94vw, 430px);
+    padding: 20px 15px 16px;
+  }
+  #start-screen .panel > p { margin-bottom: 12px; }
+  #start-screen .feature-strip,
+  #start-screen .control-hints,
+  #start-screen .panel > small { display: none !important; }
+  #start-screen .start-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+  #start-screen .start-meta button {
+    min-width: 0;
+    padding: 8px 7px;
+    font-size: 7px;
+  }
+  #start-screen .primary-btn {
+    min-height: 48px;
+    font-size: 10px;
+  }
+
+  .hud {
+    top: calc(44px + var(--safe-area-top));
+  }
+
+  .combat-stack {
+    top: calc(84px + var(--safe-area-top));
+  }
+  .mission-card,
+  .boss-card,
+  .miniboss-card {
+    width: min(82vw, 310px);
+    margin-inline: auto;
+  }
+
+  .utility-controls {
+    top: calc(6px + var(--safe-area-top));
+  }
+  .icon-btn {
+    width: 29px;
+    height: 29px;
+    min-width: 29px;
+    min-height: 29px;
+    border-radius: 9px;
+    font-size: 10px;
+  }
+
+  .touch-controls {
+    bottom: calc(6px + var(--safe-area-bottom));
+    height: 104px;
+    pointer-events: none;
+  }
   .dpad,
   .fire-btn,
   .ability-btn,
   .dash-btn,
   .missile-btn { pointer-events: auto; }
+
+  .dpad {
+    width: 104px;
+    height: 104px;
+    opacity: 0.62;
+    transition: opacity 140ms ease;
+  }
+  .control-btn {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    min-height: 34px;
+    border-radius: 10px;
+    font-size: 11px;
+    opacity: 0.74;
+  }
+  .control-btn.up { left: 35px; top: 0; }
+  .control-btn.left { left: 0; top: 35px; }
+  .control-btn.right { right: 0; top: 35px; }
+  .control-btn.down { left: 35px; bottom: 0; }
+  .control-btn.is-active { opacity: 1; }
+
+  body.v101-dragging .dpad { opacity: 0.18; }
+
+  .fire-btn {
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+    min-height: 70px;
+    font-size: 6px;
+  }
+  .fire-core { width: 18px; height: 18px; }
+
+  .ability-btn,
+  .dash-btn,
+  .missile-btn {
+    overflow: visible;
+    border-width: 1px;
+  }
+
+  .ability-btn { right: 72px; bottom: 0; width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
+  .dash-btn { right: 119px; bottom: 0; width: 42px; height: 42px; min-width: 42px; min-height: 42px; }
+  .missile-btn { right: 94px; bottom: 47px; width: 40px; height: 40px; min-width: 40px; min-height: 40px; }
+
+  .ability-btn::before,
+  .dash-btn::before,
+  .missile-btn::before {
+    content: attr(data-status);
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    min-width: 25px;
+    transform: translateX(-50%);
+    padding: 2px 4px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 999px;
+    background: rgba(2, 6, 23, 0.84);
+    color: #94a3b8;
+    font-size: 5px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .ability-btn[data-ready='true']::before,
+  .dash-btn[data-ready='true']::before,
+  .missile-btn[data-ready='true']::before {
+    color: #a5f3fc;
+    border-color: rgba(103, 232, 249, 0.28);
+  }
+
+  .ability-btn:disabled,
+  .dash-btn:disabled,
+  .missile-btn:disabled {
+    opacity: 0.46;
+    filter: saturate(0.62);
+  }
+
+  #pause-screen .panel,
+  #game-over-screen .panel {
+    width: min(92vw, 380px);
+    padding: 20px 16px;
+  }
+  #pause-screen .panel p,
+  #game-over-screen .panel p {
+    margin: 8px auto 12px;
+  }
+  #game-over-screen .result-grid { margin: 10px 0; }
+
+  .announcer { top: 31%; font-size: 15px; }
+  .cinematic-banner { top: 28%; font-size: 7px; }
+  .power-status { top: calc(82px + var(--safe-area-top)); }
+}
+
+@media (max-height: 700px) and (max-width: 520px) and (orientation: portrait) {
+  #start-screen .panel { padding-top: 14px; }
+  #start-screen h1 { margin-block: 6px; }
+  .v101-quickstart { margin-bottom: 7px; }
+  .v101-quickstart > div { padding-block: 5px; }
+  .touch-controls { height: 94px; }
+  .dpad { transform: scale(0.9); transform-origin: left bottom; }
+  .fire-btn { transform: scale(0.9); transform-origin: right bottom; }
+  .ability-btn,
+  .dash-btn,
+  .missile-btn { transform: scale(0.9); }
+  .v10-coach { bottom: max(104px, calc(env(safe-area-inset-bottom) + 104px)); }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .v10-coach { bottom: max(82px, calc(env(safe-area-inset-bottom) + 82px)); }
+  .v101-quickstart { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .v10-coach,
-  .v10-impact { transition: none; }
+  .v10-impact,
+  .dpad { transition: none; }
   body.v10-impact-active #game-container canvas { filter: none; }
+  .cinematic-banner,
+  .announcer { animation: none !important; }
 }
