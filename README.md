@@ -18,6 +18,25 @@ El sello permanece en portada, combate y pantallas clave como firma visual ofici
 - WebGL + Web Audio API
 - Responsive / touch / keyboard
 
+## V10.1 · UX Hardening
+
+V10.1 conserva íntegramente el balance y la progresión V10. El objetivo del release es mejorar experiencia de usuario sin alterar combate, economía ni dificultad:
+
+- Capa UX desacoplada del motor mediante `boot.js` + `ux.js`.
+- Viewport móvil estabilizado con `visualViewport`, `100dvh` y safe areas.
+- Bloqueo de scroll, overscroll, selección y gestos accidentales durante la partida.
+- Guía inicial de tres pasos: mover, disparar y usar habilidades.
+- Copy simplificado en portada, pausa y game over.
+- Controles táctiles más compactos para recuperar área útil de juego.
+- D-pad más discreto cuando el jugador usa arrastre.
+- Arrastre táctil con dead-zone reducida y filtrado de diagonales accidentales.
+- Botones de Pulso, Esquiva y Misil muestran directamente `LISTO` o segundos de recarga.
+- Estados `disabled` visualmente claros sin volver a introducir barras grandes.
+- Micro-haptics opcionales en acciones táctiles.
+- Paneles móviles limitados al alto real disponible para evitar cortes en Android.
+- Mejor comportamiento de foco táctil y `prefers-reduced-motion`.
+- El sello **wae os Enterprise** permanece visible y no invade la zona de controles.
+
 ## V10 · Combat Feel & Mastery
 
 V10 conserva Living Galaxy V9 y prioriza sensación de control, legibilidad y aprendizaje:
@@ -167,7 +186,7 @@ npm run check
 npm run build
 ```
 
-`check` valida sintaxis acumulada de V3 a V10. Vite valida el entrypoint productivo activo en `src/v10/main.js`.
+`check` valida sintaxis acumulada de V3 a V10.1, incluida la capa UX. Vite valida el entrypoint productivo activo en `src/v10/boot.js`.
 
 ## Arquitectura
 
@@ -182,8 +201,10 @@ src/
   v10/
     config.js      # balance V10 y rangos de Maestría
     game.js        # telegraphs, launch grace, mastery y coaching
-    main.js        # drag steering, feedback y UI de Maestría
-    styles.css     # feedback visual V10 sin saturar el combate
+    main.js        # UI y bindings principales V10
+    ux.js          # ergonomía móvil, viewport, estados y precisión táctil V10.1
+    boot.js        # entrypoint desacoplado: motor + UX
+    styles.css     # HUD player-first y hardening responsive
 ```
 
 ## Siguiente frontera de producto
