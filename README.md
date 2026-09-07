@@ -1,6 +1,6 @@
 # WAE Neon Rider 3D
 
-Arcade espacial 3D de **WAE OS Enterprise**, evolucionado desde el prototipo Flight Simulator V2 hacia una arquitectura modular y un Combat Core V4 orientado a partidas cortas, progresión y rejugabilidad.
+Arcade espacial 3D de **WAE OS Enterprise**, evolucionado desde Flight Simulator V2 hacia una arquitectura modular con combate, progresión persistente y metajuego de carrera.
 
 ## Stack
 
@@ -10,23 +10,56 @@ Arcade espacial 3D de **WAE OS Enterprise**, evolucionado desde el prototipo Fli
 - WebGL + Web Audio API
 - Responsive / touch / keyboard
 
-## Combat Core V4
+## Galactic Core V5
 
-La V4 conserva el motor estable de V3 y agrega una capa de gameplay de mayor profundidad:
+V5 conserva todo el Combat Core V4 y añade una capa de carrera persistente:
 
-- Sectores infinitos con dificultad incremental.
-- Drones enemigos con desplazamiento lateral y fuego dirigido.
-- Guardián de sector con HP, entrada cinematográfica y patrón de ataque.
-- Misiones cortas rotativas: destrucción, cadenas de combate y supervivencia sin impacto.
-- Sistema HEAT que premia rendimiento sostenido.
-- OVERDRIVE temporal al completar HEAT, con disparo acelerado y multiplicador de puntuación.
-- Combos visibles y multiplicadores crecientes.
-- WAE Cores persistentes obtenidos por desempeño, no por compra de ventaja.
-- Mejor sector persistente por jugador/dispositivo.
-- HUD específico para misión, HEAT, combo y salud del Guardián.
-- Audio diferenciado para armas enemigas, jefe, misión y OVERDRIVE.
-- Protección breve tras impactos para evitar daño múltiple injusto.
-- Corrección del lifecycle de Game Over para mantener la nave destruida fuera de escena.
+- Hangar orbital integrado sin recargar la aplicación.
+- 4 naves con estadísticas reales diferentes:
+  - Falcon MK-I — balance general.
+  - Viper R — velocidad/cadencia alta y menor blindaje.
+  - Aegis X — blindaje pesado y menor movilidad.
+  - Nova Prime — build experimental orientado a OVERDRIVE.
+- 4 sistemas de armas con 2, 3, 4 y 5 líneas de fuego.
+- Compra y equipamiento usando WAE Cores obtenidos jugando.
+- Migración automática del progreso V4 a V5.
+- Persistencia de Cores, bajas, mejor sector, desbloqueos y loadout.
+- Mapa galáctico con selección de punto de salto.
+- Repetición de sectores desbloqueados para progresión y práctica.
+- Siluetas/accent visual distintos por nave.
+- Estadísticas aplicadas al gameplay: velocidad, escudo máximo, cadencia y generación de HEAT.
+- HUD con loadout, Cores y sector seleccionado.
+- Atajos: `H` Hangar, `G` mapa galáctico, `P` pausa y `M` audio.
+
+## Combat Core heredado
+
+- Sectores con dificultad incremental.
+- Drones enemigos con fuego dirigido.
+- Guardianes de sector con HP y patrones de ataque.
+- Misiones de destrucción, combo y supervivencia.
+- HEAT y OVERDRIVE.
+- Combos y multiplicadores.
+- Power-ups de escudo y ráfaga.
+- Protección breve tras impactos.
+- Récord y mejor sector persistentes.
+
+## Bucle de juego V5
+
+```text
+combate
+  ↓
+misión / combo / OVERDRIVE
+  ↓
+Guardián de sector
+  ↓
+WAE Cores + nuevo sector
+  ↓
+Hangar: desbloquear / equipar
+  ↓
+Mapa: elegir nuevo punto de salto
+  ↓
+volver al combate con otro build
+```
 
 ## Desarrollo
 
@@ -42,7 +75,7 @@ npm run check
 npm run build
 ```
 
-El comando `check` valida sintaxis de V3 y V4. El build de Vite valida el entrypoint productivo activo en `src/v4/main.js`.
+`check` valida sintaxis de V3, V4 y V5. Vite valida el entrypoint productivo activo en `src/v5/main.js`.
 
 ## Arquitectura
 
@@ -54,38 +87,26 @@ src/
   main.js
   styles.css
   v4/
-    audio.js      # feedback sonoro de combate
-    config.js     # balance de sectores, drones, boss, HEAT y progresión
-    game.js       # extensión del motor V3 con Combat Core
-    main.js       # HUD y entrada productiva V4
-    styles.css    # interfaz responsive V4
+    audio.js
+    config.js
+    game.js
+    main.js
+    styles.css
+  v5/
+    config.js     # catálogo de naves/armas y balance meta
+    game.js       # extensión V4: perfil, hangar, loadouts y sectores seleccionables
+    main.js       # navegación Hangar / Galaxia / combate
+    styles.css    # interfaz Galactic Core
 ```
 
-## Bucle principal de juego
+## Siguiente frontera de producto
 
-```text
-destruir amenazas
-      ↓
-encadenar combo
-      ↓
-llenar HEAT
-      ↓
-activar OVERDRIVE
-      ↓
-completar misión
-      ↓
-derrotar Guardián
-      ↓
-entrar a un sector más difícil
-```
-
-## Próximos módulos recomendados
-
-1. Hangar y selección de naves usando WAE Cores como progreso cosmético/desbloqueo.
-2. Armas secundarias y builds de nave.
-3. Más familias de enemigos y jefes con patrones diferenciados.
-4. Mapa galáctico y campaña ligera.
-5. Leaderboard backend y perfiles multi-dispositivo.
-6. Gamepad y vibración avanzada.
-7. Modelos GLTF/GLB optimizados, skins y efectos VFX.
-8. Telemetría de dificultad, duración de partida y balance.
+1. Familias de enemigos: interceptor, bombardero, sniper, carrier y kamikaze.
+2. Guardianes únicos por bioma/sector con fases y telegráficos visuales.
+3. Armas secundarias activas: misil, EMP, dash y drone aliado.
+4. Sistema de perks/builds por run estilo roguelite.
+5. Biomas visuales y mapa galáctico con rutas/decisiones.
+6. Leaderboard backend, perfiles multi-dispositivo y temporadas.
+7. Gamepad, vibración avanzada y accesibilidad.
+8. VFX, modelos GLTF/GLB y audio musical dinámico.
+9. Telemetría de balance: duración, muertes, build win-rate y dificultad por sector.
