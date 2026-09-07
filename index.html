@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#030712" />
-    <meta name="description" content="WAE OS Enterprise · Neon Rider 3D V9 — Living Galaxy con facciones, campaña, objetivos secundarios, combate cinematográfico, misiles, wingman, mini-bosses, rutas y progresión persistente." />
-    <title>WAE Neon Rider 3D · V9 Living Galaxy</title>
+    <meta name="description" content="WAE OS Enterprise · Neon Rider 3D V10 — Combat Feel & Mastery con control táctil por arrastre, telegráficos de peligro, progresión de Maestría, campaña, facciones, Guardianes y combate cinematográfico." />
+    <title>WAE Neon Rider 3D · V10 Combat Feel & Mastery</title>
   </head>
   <body>
     <main id="app" aria-label="WAE Neon Rider 3D">
@@ -13,14 +13,14 @@
 
       <div class="wae-game-seal" aria-label="wae os Enterprise">
         <span class="wae-game-seal__mark">W</span>
-        <div><strong>wae os Enterprise</strong><small>ORIGINAL GAME SEAL · V9</small></div>
+        <div><strong>wae os Enterprise</strong><small>ORIGINAL GAME SEAL · V10</small></div>
       </div>
 
       <header class="brand-seal" aria-label="WAE OS Enterprise">
         <div class="brand-mark">W</div>
         <div>
           <strong>WAE OS ENTERPRISE</strong>
-          <span>NEON RIDER · LIVING GALAXY V9</span>
+          <span>NEON RIDER · COMBAT FEEL & MASTERY V10</span>
         </div>
       </header>
 
@@ -87,27 +87,27 @@
           <button class="control-btn down" data-control="down" type="button" aria-label="Abajo">▼</button>
         </div>
         <button id="missile-btn" class="missile-btn ready" type="button" aria-label="Lanzar misil guiado">MISIL<br>WAE</button>
-        <button id="dash-btn" class="dash-btn ready" type="button" aria-label="Activar Phase Dash">PHASE<br>DASH</button>
+        <button id="dash-btn" class="dash-btn ready" type="button" aria-label="Activar esquiva">PHASE<br>DASH</button>
         <button id="secondary-btn" class="ability-btn ready" type="button" aria-label="Activar Pulso Nova">PULSO<br>NOVA</button>
         <button id="fire-btn" class="fire-btn" data-control="shoot" type="button" aria-label="Disparar láser"><span class="fire-core"></span><span>FUEGO</span></button>
       </section>
 
       <section id="start-screen" class="overlay">
         <div class="panel">
-          <span class="eyebrow">WAE LIVING GALAXY / BUILD A LEGEND</span>
+          <span class="eyebrow">WAE V10 / DOMINA EL COMBATE</span>
           <h1>NEON RIDER <em>3D</em></h1>
-          <p>La galaxia ya recuerda tus victorias. Cada bioma pertenece a una facción con doctrina propia, cada sector ofrece un objetivo secundario y cada Guardián empuja tu rango de campaña. Construye una nave, una run y una leyenda.</p>
-          <div class="feature-strip"><span>4 FACCIONES</span><span>CAMPAÑA</span><span>OBJETIVOS</span><span>RENOMBRE</span><span>RANGOS</span></div>
+          <p>Muévete, dispara, esquiva y sobrevive. Los enemigos avisan antes de atacar, tu habilidad construye Maestría y cada Guardián vencido abre el siguiente salto.</p>
+          <div class="feature-strip"><span>CONTROL POR ARRASTRE</span><span>MAESTRÍA</span><span>ATAQUES LEGIBLES</span><span>4 FACCIONES</span><span>GUARDIANES</span></div>
           <div class="start-meta"><button id="open-hangar-btn" type="button">HANGAR · H</button><button id="open-galaxy-btn" type="button">MAPA GALÁCTICO · G</button></div>
-          <div class="control-hints"><span><kbd>WASD</kbd> / <kbd>↑↓←→</kbd> mover</span><span><kbd>ESPACIO</kbd> fuego</span><span><kbd>Q/E</kbd> Pulso Nova</span><span><kbd>SHIFT/X</kbd> Phase Dash</span><span><kbd>R</kbd> Misil WAE</span></div>
-          <button id="start-btn" class="primary-btn" type="button">INICIAR · SECTOR 1</button>
-          <small>Skill-first · campaña persistente · decisiones · progresión jugando · sin pay-to-win</small>
+          <div class="control-hints"><span><kbd>WASD</kbd> / <kbd>↑↓←→</kbd> mover</span><span><kbd>ESPACIO</kbd> fuego</span><span><kbd>Q/E</kbd> Pulso Nova</span><span><kbd>SHIFT/X</kbd> Esquiva</span><span><kbd>R</kbd> Misil WAE</span></div>
+          <button id="start-btn" class="primary-btn" type="button">JUGAR · SECTOR 1</button>
+          <small>Control directo · progreso por habilidad · campaña persistente · sin pay-to-win</small>
         </div>
       </section>
 
       <section id="hangar-screen" class="overlay meta-overlay hidden">
         <div class="meta-panel">
-          <div class="meta-panel-header"><div><span class="eyebrow">WAE ORBITAL HANGAR</span><h2>CONSTRUYE TU LOADOUT</h2><p>Invierte WAE Cores ganados en combate. Cada nave cambia estadísticas reales y cada sistema de armas modifica la cobertura de fuego.</p><div class="meta-balance">WAE CORES · <strong id="hangar-cores">0</strong></div></div><button id="close-hangar-btn" class="meta-close" type="button" aria-label="Cerrar hangar">×</button></div>
+          <div class="meta-panel-header"><div><span class="eyebrow">WAE ORBITAL HANGAR</span><h2>CONSTRUYE TU LOADOUT</h2><p>Invierte WAE Cores ganados jugando. Cada nave cambia estadísticas reales y cada sistema de armas modifica la cobertura de fuego.</p><div class="meta-balance">WAE CORES · <strong id="hangar-cores">0</strong></div></div><button id="close-hangar-btn" class="meta-close" type="button" aria-label="Cerrar hangar">×</button></div>
           <section class="catalog-section"><div class="catalog-title"><h3>NAVES</h3><span>VELOCIDAD · ESCUDO · CADENCIA · HEAT</span></div><div id="ship-grid" class="loadout-grid"></div></section>
           <section class="catalog-section"><div class="catalog-title"><h3>SISTEMAS DE ARMAS</h3><span>COBERTURA VS CADENCIA</span></div><div id="weapon-grid" class="loadout-grid"></div></section>
         </div>
@@ -118,26 +118,26 @@
           <div class="meta-panel-header"><div><span class="eyebrow">WAE GALACTIC NAVIGATION</span><h2>GALAXIA VIVA</h2><p>Elige punto de salto y revisa qué facciones has doblegado. Cada cuatro sectores avanzas un capítulo de campaña.</p><div class="meta-balance">MEJOR SECTOR · <strong id="galaxy-best-sector">1</strong></div></div><button id="close-galaxy-btn" class="meta-close" type="button" aria-label="Cerrar mapa galáctico">×</button></div>
           <div class="galaxy-stage"><div id="galaxy-grid" class="galaxy-grid"></div></div>
           <section class="catalog-section"><div class="catalog-title"><h3>FACCIONES</h3><span>VICTORIAS DE CAMPAÑA</span></div><div id="faction-grid" class="faction-grid"></div></section>
-          <p class="galaxy-legend"><strong>Punto de salto:</strong> el sector seleccionado será el inicio de tu próxima partida. Las victorias y el renombre permanecen entre runs.</p>
+          <p class="galaxy-legend"><strong>Punto de salto:</strong> el sector seleccionado será el inicio de tu próxima partida. Las victorias, el renombre y la Maestría permanecen entre runs.</p>
         </div>
       </section>
 
-      <section id="perk-screen" class="overlay perk-overlay hidden"><div class="perk-panel"><span class="eyebrow">SECTOR DOMINADO / EVOLUCIÓN DE RUN</span><h2>ELIGE UNA MEJORA</h2><p>La elección dura únicamente esta partida. Combina perks para crear una build distinta en cada intento.</p><div id="perk-grid" class="perk-grid"></div></div></section>
-      <section id="route-screen" class="overlay route-overlay hidden"><div class="route-panel"><span id="route-sector" class="route-sector">SECTOR 2</span><span class="eyebrow">NAVEGACIÓN TÁCTICA / RIESGO VS RECOMPENSA</span><h2>ELIGE TU SIGUIENTE RUTA</h2><p>Una ruta segura protege la run. Una cacería de élites acelera tu economía. La anomalía volátil multiplica recompensa y peligro.</p><div id="route-grid" class="route-grid"></div></div></section>
-      <section id="pause-screen" class="overlay hidden"><div class="panel panel--small"><span class="eyebrow">SISTEMA EN ESPERA</span><h2>MISIÓN PAUSADA</h2><p>Tu progreso de sector queda congelado.</p><button id="resume-btn" class="primary-btn" type="button">CONTINUAR</button></div></section>
+      <section id="perk-screen" class="overlay perk-overlay hidden"><div class="perk-panel"><span class="eyebrow">SECTOR DOMINADO / MEJORA TU RUN</span><h2>ELIGE UNA MEJORA</h2><p>La elección dura únicamente esta partida. Combina mejoras para crear una build distinta en cada intento.</p><div id="perk-grid" class="perk-grid"></div></div></section>
+      <section id="route-screen" class="overlay route-overlay hidden"><div class="route-panel"><span id="route-sector" class="route-sector">SECTOR 2</span><span class="eyebrow">SIGUIENTE SALTO / RIESGO VS RECOMPENSA</span><h2>ELIGE TU RUTA</h2><p>Ruta estable: protege tu partida. Cacería: más élites y recompensa. Anomalía: máximo riesgo y máximo premio.</p><div id="route-grid" class="route-grid"></div></div></section>
+      <section id="pause-screen" class="overlay hidden"><div class="panel panel--small"><span class="eyebrow">SISTEMA EN ESPERA</span><h2>MISIÓN PAUSADA</h2><p>La partida quedó congelada exactamente donde la dejaste.</p><button id="resume-btn" class="primary-btn" type="button">CONTINUAR</button></div></section>
 
       <section id="game-over-screen" class="overlay hidden">
         <div class="panel panel--small">
-          <span class="eyebrow danger">RUN TERMINADA</span><h2>LA CAMPAÑA CONTINÚA</h2><p id="final-score">Puntuación alcanzada: 0</p>
+          <span class="eyebrow danger">RUN TERMINADA</span><h2>TU MAESTRÍA CONTINÚA</h2><p id="final-score">Puntuación alcanzada: 0</p>
           <div class="result-grid result-grid--three"><div><span>Sector</span><strong id="final-sector">1</strong></div><div><span>Récord</span><strong id="final-high-score">0</strong></div><div><span>WAE Cores</span><strong id="final-cores">0</strong></div></div>
           <div class="legend-stats legend-stats--three"><div><span>ÉLITES</span><strong id="elite-kills">0</strong></div><div><span>MINI-BOSSES</span><strong id="minibosses-defeated">0</strong></div><div><span>GUARDIANES</span><strong id="guardians-defeated">0</strong></div></div>
           <div class="campaign-summary"><div><span>RANGO</span><strong id="final-campaign-rank">PILOTO</strong></div><div><span>RENOMBRE</span><strong id="final-renown">0</strong></div><div><span>OBJETIVOS</span><strong id="final-objectives">0</strong></div></div>
-          <button id="restart-btn" class="primary-btn" type="button">UNA RUN MÁS</button><button id="gameover-hangar-btn" class="secondary-btn" type="button">MEJORAR EN HANGAR</button>
+          <button id="restart-btn" class="primary-btn" type="button">OTRA PARTIDA</button><button id="gameover-hangar-btn" class="secondary-btn" type="button">MEJORAR EN HANGAR</button>
         </div>
       </section>
 
       <section id="fatal-screen" class="overlay hidden"><div class="panel panel--small"><span class="eyebrow danger">WEBGL NO DISPONIBLE</span><h2>NO SE PUDO INICIAR EL MOTOR 3D</h2><p id="fatal-message">Este dispositivo o navegador no pudo crear el contexto gráfico.</p></div></section>
     </main>
-    <script type="module" src="/src/v9/main.js"></script>
+    <script type="module" src="/src/v10/main.js"></script>
   </body>
 </html>
