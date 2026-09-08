@@ -16,22 +16,41 @@ function moveToFront(parent,child){
   parent.children.unshift(child);
 }
 
+function inferRemoteRole(drone){
+  const color=drone?.children?.find((child)=>child?.material?.color)?.material?.color?.getHex?.();
+  if(color===0x1e3a8a||color===0x172554) return 'sentinel';
+  if(color===0x581c87||color===0x3b0764) return 'sniper';
+  if(color===0x9a3412||color===0x431407) return 'swarm';
+  return 'raider';
+}
+
+function findEliteRing(drone,skin){
+  return drone.children.find((child)=>{
+    if(child===skin||child.geometry?.type!=='TorusGeometry') return false;
+    const radius=Number(child.geometry?.parameters?.radius);
+    return Number.isFinite(radius)&&Math.abs(radius-1.62)<0.08;
+  });
+}
+
 function normalizeDrone(drone){
   if(!drone?.children?.length) return;
   const skin=drone.children.find((child)=>child?.name==='WAE_V26_ENEMY_SKIN');
   if(!skin) return;
+
+  const remote=String(drone.name||'').startsWith('V17_drone_');
+  const eliteRing=findEliteRing(drone,skin);
+  if(remote){
+    if(!drone.userData.role) drone.userData.role=inferRemoteRole(drone);
+    drone.userData.elite=Boolean(drone.userData.elite||eliteRing);
+  }
 
   for(const child of [...drone.children]){
     if(child===skin) continue;
     if(child.visible===false) drone.remove(child);
   }
 
-  const eliteRing=drone.children.find((child)=>{
-    if(child===skin||child.geometry?.type!=='TorusGeometry') return false;
-    const radius=Number(child.geometry?.parameters?.radius);
-    return Number.isFinite(radius)&&Math.abs(radius-1.62)<0.08;
-  });
-  if(eliteRing) moveToEnd(drone,eliteRing);
+  const remainingEliteRing=findEliteRing(drone,skin);
+  if(remainingEliteRing) moveToEnd(drone,remainingEliteRing);
 }
 
 function normalizeBoss(boss){
