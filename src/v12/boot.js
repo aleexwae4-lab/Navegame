@@ -1,7 +1,3 @@
-// Stable production entrypoint retained for existing Render configuration.
-// V28.0.1 boot is intentionally resilient: premium layers load dynamically and
-// a stable V15 core remains available if a later browser-only module fails.
-import { bootWithFallback, installBootWatchdog } from '../v28/bootstrap-guard.js';
-
-installBootWatchdog();
-bootWithFallback();
+// P0 recovery entrypoint: keep the production path stable while booting only the known-good V15 core.
+// V16-V28 remain in the repository but are intentionally excluded from startup until mobile boot is re-certified.
+import '../v15/boot.js';
