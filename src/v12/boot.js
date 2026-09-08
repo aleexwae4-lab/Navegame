@@ -1,3 +1,3 @@
 // Stable production entrypoint retained for existing Render configuration.
-// V19 owns startup orchestration, premium boss raids and the layered co-op stack.
-import '../v19/boot.js';
+// V20 owns startup orchestration, premium Live Ops and the layered co-op/raid stack.
+import '../v20/boot.js';
