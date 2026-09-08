@@ -110,6 +110,10 @@
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--product-accent) 15%, transparent);
 }
 
+.v11-product.v13-owned .v11-product__visual {
+  position: relative;
+}
+
 .v11-product.v13-owned .v11-product__visual::after {
   content: 'EN TU VAULT';
   position: absolute;
