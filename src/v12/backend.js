@@ -1,10 +1,12 @@
 const STORAGE_KEY = 'wae_neon_rider_v12_session';
+const PRODUCTION_APP_URL = 'https://wae-neon-rider-live.onrender.com';
 
 const env = {
   url: String(import.meta.env.VITE_WAE_SUPABASE_URL ?? '').replace(/\/$/, ''),
   key: String(import.meta.env.VITE_WAE_SUPABASE_PUBLISHABLE_KEY ?? ''),
   checkoutFunction: String(import.meta.env.VITE_WAE_COMMERCE_CHECKOUT_FUNCTION ?? 'wae-commerce-checkout'),
   entitlementsFunction: String(import.meta.env.VITE_WAE_COMMERCE_ENTITLEMENTS_FUNCTION ?? 'wae-commerce-entitlements'),
+  appUrl: String(import.meta.env.VITE_WAE_PUBLIC_APP_URL ?? PRODUCTION_APP_URL).replace(/\/$/, ''),
 };
 
 function readSession() {
@@ -43,6 +45,7 @@ export function commerceConfigSnapshot() {
     publishableKeyConfigured: Boolean(env.key),
     checkoutFunction: env.checkoutFunction,
     entitlementsFunction: env.entitlementsFunction,
+    appUrl: env.appUrl,
   };
 }
 
@@ -67,6 +70,27 @@ export function commerceSnapshot() {
   };
 }
 
+function consumeAuthRedirect() {
+  if (!window.location.hash || window.location.hash.length < 2) return false;
+  const params = new URLSearchParams(window.location.hash.slice(1));
+  const accessToken = params.get('access_token');
+  const refreshToken = params.get('refresh_token');
+  if (!accessToken) return false;
+
+  commerceState.session = {
+    ...(commerceState.session ?? {}),
+    access_token: accessToken,
+    refresh_token: refreshToken ?? commerceState.session?.refresh_token ?? '',
+    token_type: params.get('token_type') ?? 'bearer',
+    expires_in: Number(params.get('expires_in') ?? 3600),
+  };
+  saveSession(commerceState.session);
+
+  const next = `${window.location.pathname}${window.location.search}`;
+  window.history.replaceState({}, '', next);
+  return true;
+}
+
 async function authRequest(path, body) {
   if (!commerceConfigured()) throw new Error('COMMERCE_BACKEND_NOT_CONFIGURED');
   const response = await fetch(`${env.url}${path}`, {
@@ -84,7 +108,8 @@ async function authRequest(path, body) {
 }
 
 export async function signUp(email, password) {
-  const data = await authRequest('/auth/v1/signup', { email, password });
+  const redirectTo = `${env.appUrl}/?auth=confirmed`;
+  const data = await authRequest(`/auth/v1/signup?redirect_to=${encodeURIComponent(redirectTo)}`, { email, password });
   if (data.access_token) {
     commerceState.session = data;
     saveSession(data);
@@ -166,6 +191,7 @@ export async function createCheckout(sku) {
 }
 
 export async function restoreSession() {
+  consumeAuthRedirect();
   if (!commerceConfigured() || !commerceState.session?.access_token) {
     emit();
     return commerceSnapshot();
