@@ -41,7 +41,10 @@ function showToast(text, danger = false) {
 
 async function loadRaidDirector() {
   if (raidPromise) return raidPromise;
-  raidPromise = import('./raid-director.js').catch((error) => {
+  raidPromise = Promise.all([
+    import('./raid-director.js'),
+    import('./revive-streak-guard.js'),
+  ]).then(([director]) => director).catch((error) => {
     raidPromise = null;
     console.error('[WAE V19] Combat Director failed to load', error);
     showToast('COMBAT DIRECTOR NO DISPONIBLE · EL JUEGO BASE SIGUE ACTIVO', true);
