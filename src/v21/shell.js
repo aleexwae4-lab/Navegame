@@ -2,6 +2,22 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const LIVEOPS_KEY = 'wae_neon_rider_v20_liveops_profile';
 const CALLSIGN_KEY = 'wae_neon_rider_callsign';
 const ROLE_KEY = 'wae_neon_rider_v18_role';
+const PREMIUM_SHIP_KEY = 'wae_neon_rider_v12_ship_sku';
+const GAMEPLAY_SHIP_SCALE = 0.9;
+
+const PREMIUM_SHIP_NAMES = Object.freeze({
+  'WAE-SHIP-VIPER-BLK': 'VIPER R BLACK EDITION',
+  'WAE-SHIP-AEGIS-SOV': 'AEGIS SOVEREIGN',
+  'WAE-SHIP-NOVA-IMP': 'NOVA IMPERIUM',
+  'WAE-SHIP-ECLIPSE-X': 'WAE ECLIPSE X',
+  'WAE-SHIP-OBSIDIAN-1': 'WAE OBSIDIAN ONE',
+  'WAE-SHIP-CELESTIAL': 'WAE CELESTIAL CROWN',
+});
+
+const LEGACY_SHIP_NAMES = Object.freeze({
+  'AEGIS-32': 'AEGIS X',
+  'AEGIS 32': 'AEGIS X',
+});
 
 let identityPromise = null;
 let badgeTimer = 0;
@@ -21,9 +37,58 @@ function identitySnapshot() {
   return {
     callsign: String(localStorage.getItem(CALLSIGN_KEY) || 'PILOTO').slice(0, 18),
     title: String(cosmetic.title || 'PILOT').slice(0, 24),
-    frame: String(cosmetic.frame || 'STANDARD').slice(0, 24),
+    frame: String(cosmetic.frame || 'STANDARD').slice(0, 24).toUpperCase(),
     role: String(localStorage.getItem(ROLE_KEY) || 'assault').toUpperCase().slice(0, 16),
   };
+}
+
+function cleanLabel(value, fallback, max = 28) {
+  const text = String(value || '').trim().replace(/\s+/g, ' ');
+  return (text || fallback).slice(0, max);
+}
+
+function shipIdentitySnapshot(identity = identitySnapshot()) {
+  const game = window.__waeNeonRiderGame;
+  const ship = game?.getShip?.() || {};
+  const premiumSku = localStorage.getItem(PREMIUM_SHIP_KEY) || '';
+  const sourceName = cleanLabel(
+    ship.displayName || ship.modelName || PREMIUM_SHIP_NAMES[premiumSku] || ship.name,
+    'AEGIS X',
+    30,
+  );
+  const legacyKey = sourceName.toUpperCase();
+  const displayName = LEGACY_SHIP_NAMES[legacyKey] || sourceName;
+  const className = cleanLabel(
+    ship.className || ship.roleName || ship.shipClass || ship.class || identity.role,
+    'VANGUARD',
+    22,
+  ).toUpperCase();
+  const pilotStatus = identity.title !== 'PILOT'
+    ? cleanLabel(identity.title, 'PILOTO ESTÁNDAR', 24).toUpperCase()
+    : identity.frame === 'STANDARD'
+      ? 'PILOTO ESTÁNDAR'
+      : `${cleanLabel(identity.frame, 'STANDARD', 18).toUpperCase()} PILOT`;
+  return { displayName, className, pilotStatus };
+}
+
+function shipMonogram(name) {
+  const parts = String(name || 'WAE').toUpperCase().match(/[A-Z0-9]+/g) || ['WAE'];
+  if (parts.length > 1) return `${parts[0][0]}${parts[1][0]}`.slice(0, 2);
+  return parts[0].slice(0, 2);
+}
+
+function syncGameplayComposition(playing) {
+  const ship = window.__waeNeonRiderGame?.ship;
+  if (!ship?.scale) return;
+  ship.userData ??= {};
+  const applied = Boolean(ship.userData.v21HudScaleApplied);
+  if (playing && !applied) {
+    ship.scale.multiplyScalar(GAMEPLAY_SHIP_SCALE);
+    ship.userData.v21HudScaleApplied = true;
+  } else if (!playing && applied) {
+    ship.scale.multiplyScalar(1 / GAMEPLAY_SHIP_SCALE);
+    ship.userData.v21HudScaleApplied = false;
+  }
 }
 
 function applyBranding() {
@@ -75,7 +140,8 @@ function ensureGameplayBadge() {
   badge = document.createElement('aside');
   badge.id = 'v21-game-identity';
   badge.className = 'v21-game-identity hidden';
-  badge.innerHTML = '<i>WA</i><div><strong data-v21-game-name>PILOTO</strong><span data-v21-game-title>PILOT · STANDARD</span></div><b data-v21-game-role>ASSAULT</b>';
+  badge.setAttribute('aria-label', 'Identidad de nave activa');
+  badge.innerHTML = '<i data-v21-game-mark>AX</i><div><strong data-v21-game-name>AEGIS X</strong><b data-v21-game-class>VANGUARD</b><span data-v21-game-pilot>PILOTO ESTÁNDAR</span></div>';
   document.body.append(badge);
   return badge;
 }
@@ -83,11 +149,14 @@ function ensureGameplayBadge() {
 function syncGameplayBadge() {
   const badge = ensureGameplayBadge();
   const id = identitySnapshot();
+  const ship = shipIdentitySnapshot(id);
   const playing = window.__waeNeonRiderGame?.state === 'playing';
   badge.classList.toggle('hidden', !playing);
-  $('[data-v21-game-name]', badge).textContent = id.callsign;
-  $('[data-v21-game-title]', badge).textContent = `${id.title} · ${id.frame}`;
-  $('[data-v21-game-role]', badge).textContent = id.role;
+  $('[data-v21-game-mark]', badge).textContent = shipMonogram(ship.displayName);
+  $('[data-v21-game-name]', badge).textContent = ship.displayName;
+  $('[data-v21-game-class]', badge).textContent = ship.className;
+  $('[data-v21-game-pilot]', badge).textContent = ship.pilotStatus;
+  syncGameplayComposition(playing);
 }
 
 function showToast(text, danger = false) {
