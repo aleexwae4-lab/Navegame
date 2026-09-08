@@ -3,7 +3,9 @@ const LIVEOPS_KEY = 'wae_neon_rider_v20_liveops_profile';
 const CALLSIGN_KEY = 'wae_neon_rider_callsign';
 const ROLE_KEY = 'wae_neon_rider_v18_role';
 const PREMIUM_SHIP_KEY = 'wae_neon_rider_v12_ship_sku';
+const HUD_MODE_KEY = 'wae_neon_rider_v21_hud_mode';
 const GAMEPLAY_SHIP_SCALE = 0.9;
+const HUD_MODES = Object.freeze(['compact', 'off', 'full']);
 
 const PREMIUM_SHIP_NAMES = Object.freeze({
   'WAE-SHIP-VIPER-BLK': 'VIPER R BLACK EDITION',
@@ -91,6 +93,58 @@ function syncGameplayComposition(playing) {
   }
 }
 
+function currentHudMode() {
+  const stored = String(localStorage.getItem(HUD_MODE_KEY) || '').toLowerCase();
+  return HUD_MODES.includes(stored) ? stored : 'compact';
+}
+
+function hudModeLabel(mode) {
+  if (mode === 'off') return 'OCULTO';
+  if (mode === 'full') return 'COMPLETO';
+  return 'COMPACTO';
+}
+
+function ensureHudModeToggle() {
+  let button = $('#v21-hud-mode-toggle');
+  if (button) return button;
+  button = document.createElement('button');
+  button.id = 'v21-hud-mode-toggle';
+  button.type = 'button';
+  button.className = 'v21-hud-mode-toggle hidden';
+  button.dataset.v21HudToggle = 'true';
+  button.innerHTML = '<span>HUD</span><b data-v21-hud-mode-label>COMPACTO</b>';
+  document.body.append(button);
+  return button;
+}
+
+function applyHudMode(mode = currentHudMode(), announce = false) {
+  const resolved = HUD_MODES.includes(mode) ? mode : 'compact';
+  try { localStorage.setItem(HUD_MODE_KEY, resolved); } catch {}
+  document.body.dataset.v21HudMode = resolved;
+  const button = ensureHudModeToggle();
+  const label = hudModeLabel(resolved);
+  $('[data-v21-hud-mode-label]', button).textContent = label;
+  button.dataset.mode = resolved;
+  button.setAttribute('aria-label', `HUD ${label}. Toca para cambiar.`);
+  button.title = `HUD ${label}`;
+  if (announce) showToast(`HUD ${label} · VISIBILIDAD DE COMBATE ACTUALIZADA`);
+  return resolved;
+}
+
+function cycleHudMode() {
+  const active = applyHudMode(currentHudMode());
+  const next = HUD_MODES[(HUD_MODES.indexOf(active) + 1) % HUD_MODES.length];
+  applyHudMode(next, true);
+}
+
+function syncHudModeControl() {
+  const button = ensureHudModeToggle();
+  const state = String(window.__waeNeonRiderGame?.state || 'idle');
+  const gameplayActive = state === 'playing' || state === 'paused';
+  button.classList.toggle('hidden', !gameplayActive);
+  if (gameplayActive) applyHudMode(currentHudMode());
+}
+
 function applyBranding() {
   document.title = 'WAE Neon Rider 3D · V21 Identity Hangar';
   const seal = $('.wae-game-seal small');
@@ -150,13 +204,15 @@ function syncGameplayBadge() {
   const badge = ensureGameplayBadge();
   const id = identitySnapshot();
   const ship = shipIdentitySnapshot(id);
-  const playing = window.__waeNeonRiderGame?.state === 'playing';
+  const state = String(window.__waeNeonRiderGame?.state || 'idle');
+  const playing = state === 'playing';
   badge.classList.toggle('hidden', !playing);
   $('[data-v21-game-mark]', badge).textContent = shipMonogram(ship.displayName);
   $('[data-v21-game-name]', badge).textContent = ship.displayName;
   $('[data-v21-game-class]', badge).textContent = ship.className;
   $('[data-v21-game-pilot]', badge).textContent = ship.pilotStatus;
   syncGameplayComposition(playing);
+  syncHudModeControl();
 }
 
 function showToast(text, danger = false) {
@@ -213,12 +269,15 @@ async function openHangar() {
 applyBranding();
 installHangarButton();
 installPilotChip();
+applyHudMode(currentHudMode());
+ensureHudModeToggle();
 syncGameplayBadge();
 
 window.addEventListener('pageshow', () => {
   applyBranding();
   installHangarButton();
   installPilotChip();
+  applyHudMode(currentHudMode());
   syncGameplayBadge();
 });
 window.addEventListener('wae:v21-identity-changed', () => {
@@ -227,6 +286,11 @@ window.addEventListener('wae:v21-identity-changed', () => {
 });
 
 document.addEventListener('click', (event) => {
+  if (event.target.closest('[data-v21-hud-toggle]')) {
+    event.preventDefault();
+    cycleHudMode();
+    return;
+  }
   if (!event.target.closest('[data-v21-hangar]')) return;
   event.preventDefault();
   openHangar();
@@ -234,7 +298,8 @@ document.addEventListener('click', (event) => {
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') identityPromise?.then((module) => module.closeIdentityHangar?.()).catch(() => {});
+  if (event.key.toLowerCase() === 'h' && (event.ctrlKey || event.metaKey)) cycleHudMode();
 });
 
 window.clearInterval(badgeTimer);
-badgeTimer = window.setInterval(syncGameplayBadge, 1000);
+badgeTimer = window.setInterval(syncGameplayBadge, 700);
