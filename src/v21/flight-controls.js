@@ -3,10 +3,14 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 const BASE_SHIP_SPEED = 22;
 const WORLD = Object.freeze({ xMin: -16, xMax: 16, yMin: -9.5, yMax: 9.5 });
-const STICK_RADIUS = 64;
-const DEADZONE = 0.075;
-const RESPONSE = 1.22;
-const PREMIUM_SCALE = 1.18;
+const STICK_RADIUS = 54;
+const DEADZONE = 0.055;
+const RESPONSE = 1.08;
+const PREMIUM_SCALE = 0.94;
+const STEERING_ZONE_RATIO = 0.62;
+const STEERING_RIGHT_GUTTER = 154;
+const ENGAGED_RESPONSE = 24;
+const RELEASE_RESPONSE = 15;
 
 const flight = {
   pointerId: null,
@@ -32,6 +36,12 @@ function touchLayout() {
   return window.matchMedia?.('(pointer: coarse)').matches || window.innerWidth <= 900;
 }
 
+function steeringZoneLimit() {
+  const ratioLimit = window.innerWidth * STEERING_ZONE_RATIO;
+  const actionClearance = window.innerWidth - STEERING_RIGHT_GUTTER;
+  return Math.max(140, Math.min(ratioLimit, actionClearance));
+}
+
 function shipSpeedMultiplier(g) {
   const selected = g?.getShip?.() || {};
   const value = Number(selected.speed);
@@ -53,8 +63,10 @@ function setStickVisual(dx = 0, dy = 0) {
 
 function setStickOrigin(x, y) {
   if (!flight.stick) return;
-  flight.stick.style.left = `${x}px`;
-  flight.stick.style.top = `${y}px`;
+  const safeX = clamp(x, 58, steeringZoneLimit() - 18);
+  const safeY = clamp(y, 164, window.innerHeight - 104);
+  flight.stick.style.left = `${safeX}px`;
+  flight.stick.style.top = `${safeY}px`;
 }
 
 function updateTarget(clientX, clientY) {
@@ -74,6 +86,14 @@ function lightHaptic(duration = 7) {
   if (now - flight.lastHaptic < 55) return;
   flight.lastHaptic = now;
   try { navigator.vibrate?.(duration); } catch {}
+}
+
+function resetSteeringVisual() {
+  flight.pointerId = null;
+  flight.targetX = 0;
+  flight.targetY = 0;
+  flight.surface?.classList.remove('engaged');
+  setStickVisual(0, 0);
 }
 
 function ensureFlightSurface() {
@@ -96,6 +116,7 @@ function ensureFlightSurface() {
   surface.addEventListener('pointerdown', (event) => {
     const g = game();
     if (event.pointerType !== 'touch' || g?.state !== 'playing' || flight.pointerId !== null) return;
+    if (event.clientX > steeringZoneLimit()) return;
     flight.pointerId = event.pointerId;
     flight.originX = event.clientX;
     flight.originY = event.clientY;
@@ -105,7 +126,7 @@ function ensureFlightSurface() {
     setStickVisual(0, 0);
     surface.classList.add('engaged');
     surface.setPointerCapture?.(event.pointerId);
-    lightHaptic(8);
+    lightHaptic(6);
     event.preventDefault();
   }, { passive: false });
 
@@ -117,22 +138,13 @@ function ensureFlightSurface() {
 
   const end = (event) => {
     if (event.pointerId !== flight.pointerId) return;
-    flight.pointerId = null;
-    flight.targetX = 0;
-    flight.targetY = 0;
-    surface.classList.remove('engaged');
-    setStickVisual(0, 0);
+    resetSteeringVisual();
     event.preventDefault();
   };
   surface.addEventListener('pointerup', end, { passive: false });
   surface.addEventListener('pointercancel', end, { passive: false });
   surface.addEventListener('lostpointercapture', (event) => {
-    if (event.pointerId !== flight.pointerId) return;
-    flight.pointerId = null;
-    flight.targetX = 0;
-    flight.targetY = 0;
-    surface.classList.remove('engaged');
-    setStickVisual(0, 0);
+    if (event.pointerId === flight.pointerId) resetSteeringVisual();
   });
 
   return surface;
@@ -162,14 +174,15 @@ function installGameHook() {
   const wrapped = (delta, elapsed, ...args) => {
     const activeTouch = touchLayout();
     if (activeTouch) {
-      const responsiveness = 1 - Math.exp(-18 * Math.min(delta, 0.05));
+      const responseRate = flight.pointerId !== null ? ENGAGED_RESPONSE : RELEASE_RESPONSE;
+      const responsiveness = 1 - Math.exp(-responseRate * Math.min(delta, 0.05));
       flight.currentX += (flight.targetX - flight.currentX) * responsiveness;
       flight.currentY += (flight.targetY - flight.currentY) * responsiveness;
 
-      if (Math.abs(flight.currentX) < 0.003) flight.currentX = 0;
-      if (Math.abs(flight.currentY) < 0.003) flight.currentY = 0;
+      if (Math.abs(flight.currentX) < 0.0025) flight.currentX = 0;
+      if (Math.abs(flight.currentY) < 0.0025) flight.currentY = 0;
 
-      if (flight.pointerId !== null || Math.abs(flight.currentX) + Math.abs(flight.currentY) > 0.01) {
+      if (flight.pointerId !== null || Math.abs(flight.currentX) + Math.abs(flight.currentY) > 0.008) {
         for (const direction of ['left', 'right', 'up', 'down']) g.setInput?.(direction, false);
         const ship = g.ship;
         if (ship?.position) {
@@ -186,11 +199,12 @@ function installGameHook() {
 
     const result = baseUpdate(delta, elapsed, ...args);
 
-    if (activeTouch && g.ship?.rotation && (flight.pointerId !== null || Math.abs(flight.currentX) + Math.abs(flight.currentY) > 0.01)) {
-      const rollTarget = -flight.currentX * 0.48;
-      const pitchTarget = flight.currentY * 0.24;
-      g.ship.rotation.z += (rollTarget - g.ship.rotation.z) * (1 - Math.exp(-14 * delta));
-      g.ship.rotation.x += (pitchTarget - g.ship.rotation.x) * (1 - Math.exp(-14 * delta));
+    if (activeTouch && g.ship?.rotation && (flight.pointerId !== null || Math.abs(flight.currentX) + Math.abs(flight.currentY) > 0.008)) {
+      const rollTarget = -flight.currentX * 0.4;
+      const pitchTarget = flight.currentY * 0.19;
+      const attitudeResponse = 1 - Math.exp(-16 * delta);
+      g.ship.rotation.z += (rollTarget - g.ship.rotation.z) * attitudeResponse;
+      g.ship.rotation.x += (pitchTarget - g.ship.rotation.x) * attitudeResponse;
     }
     return result;
   };
@@ -210,13 +224,7 @@ function syncPremiumState() {
   applyPremiumShipScale(playing);
   installGameHook();
 
-  if (!usable && flight.pointerId !== null) {
-    flight.pointerId = null;
-    flight.targetX = 0;
-    flight.targetY = 0;
-    surface.classList.remove('engaged');
-    setStickVisual(0, 0);
-  }
+  if (!usable && flight.pointerId !== null) resetSteeringVisual();
 }
 
 function installActionHaptics() {
@@ -224,7 +232,7 @@ function installActionHaptics() {
     if (event.pointerType !== 'touch') return;
     const action = event.target.closest('#fire-btn, #dash-btn, #missile-btn, #secondary-btn, #pause-btn, [data-v21-hud-toggle]');
     if (!action) return;
-    lightHaptic(action.id === 'fire-btn' ? 5 : 9);
+    lightHaptic(action.id === 'fire-btn' ? 4 : 8);
   }, true);
 }
 
@@ -249,11 +257,7 @@ window.setInterval(syncPremiumState, 320);
 window.addEventListener('resize', syncPremiumState);
 window.addEventListener('pageshow', syncPremiumState);
 window.addEventListener('blur', () => {
-  flight.pointerId = null;
-  flight.targetX = 0;
-  flight.targetY = 0;
+  resetSteeringVisual();
   flight.currentX = 0;
   flight.currentY = 0;
-  flight.surface?.classList.remove('engaged');
-  setStickVisual(0, 0);
 });
