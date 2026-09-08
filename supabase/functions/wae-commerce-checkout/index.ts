@@ -59,11 +59,12 @@ Deno.serve(async (req: Request) => {
 
   const { data: product, error: productError } = await admin
     .from('commerce_products')
-    .select('sku,kind,name,rarity,price_mxn,currency,active')
+    .select('sku,kind,name,rarity,price_mxn,currency,active,stripe_product_id,stripe_price_id')
     .eq('sku', sku)
     .eq('active', true)
     .maybeSingle();
   if (productError || !product) return json(404, { error: 'PRODUCT_NOT_FOUND' });
+  if (!product.stripe_price_id || !product.stripe_product_id) return json(503, { error: 'STRIPE_CATALOG_NOT_LINKED', sku });
 
   const clientIdempotency = String(req.headers.get('Idempotency-Key') ?? '').trim();
   const idempotencyKey = clientIdempotency || crypto.randomUUID();
@@ -88,7 +89,12 @@ Deno.serve(async (req: Request) => {
       status: 'pending',
       provider: 'stripe',
       idempotency_key: idempotencyKey,
-      metadata: { product_kind: product.kind, rarity: product.rarity },
+      metadata: {
+        product_kind: product.kind,
+        rarity: product.rarity,
+        stripe_product_id: product.stripe_product_id,
+        stripe_price_id: product.stripe_price_id,
+      },
     })
     .select('id')
     .single();
@@ -99,11 +105,13 @@ Deno.serve(async (req: Request) => {
     success_url: `${publicAppUrl}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${publicAppUrl}/?checkout=cancel`,
     client_reference_id: user.id,
+    customer_email: user.email || '',
     'metadata[order_id]': order.id,
     'metadata[sku]': product.sku,
-    'line_items[0][price_data][currency]': 'mxn',
-    'line_items[0][price_data][unit_amount]': product.price_mxn * 100,
-    'line_items[0][price_data][product_data][name]': product.name,
+    'metadata[stripe_price_id]': product.stripe_price_id,
+    'payment_intent_data[metadata][order_id]': order.id,
+    'payment_intent_data[metadata][sku]': product.sku,
+    'line_items[0][price]': product.stripe_price_id,
     'line_items[0][quantity]': 1,
   });
 
@@ -119,7 +127,20 @@ Deno.serve(async (req: Request) => {
   const stripeData = await stripeResponse.json();
 
   if (!stripeResponse.ok || !stripeData?.id || !stripeData?.url) {
-    await admin.from('commerce_orders').update({ status: 'failed', metadata: { stripe_error: stripeData?.error?.code ?? 'checkout_failed' }, updated_at: new Date().toISOString() }).eq('id', order.id);
+    await admin
+      .from('commerce_orders')
+      .update({
+        status: 'failed',
+        metadata: {
+          product_kind: product.kind,
+          rarity: product.rarity,
+          stripe_product_id: product.stripe_product_id,
+          stripe_price_id: product.stripe_price_id,
+          stripe_error: stripeData?.error?.code ?? 'checkout_failed',
+        },
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', order.id);
     return json(502, { error: 'PAYMENT_CHECKOUT_FAILED' });
   }
 
