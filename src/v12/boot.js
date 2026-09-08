@@ -1,3 +1,3 @@
 // Stable production entrypoint retained for existing Render configuration.
-// V16 owns startup orchestration and the lazy realtime co-op squad layer.
-import '../v16/boot.js';
+// V17 owns startup orchestration, premium co-op and the shared battlefield authority layer.
+import '../v17/boot.js';
