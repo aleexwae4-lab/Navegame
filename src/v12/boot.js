@@ -1,9 +1,3 @@
-import './runtime-hook.js';
-import '../v11/boot.js';
-import './styles.css';
-import './commerce-live.js';
-import '../v13/styles.css';
-import '../v13/collection.js';
-import '../v14/styles.css';
-import '../v14/showroom.js';
-import '../v14/cinematic.js';
+// Stable production entrypoint retained for existing Render configuration.
+// V15 owns startup orchestration, premium lazy-loading and performance policy.
+import '../v15/boot.js';
