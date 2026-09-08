@@ -1,3 +1,7 @@
 // Stable production entrypoint retained for existing Render configuration.
-// V28 owns startup orchestration, faction warfare/mission direction and the layered tactical-AI/enemy-remaster/signature-fleet/visual-recovery/living-universe/cinematic/identity/live-ops/co-op stack.
-import '../v28/boot.js';
+// V28.0.1 boot is intentionally resilient: premium layers load dynamically and
+// a stable V15 core remains available if a later browser-only module fails.
+import { bootWithFallback, installBootWatchdog } from '../v28/bootstrap-guard.js';
+
+installBootWatchdog();
+bootWithFallback();
