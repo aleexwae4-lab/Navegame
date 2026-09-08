@@ -1,0 +1,242 @@
+/* WAE Neon Rider V21.3 — Premium mobile flight + visual polish */
+
+:root {
+  --v21-premium-cyan: #67e8f9;
+  --v21-premium-blue: #38bdf8;
+  --v21-premium-violet: #a78bfa;
+  --v21-premium-gold: #fde68a;
+  --v21-premium-glass: rgba(2, 6, 23, .72);
+}
+
+body.v21-playing #game-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 54%, transparent 0 38%, rgba(2, 6, 23, .045) 62%, rgba(2, 6, 23, .22) 100%),
+    linear-gradient(180deg, rgba(56, 189, 248, .025), transparent 28%, transparent 72%, rgba(15, 23, 42, .11));
+}
+
+.v21-flight-surface {
+  position: fixed;
+  inset: max(112px, env(safe-area-inset-top, 0px) + 96px) 0 0 0;
+  z-index: 27;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.v21-flight-surface.hidden { display: none !important; }
+
+.v21-flight-stick {
+  position: fixed;
+  width: 128px;
+  height: 128px;
+  margin: -64px 0 0 -64px;
+  border: 1px solid rgba(103, 232, 249, .18);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(8, 47, 73, .2) 0 20%, rgba(15, 23, 42, .16) 21% 48%, transparent 49%),
+    conic-gradient(from 45deg, rgba(103, 232, 249, .13), transparent 12% 38%, rgba(167, 139, 250, .12) 50%, transparent 62% 88%, rgba(103, 232, 249, .13));
+  box-shadow: inset 0 0 42px rgba(34, 211, 238, .045), 0 16px 44px rgba(0, 0, 0, .2);
+  opacity: 0;
+  transform: scale(.76);
+  transition: opacity .12s ease, transform .12s ease;
+  pointer-events: none;
+  backdrop-filter: blur(5px);
+}
+.v21-flight-surface.engaged .v21-flight-stick { opacity: .92; transform: scale(1); }
+.v21-flight-ring { position: absolute; inset: 14px; border: 1px dashed rgba(125, 211, 252, .22); border-radius: inherit; }
+.v21-flight-ring::before,
+.v21-flight-ring::after { content: ""; position: absolute; background: rgba(103, 232, 249, .17); }
+.v21-flight-ring::before { left: 50%; top: -9px; bottom: -9px; width: 1px; }
+.v21-flight-ring::after { top: 50%; left: -9px; right: -9px; height: 1px; }
+
+.v21-flight-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 42px;
+  height: 42px;
+  margin: -21px 0 0 -21px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(165, 243, 252, .48);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, rgba(255, 255, 255, .2), transparent 22%), radial-gradient(circle, rgba(8, 145, 178, .5), rgba(8, 47, 73, .78) 58%, rgba(2, 6, 23, .9));
+  box-shadow: 0 0 0 5px rgba(34, 211, 238, .05), 0 0 28px rgba(34, 211, 238, .22);
+  transition: transform .025s linear;
+}
+.v21-flight-knob b { width: 10px; height: 10px; border-radius: 50%; background: #cffafe; box-shadow: 0 0 13px rgba(103, 232, 249, .9); }
+.v21-flight-stick small { position: absolute; left: 50%; bottom: -19px; transform: translateX(-50%); color: rgba(186, 230, 253, .38); font-size: 5px; font-weight: 800; letter-spacing: .2em; }
+
+@media (pointer: coarse), (max-width: 900px) {
+  body.v21-touch-flight .dpad { display: none !important; }
+
+  body.v21-touch-flight .touch-controls {
+    position: fixed;
+    left: auto;
+    right: max(10px, env(safe-area-inset-right, 0px) + 8px);
+    bottom: max(13px, env(safe-area-inset-bottom, 0px) + 10px);
+    z-index: 45;
+    width: auto;
+    display: grid !important;
+    grid-template-columns: 44px 44px 76px;
+    grid-template-rows: 44px 44px;
+    gap: 7px;
+    align-items: center;
+    justify-items: center;
+    pointer-events: none;
+  }
+
+  body.v21-touch-flight #missile-btn,
+  body.v21-touch-flight #dash-btn,
+  body.v21-touch-flight #secondary-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(125, 211, 252, .26);
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgba(15, 23, 42, .78), rgba(2, 6, 23, .74)), rgba(2, 6, 23, .76);
+    color: rgba(224, 242, 254, .84);
+    box-shadow: inset 0 1px rgba(255, 255, 255, .055), 0 9px 24px rgba(0, 0, 0, .24);
+    font-size: 5.5px;
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: .06em;
+    text-align: center;
+    backdrop-filter: blur(11px);
+    pointer-events: auto;
+    touch-action: manipulation;
+    transition: transform .08s ease, border-color .12s ease, box-shadow .12s ease, opacity .12s ease;
+  }
+
+  body.v21-touch-flight #missile-btn { grid-column: 1; grid-row: 1; border-color: rgba(253, 230, 138, .28); color: #fef3c7; }
+  body.v21-touch-flight #dash-btn { grid-column: 2; grid-row: 1; border-color: rgba(196, 181, 253, .3); color: #ede9fe; }
+  body.v21-touch-flight #secondary-btn { grid-column: 1 / 3; grid-row: 2; width: 95px; border-radius: 999px; border-color: rgba(103, 232, 249, .28); color: #cffafe; }
+
+  body.v21-touch-flight #fire-btn {
+    grid-column: 3;
+    grid-row: 1 / 3;
+    width: 76px;
+    height: 76px;
+    min-width: 76px;
+    min-height: 76px;
+    padding: 0;
+    border: 1px solid rgba(248, 113, 113, .48);
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 46%, rgba(239, 68, 68, .22), rgba(69, 10, 10, .46) 58%, rgba(2, 6, 23, .84));
+    color: #fee2e2;
+    box-shadow: inset 0 0 24px rgba(248, 113, 113, .1), 0 0 0 5px rgba(239, 68, 68, .025), 0 13px 34px rgba(0, 0, 0, .3), 0 0 22px rgba(239, 68, 68, .12);
+    backdrop-filter: blur(10px);
+    pointer-events: auto;
+    touch-action: none;
+    transition: transform .07s ease, box-shadow .1s ease, background .1s ease;
+  }
+
+  body.v21-touch-flight #fire-btn .fire-core { width: 24px; height: 24px; box-shadow: 0 0 20px rgba(248, 113, 113, .58); }
+  body.v21-touch-flight #fire-btn:active,
+  body.v21-touch-flight #fire-btn.is-active { transform: scale(.93); background: radial-gradient(circle at 50% 46%, rgba(248, 113, 113, .34), rgba(127, 29, 29, .58) 58%, rgba(2, 6, 23, .88)); box-shadow: inset 0 0 30px rgba(248, 113, 113, .15), 0 0 30px rgba(239, 68, 68, .2); }
+  body.v21-touch-flight #missile-btn:active,
+  body.v21-touch-flight #dash-btn:active,
+  body.v21-touch-flight #secondary-btn:active { transform: scale(.91); }
+  body.v21-touch-flight #missile-btn:disabled,
+  body.v21-touch-flight #dash-btn:disabled,
+  body.v21-touch-flight #secondary-btn:disabled { opacity: .34; filter: saturate(.55); }
+
+  body.v21-playing .brand-seal { display: none !important; }
+  body.v21-playing .wae-game-seal { opacity: .48; transform: scale(.78); transform-origin: top left; }
+  body.v21-playing .campaign-ribbon,
+  body.v21-playing .meta-strip,
+  body.v21-playing .biome-pill,
+  body.v21-playing .contract-pill,
+  body.v21-playing .encounter-pill { display: none !important; }
+
+  body.v21-playing .hud { top: max(10px, env(safe-area-inset-top, 0px) + 8px); left: max(58px, env(safe-area-inset-left, 0px) + 54px); right: max(8px, env(safe-area-inset-right, 0px) + 6px); gap: 5px; }
+  body.v21-playing .hud-card { padding: 6px 8px; border-color: rgba(125, 211, 252, .14); border-radius: 9px; background: rgba(2, 6, 23, .56); box-shadow: none; backdrop-filter: blur(8px); }
+  body.v21-playing .hud-card > span,
+  body.v21-playing .hud-row > span { font-size: 5px; }
+  body.v21-playing .hud-card > strong { font-size: 13px; }
+  body.v21-playing .hud-row strong { font-size: 8px; }
+  body.v21-playing .meter { height: 4px; margin-top: 4px; }
+  body.v21-playing .hud-shield { flex: 1.2; }
+
+  body.v21-playing .combat-stack .heat-card,
+  body.v21-playing .combat-stack .secondary-card,
+  body.v21-playing .combat-stack .dash-card,
+  body.v21-playing .combat-stack .missile-card { display: none !important; }
+  body.v21-playing .combat-stack { left: max(8px, env(safe-area-inset-left, 0px) + 6px); right: max(8px, env(safe-area-inset-right, 0px) + 6px); width: auto; }
+  body.v21-playing .mission-card,
+  body.v21-playing .side-objective-card { border-color: rgba(125, 211, 252, .13); background: linear-gradient(90deg, rgba(2, 6, 23, .54), rgba(8, 47, 73, .2), rgba(2, 6, 23, .5)); box-shadow: none; backdrop-filter: blur(7px); }
+
+  body.v21-playing .v21-hud-mode-toggle { top: auto; right: max(12px, env(safe-area-inset-right, 0px) + 9px); bottom: max(111px, env(safe-area-inset-bottom, 0px) + 103px); min-width: 42px; min-height: 27px; border-radius: 9px; opacity: .76; }
+}
+
+@media (max-width: 560px) {
+  #start-screen,
+  #game-over-screen { padding: 9px; }
+  #start-screen .panel,
+  #game-over-screen .panel { width: 100%; max-height: calc(100dvh - 18px); overflow-y: auto; padding: 20px 15px 18px; border: 1px solid rgba(125, 211, 252, .16); border-radius: 24px; background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, .08), transparent 34%), radial-gradient(circle at 100% 70%, rgba(139, 92, 246, .06), transparent 35%), linear-gradient(180deg, rgba(8, 15, 31, .89), rgba(2, 6, 23, .92)); box-shadow: 0 28px 80px rgba(0, 0, 0, .48), inset 0 1px rgba(255, 255, 255, .045); backdrop-filter: blur(18px) saturate(1.08); }
+  #start-screen h1 { font-size: clamp(35px, 10vw, 48px); letter-spacing: -.05em; }
+  #start-screen .panel > p { margin: 12px auto 14px; font-size: 10px; line-height: 1.55; }
+  #start-screen .feature-strip { gap: 5px; margin-bottom: 10px; }
+  #start-screen .feature-strip span { font-size: 5.5px; }
+  #start-screen .start-meta { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; align-items: stretch; }
+  #start-screen .start-meta > button { min-width: 0; min-height: 38px; margin: 0; padding: 7px 8px; border-radius: 11px; font-size: 6.5px; line-height: 1.25; letter-spacing: .07em; }
+  #start-screen .start-meta > .v21-pilot-chip { grid-column: 1 / -1; min-height: 42px; }
+  #start-screen .primary-btn,
+  #game-over-screen .primary-btn { min-height: 51px; border: 1px solid rgba(165, 243, 252, .25); background: linear-gradient(135deg, #67e8f9, #38bdf8 54%, #0ea5e9); box-shadow: 0 13px 34px rgba(14, 165, 233, .18), inset 0 1px rgba(255, 255, 255, .42); }
+}
+
+#v11-store .v11-store-panel { border-color: rgba(253, 230, 138, .18); background: radial-gradient(circle at 12% 0%, rgba(14, 165, 233, .075), transparent 26%), radial-gradient(circle at 88% 4%, rgba(139, 92, 246, .065), transparent 25%), linear-gradient(160deg, rgba(8, 15, 31, .98), rgba(2, 6, 23, .985)); box-shadow: 0 34px 110px rgba(0, 0, 0, .62), inset 0 1px rgba(255, 255, 255, .045); }
+#v11-store .v11-store-head h2 { color: #f8fafc; text-shadow: 0 0 26px rgba(253, 230, 138, .08); }
+#v11-store .v11-store-tabs button { min-height: 31px; border-color: rgba(148, 163, 184, .14); background: rgba(15, 23, 42, .58); }
+#v11-store .v11-store-tabs button.active { border-color: rgba(253, 230, 138, .38); background: linear-gradient(135deg, rgba(120, 53, 15, .34), rgba(8, 47, 73, .28)); box-shadow: inset 0 1px rgba(255,255,255,.04), 0 8px 24px rgba(0,0,0,.18); }
+#v11-store .v11-product { position: relative; border-color: color-mix(in srgb, var(--product-accent), transparent 66%); background: linear-gradient(155deg, color-mix(in srgb, var(--product-accent), transparent 93%), rgba(15, 23, 42, .92) 46%, rgba(2, 6, 23, .96)); box-shadow: 0 15px 38px rgba(0,0,0,.2), inset 0 1px rgba(255,255,255,.035); }
+#v11-store .v11-product::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(120deg, transparent 18%, rgba(255,255,255,.025) 42%, transparent 62%); }
+#v11-store .v11-product__visual { min-height: 138px; background: radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--product-accent), transparent 76%), transparent 44%), linear-gradient(180deg, rgba(255,255,255,.015), rgba(2,6,23,.18)); }
+#v11-store .v11-product__core { width: 72px; height: 72px; border-width: 1px; background: radial-gradient(circle at 35% 28%, rgba(255,255,255,.13), transparent 18%), linear-gradient(145deg, color-mix(in srgb, var(--product-accent), transparent 78%), rgba(2,6,23,.18)); filter: drop-shadow(0 0 18px color-mix(in srgb, var(--product-accent), transparent 48%)); animation: v21-premium-core-float 4.8s ease-in-out infinite; }
+#v11-store .v11-product__body h3 { letter-spacing: -.01em; }
+#v11-store .v11-product__buy button { min-height: 35px; border-color: color-mix(in srgb, var(--product-accent), transparent 46%); background: linear-gradient(135deg, color-mix(in srgb, var(--product-accent), transparent 78%), rgba(15,23,42,.82)); box-shadow: inset 0 1px rgba(255,255,255,.04); }
+
+@keyframes v21-premium-core-float {
+  0%, 100% { transform: perspective(140px) rotateX(58deg) rotateZ(45deg) translateY(0); }
+  50% { transform: perspective(140px) rotateX(58deg) rotateZ(45deg) translateY(-5px); }
+}
+
+@media (max-width: 520px) {
+  #v11-store .v11-store-panel { width: calc(100vw - 12px); max-height: calc(100dvh - 12px); padding: 11px; border-radius: 19px; }
+  #v11-store .v11-store-head { gap: 10px; }
+  #v11-store .v11-store-head h2 { font-size: 22px; }
+  #v11-store .v11-store-head p { font-size: 8px; line-height: 1.45; }
+  #v11-store .v11-store-tabs { margin: 11px 0; }
+  #v11-store .v11-store-grid { gap: 8px; }
+  #v11-store .v11-product { grid-template-columns: 112px minmax(0,1fr); min-height: 156px; border-radius: 15px; }
+  #v11-store .v11-product__visual { min-height: 100%; }
+  #v11-store .v11-product__core { width: 54px; height: 54px; }
+  #v11-store .v11-product__body { padding: 10px; }
+  #v11-store .v11-product__body h3 { font-size: 12px; }
+  #v11-store .v11-product__body p { margin: 5px 0; line-height: 1.35; }
+  #v11-store .v11-product__stats { gap: 4px; margin: 7px 0; }
+  #v11-store .v11-product__stats span { border: 1px solid rgba(148,163,184,.06); background: rgba(2,6,23,.34); }
+}
+
+@media (max-height: 720px) and (pointer: coarse) {
+  body.v21-touch-flight .touch-controls { bottom: max(8px, env(safe-area-inset-bottom, 0px) + 6px); transform: scale(.92); transform-origin: right bottom; }
+  body.v21-playing .v21-hud-mode-toggle { bottom: max(98px, env(safe-area-inset-bottom, 0px) + 90px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v21-flight-stick,
+  body.v21-touch-flight #fire-btn,
+  body.v21-touch-flight #missile-btn,
+  body.v21-touch-flight #dash-btn,
+  body.v21-touch-flight #secondary-btn { transition: none !important; }
+  #v11-store .v11-product__core { animation: none; }
+}
