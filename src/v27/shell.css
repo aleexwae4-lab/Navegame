@@ -1,0 +1,47 @@
+@import '../v26/shell.css';
+
+.v27-tactical-hud{
+  position:fixed;
+  top:calc(env(safe-area-inset-top,0px) + 92px);
+  right:clamp(12px,2.2vw,28px);
+  z-index:24;
+  width:min(238px,42vw);
+  padding:9px 10px 8px;
+  border:1px solid rgba(103,232,249,.2);
+  border-radius:14px;
+  background:linear-gradient(145deg,rgba(2,6,23,.78),rgba(6,15,34,.58));
+  box-shadow:0 14px 38px rgba(2,6,23,.28),inset 0 1px rgba(255,255,255,.04);
+  backdrop-filter:blur(12px) saturate(1.16);
+  -webkit-backdrop-filter:blur(12px) saturate(1.16);
+  color:#e6fbff;
+  pointer-events:none!important;
+  user-select:none;
+  transition:opacity .2s ease,transform .2s ease;
+}
+.v27-tactical-hud.hidden{opacity:0;transform:translateY(-7px);visibility:hidden}
+.v27-tactical-head,.v27-tactical-line{display:flex;align-items:center;gap:7px;min-width:0}
+.v27-tactical-head i{width:6px;height:6px;border-radius:50%;background:#67e8f9;box-shadow:0 0 12px #22d3ee;flex:0 0 auto;animation:v27pulse 1.4s ease-in-out infinite}
+.v27-tactical-head span{font-size:8px;font-weight:800;letter-spacing:.15em;color:rgba(207,250,254,.68);white-space:nowrap}
+.v27-tactical-head>b{margin-left:auto;font-size:8px;letter-spacing:.08em;color:#c4b5fd;background:rgba(124,58,237,.12);border:1px solid rgba(196,181,253,.18);padding:3px 5px;border-radius:999px;white-space:nowrap}
+.v27-tactical-line{margin-top:6px;padding-top:6px;border-top:1px solid rgba(148,163,184,.1);justify-content:space-between}
+.v27-tactical-line>strong{font-size:9px;letter-spacing:.08em;color:#f8fafc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v27-tactical-line>span{font-size:8px;color:rgba(186,230,253,.62);white-space:nowrap}
+.v27-tactical-line>span b{color:#fde68a}
+body.v27-encounter-direction.gameplay .v27-tactical-hud{opacity:.88}
+@keyframes v27pulse{50%{opacity:.45;transform:scale(.72)}}
+
+@media(max-width:720px){
+  .v27-tactical-hud{top:calc(env(safe-area-inset-top,0px) + 68px);right:9px;width:min(174px,45vw);padding:7px 8px;border-radius:11px;background:linear-gradient(145deg,rgba(2,6,23,.68),rgba(6,15,34,.48));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .v27-tactical-head span{font-size:7px;letter-spacing:.11em}
+  .v27-tactical-head>b{font-size:7px;padding:2px 4px}
+  .v27-tactical-line{margin-top:4px;padding-top:4px}
+  .v27-tactical-line>strong,.v27-tactical-line>span{font-size:7px}
+}
+@media(max-width:420px){
+  .v27-tactical-hud{width:148px;top:calc(env(safe-area-inset-top,0px) + 61px);opacity:.76!important}
+  .v27-tactical-head span{display:none}
+}
+@media(orientation:landscape) and (max-height:520px){
+  .v27-tactical-hud{top:calc(env(safe-area-inset-top,0px) + 8px);right:112px;width:154px;padding:6px 7px}
+}
+@media(prefers-reduced-motion:reduce){.v27-tactical-hud,.v27-tactical-head i{transition:none!important;animation:none!important}}
