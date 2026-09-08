@@ -36,6 +36,10 @@ function applyBranding() {
   if (start) start.textContent = 'WAE V21 / PLAYER IDENTITY · 3D HANGAR · RELIC DISPLAY';
 }
 
+function warmIdentity() {
+  loadIdentity().catch(() => {});
+}
+
 function installHangarButton() {
   const container = $('#start-screen .start-meta');
   if (!container || container.querySelector('[data-v21-hangar]')) return;
@@ -44,6 +48,8 @@ function installHangarButton() {
   button.className = 'v21-hangar-launch';
   button.dataset.v21Hangar = 'true';
   button.innerHTML = '<span>◇</span> IDENTITY HANGAR';
+  button.addEventListener('pointerenter', warmIdentity, { once: true });
+  button.addEventListener('touchstart', warmIdentity, { once: true, passive: true });
   container.append(button);
 }
 
@@ -63,18 +69,25 @@ function installPilotChip() {
   document.body.dataset.v21Frame = id.frame.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 }
 
+function ensureGameplayBadge() {
+  let badge = $('#v21-game-identity');
+  if (badge) return badge;
+  badge = document.createElement('aside');
+  badge.id = 'v21-game-identity';
+  badge.className = 'v21-game-identity hidden';
+  badge.innerHTML = '<i>WA</i><div><strong data-v21-game-name>PILOTO</strong><span data-v21-game-title>PILOT · STANDARD</span></div><b data-v21-game-role>ASSAULT</b>';
+  document.body.append(badge);
+  return badge;
+}
+
 function syncGameplayBadge() {
-  const badge = $('#v21-game-identity');
-  if (!badge) return;
+  const badge = ensureGameplayBadge();
   const id = identitySnapshot();
   const playing = window.__waeNeonRiderGame?.state === 'playing';
   badge.classList.toggle('hidden', !playing);
-  const name = $('[data-v21-game-name]', badge);
-  const title = $('[data-v21-game-title]', badge);
-  const role = $('[data-v21-game-role]', badge);
-  if (name) name.textContent = id.callsign;
-  if (title) title.textContent = `${id.title} · ${id.frame}`;
-  if (role) role.textContent = id.role;
+  $('[data-v21-game-name]', badge).textContent = id.callsign;
+  $('[data-v21-game-title]', badge).textContent = `${id.title} · ${id.frame}`;
+  $('[data-v21-game-role]', badge).textContent = id.role;
 }
 
 function showToast(text, danger = false) {
@@ -131,11 +144,13 @@ async function openHangar() {
 applyBranding();
 installHangarButton();
 installPilotChip();
+syncGameplayBadge();
 
 window.addEventListener('pageshow', () => {
   applyBranding();
   installHangarButton();
   installPilotChip();
+  syncGameplayBadge();
 });
 window.addEventListener('wae:v21-identity-changed', () => {
   installPilotChip();
@@ -143,12 +158,9 @@ window.addEventListener('wae:v21-identity-changed', () => {
 });
 
 document.addEventListener('click', (event) => {
-  if (event.target.closest('[data-v21-hangar]')) {
-    event.preventDefault();
-    openHangar();
-    return;
-  }
-  if (event.target.closest('#start-btn, #restart-btn')) loadIdentity().catch(() => {});
+  if (!event.target.closest('[data-v21-hangar]')) return;
+  event.preventDefault();
+  openHangar();
 }, true);
 
 document.addEventListener('keydown', (event) => {
@@ -157,11 +169,3 @@ document.addEventListener('keydown', (event) => {
 
 window.clearInterval(badgeTimer);
 badgeTimer = window.setInterval(syncGameplayBadge, 1000);
-
-const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-const canWarm = !connection?.saveData && !/2g/i.test(connection?.effectiveType || '');
-if (canWarm) {
-  const warm = () => loadIdentity().catch(() => {});
-  if ('requestIdleCallback' in window) window.requestIdleCallback(warm, { timeout: 5200 });
-  else window.setTimeout(warm, 4800);
-}
