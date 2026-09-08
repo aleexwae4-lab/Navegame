@@ -1,3 +1,3 @@
 // Stable production entrypoint retained for existing Render configuration.
-// V18 owns startup orchestration, tactical squad roles and premium realtime matchmaking.
-import '../v18/boot.js';
+// V19 owns startup orchestration, premium boss raids and the layered co-op stack.
+import '../v19/boot.js';
