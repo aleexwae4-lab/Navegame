@@ -31,9 +31,9 @@ function resolveKey(config={}){
   if(name.includes('eclipse')) return 'eclipse-x';
   if(name.includes('obsidian')) return 'obsidian-one';
   if(name.includes('celestial')) return 'celestial-crown';
-  if(name.includes('viper')) return config.premium?'viper-black':'viper';
-  if(name.includes('aegis')) return config.premium?'aegis-sovereign':'aegis';
-  if(name.includes('nova')) return config.premium?'nova-imperium':'nova';
+  if(name.includes('viper')) return config.premium ? 'viper-black' : 'viper';
+  if(name.includes('aegis')) return config.premium ? 'aegis-sovereign' : 'aegis';
+  if(name.includes('nova')) return config.premium ? 'nova-imperium' : 'nova';
   return 'falcon';
 }
 
@@ -94,7 +94,7 @@ function addWeapons(group,weapon={},accent,style){
   const id=String(weapon.id||'').toLowerCase();
   const color=toHex(weapon.accent,accent);
   const premium=Boolean(weapon.premium);
-  const mount=physical(0x0b1220,{metalness:.92,roughness:.16,emissive:color,emissiveIntensity:premium?.32:.16});
+  const mount=physical(0x0b1220,{metalness:.92,roughness:.16,emissive:color,emissiveIntensity:premium ? .32 : .16});
   let xs=[-style.span*.38,style.span*.38];
   if(id.includes('trident')) xs=[-style.span*.34,0,style.span*.34];
   else if(id.includes('storm')) xs=[-style.span*.4,-style.span*.16,style.span*.16,style.span*.4];
@@ -103,8 +103,8 @@ function addWeapons(group,weapon={},accent,style){
   else if(id.includes('nova-destroyer')) xs=[-style.span*.33,style.span*.33];
   else if(id.includes('singularity')) xs=[0];
   for(const x of xs){
-    const radius=id.includes('eclipse')||id.includes('singularity')?.13:.075;
-    const length=id.includes('helix')?2.7:id.includes('eclipse')?2.35:1.85;
+    const radius=id.includes('eclipse')||id.includes('singularity') ? .13 : .075;
+    const length=id.includes('helix') ? 2.7 : id.includes('eclipse') ? 2.35 : 1.85;
     const barrel=new THREE.CylinderGeometry(radius,radius*1.08,length,12); barrel.rotateX(Math.PI/2);
     add(group,barrel,mount.clone(),[x,.05,-1.65]);
     add(group,new THREE.SphereGeometry(radius*1.6,10,8),emissive(color,.84),[x,.05,-2.58]);
@@ -113,7 +113,7 @@ function addWeapons(group,weapon={},accent,style){
     const core=add(group,new THREE.IcosahedronGeometry(.32,2),emissive(color,.72),[0,.22,-1.02]); core.userData.v25Spin=1.2;
     for(const radius of [.52,.74]){
       const ring=add(group,new THREE.TorusGeometry(radius,.035,8,32),emissive(color,.56),[0,.22,-1.02],[Math.PI/2,radius,0]);
-      ring.userData.v25Spin=radius===.52?-1.1:.82;
+      ring.userData.v25Spin=radius===.52 ? -1.1 : .82;
     }
   }
 }
@@ -158,7 +158,7 @@ export function createSignatureShipModel(config={},options={}){
   const weapon=options.weapon||config.weapon||{};
   const key=resolveKey(config);
   const style=STYLE[key]||STYLE.falcon;
-  const accent=toHex(config.accent,key==='celestial-crown'?0xfde68a:0x22d3ee);
+  const accent=toHex(config.accent,key==='celestial-crown' ? 0xfde68a : 0x22d3ee);
   const premium=Boolean(config.premium||PREMIUM_IDS.has(key));
   const dark=key==='obsidian-one'||key==='viper-black';
   const group=new THREE.Group();
@@ -166,9 +166,9 @@ export function createSignatureShipModel(config={},options={}){
   group.userData.v25Signature=true;
   group.userData.v25Key=key;
 
-  const hull=physical(dark?0x03060b:premium?0x09101c:0x172033,{metalness:.94,roughness:premium?.16:.21,clearcoat:.68});
-  const panel=physical(dark?0x0a0f17:0x263247,{metalness:.84,roughness:.28,clearcoat:.34});
-  const trim=physical(accent,{metalness:.72,roughness:.2,emissive:accent,emissiveIntensity:premium?.56:.26});
+  const hull=physical(dark ? 0x03060b : premium ? 0x09101c : 0x172033,{metalness:.94,roughness:premium ? .16 : .21,clearcoat:.68});
+  const panel=physical(dark ? 0x0a0f17 : 0x263247,{metalness:.84,roughness:.28,clearcoat:.34});
+  const trim=physical(accent,{metalness:.72,roughness:.2,emissive:accent,emissiveIntensity:premium ? .56 : .26});
   const glass=physical(0x071526,{metalness:.3,roughness:.08,clearcoat:1,emissive:accent,emissiveIntensity:.42,transparent:true,opacity:.88});
 
   const fuselage=new THREE.CylinderGeometry(style.width*.56,style.width*.86,style.body,18); fuselage.rotateX(Math.PI/2);
@@ -188,16 +188,16 @@ export function createSignatureShipModel(config={},options={}){
   const shoulder=new THREE.CylinderGeometry(.18,.34,2.25,12); shoulder.rotateX(Math.PI/2);
   for(const side of [-1,1]) add(group,shoulder.clone(),panel.clone(),[side*style.span*.27,.02,.75],[0,side*.12,0]);
 
-  const engineXs=style.engines===2?[-.82,.82]:style.engines===3?[-1.15,0,1.15]:[-1.55,-.52,.52,1.55];
-  for(const x of engineXs) addEngine(group,x,2.18,accent,panel,style.engines===4?.84:1);
+  const engineXs=style.engines===2 ? [-.82,.82] : style.engines===3 ? [-1.15,0,1.15] : [-1.55,-.52,.52,1.55];
+  for(const x of engineXs) addEngine(group,x,2.18,accent,panel,style.engines===4 ? .84 : 1);
   addSignatureDetails(group,key,accent,hull,trim);
   addWeapons(group,weapon,accent,style);
 
-  const reactor=add(group,new THREE.IcosahedronGeometry(.24,premium?1:0),emissive(accent,.74),[0,-.02,1.38]);
+  const reactor=add(group,new THREE.IcosahedronGeometry(.24,premium ? 1 : 0),emissive(accent,.74),[0,-.02,1.38]);
   reactor.userData.v25Pulse=true;
-  const light=new THREE.PointLight(accent,mode==='hangar'?9:premium?5.4:3.8,mode==='hangar'?15:10,2);
+  const light=new THREE.PointLight(accent,mode==='hangar' ? 9 : premium ? 5.4 : 3.8,mode==='hangar' ? 15 : 10,2);
   light.position.set(0,.35,1.35); group.add(light);
-  group.scale.setScalar(mode==='hangar'?.88:.98);
+  group.scale.setScalar(mode==='hangar' ? .88 : .98);
   if(mode==='hangar') group.rotation.x=-.06;
   return group;
 }
