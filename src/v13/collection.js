@@ -4,6 +4,18 @@ import { commerceSnapshot, refreshEntitlements, subscribeCommerce } from '../v12
 const $ = (selector, root = document) => root.querySelector(selector);
 const money = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(value);
 
+function applyV13Branding() {
+  document.title = 'WAE Neon Rider 3D · V13 Private Vault';
+  const sealVersion = $('.wae-game-seal small');
+  const brandVersion = $('.brand-seal span');
+  const startEyebrow = $('#start-screen .eyebrow');
+  const storeEyebrow = $('#v11-store .v11-store-head .eyebrow');
+  if (sealVersion) sealVersion.textContent = 'ORIGINAL GAME SEAL · V13';
+  if (brandVersion) brandVersion.textContent = 'NEON RIDER · PRIVATE VAULT V13';
+  if (startEyebrow) startEyebrow.textContent = 'WAE V13 / JUEGA · COLECCIONA · DOMINA';
+  if (storeEyebrow) storeEyebrow.textContent = 'WAE PRIVATE VAULT COMMERCE';
+}
+
 function ownedProducts(snapshot) {
   const owned = new Set(snapshot.ownedSkus ?? []);
   return PREMIUM_PRODUCTS.filter((item) => owned.has(item.sku));
@@ -19,6 +31,7 @@ function collectionTier(count) {
 }
 
 function installCollection() {
+  applyV13Branding();
   const store = $('#v11-store');
   const panel = $('.v11-store-panel', store);
   const tabs = $('.v11-store-tabs', store);
@@ -47,6 +60,7 @@ function installCollection() {
   panel.insertBefore(vault, tabs);
 
   let ownedOnly = false;
+  let cleanedAuthReturn = false;
 
   const render = (snapshot) => {
     const owned = ownedProducts(snapshot);
@@ -77,6 +91,16 @@ function installCollection() {
     const filterButton = $('[data-v13-owned-only]', vault);
     filterButton.textContent = ownedOnly ? 'VER TODO EL ARSENAL' : `MI COLECCIÓN · ${owned.length}`;
     filterButton.disabled = !snapshot.signedIn;
+
+    if (!cleanedAuthReturn && snapshot.signedIn) {
+      const query = new URLSearchParams(window.location.search);
+      if (query.get('auth') === 'confirmed') {
+        query.delete('auth');
+        const next = `${window.location.pathname}${query.toString() ? `?${query}` : ''}${window.location.hash}`;
+        history.replaceState({}, '', next);
+      }
+      cleanedAuthReturn = true;
+    }
   };
 
   subscribeCommerce(render);
