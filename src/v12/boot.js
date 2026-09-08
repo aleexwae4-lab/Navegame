@@ -1,3 +1,3 @@
 // Stable production entrypoint retained for existing Render configuration.
-// V15 owns startup orchestration, premium lazy-loading and performance policy.
-import '../v15/boot.js';
+// V16 owns startup orchestration and the lazy realtime co-op squad layer.
+import '../v16/boot.js';
