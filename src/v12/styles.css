@@ -1,0 +1,213 @@
+@import '../v11/styles.css';
+
+.v12-account {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 12px 0 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(103, 232, 249, 0.18);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(8, 47, 73, 0.32), rgba(2, 6, 23, 0.74));
+}
+
+.v12-account > div:first-child {
+  display: grid;
+  gap: 2px;
+}
+
+.v12-account span {
+  color: #67e8f9;
+  font-size: 7px;
+  font-weight: 950;
+  letter-spacing: 0.15em;
+}
+
+.v12-account strong {
+  color: #f8fafc;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.v12-account small {
+  color: #94a3b8;
+  font-size: 8px;
+}
+
+.v12-account-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.v12-account button,
+.v12-auth-card button {
+  min-height: 38px;
+  border: 1px solid rgba(103, 232, 249, 0.24);
+  border-radius: 10px;
+  padding: 0 12px;
+  background: rgba(8, 47, 73, 0.52);
+  color: #e0f2fe;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.v12-account button:disabled {
+  opacity: 0.4;
+}
+
+.v11-product.v12-owned {
+  border-color: rgba(52, 211, 153, 0.44);
+  box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.08), 0 16px 42px rgba(0, 0, 0, 0.28);
+}
+
+.v11-product.v12-owned::after {
+  content: 'PROPIEDAD VERIFICADA';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(6, 78, 59, 0.88);
+  color: #a7f3d0;
+  font-size: 6px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+}
+
+.v11-product {
+  position: relative;
+}
+
+.v12-auth-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2, 6, 23, 0.78);
+  backdrop-filter: blur(16px);
+}
+
+.v12-auth-modal.hidden {
+  display: none;
+}
+
+.v12-auth-card {
+  display: grid;
+  gap: 12px;
+  width: min(430px, 100%);
+  max-height: min(86dvh, 720px);
+  overflow: auto;
+  padding: 20px;
+  border: 1px solid rgba(103, 232, 249, 0.24);
+  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(8, 47, 73, 0.94), rgba(2, 6, 23, 0.98));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+}
+
+.v12-auth-card > span {
+  color: #67e8f9;
+  font-size: 7px;
+  font-weight: 950;
+  letter-spacing: 0.18em;
+}
+
+.v12-auth-card h3 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 21px;
+}
+
+.v12-auth-card p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.v12-auth-card label {
+  display: grid;
+  gap: 6px;
+  color: #94a3b8;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.v12-auth-card input {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 11px;
+  padding: 0 12px;
+  background: rgba(2, 6, 23, 0.72);
+  color: #f8fafc;
+  outline: none;
+}
+
+.v12-auth-card input:focus {
+  border-color: rgba(103, 232, 249, 0.7);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.08);
+}
+
+.v12-auth-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.v12-auth-cancel {
+  background: rgba(15, 23, 42, 0.7) !important;
+  color: #94a3b8 !important;
+}
+
+.v12-auth-card > small {
+  min-height: 14px;
+  color: #fbbf24;
+  font-size: 8px;
+  font-weight: 800;
+  text-align: center;
+}
+
+@media (max-width: 520px) and (orientation: portrait) {
+  .v12-account {
+    align-items: stretch;
+    flex-direction: column;
+    margin: 8px 0 10px;
+    padding: 9px 10px;
+  }
+
+  .v12-account-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .v12-account button {
+    min-height: 34px;
+    padding: 0 7px;
+    font-size: 7px;
+  }
+
+  .v12-auth-card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .v12-auth-card h3 {
+    font-size: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v12-auth-modal,
+  .v12-auth-card,
+  .v11-product.v12-owned {
+    transition: none !important;
+  }
+}
