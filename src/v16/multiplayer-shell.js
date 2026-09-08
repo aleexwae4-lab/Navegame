@@ -25,10 +25,7 @@ function installLauncher() {
 
 async function loadMultiplayer() {
   if (multiplayerPromise) return multiplayerPromise;
-  multiplayerPromise = Promise.all([
-    import('./styles.css'),
-    import('./multiplayer.js'),
-  ]).then(([, module]) => module).catch((error) => {
+  multiplayerPromise = import('./multiplayer.js').catch((error) => {
     multiplayerPromise = null;
     console.error('[WAE V16] Multiplayer module failed to load', error);
     throw error;
