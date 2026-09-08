@@ -1,3 +1,3 @@
 // Stable production entrypoint retained for existing Render configuration.
-// V26 owns startup orchestration, enemy/Guardian art remaster and the layered signature-fleet/visual-recovery/living-universe/cinematic/identity/live-ops/co-op stack.
-import '../v26/boot.js';
+// V27 owns startup orchestration, tactical encounter AI and the layered enemy-remaster/signature-fleet/visual-recovery/living-universe/cinematic/identity/live-ops/co-op stack.
+import '../v27/boot.js';
