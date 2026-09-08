@@ -23,9 +23,13 @@ function installArtMark(){
 
 async function loadEnemyArt(){
   if(artPromise) return artPromise;
-  artPromise=import('./enemy-art.js').then((module)=>{
-    module.installEnemyArtDirector?.();
-    return module;
+  artPromise=Promise.all([
+    import('./enemy-art.js'),
+    import('./compat-normalizer.js'),
+  ]).then(([art,compat])=>{
+    art.installEnemyArtDirector?.();
+    compat.installV26CompatibilityNormalizer?.();
+    return art;
   }).catch((error)=>{
     artPromise=null;
     console.error('[WAE V26] Enemy Art Director failed to load',error);
