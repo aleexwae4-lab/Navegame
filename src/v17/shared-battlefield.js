@@ -148,6 +148,7 @@ function networkQuality() {
 function renderHud() {
   const hud = ensureHud();
   hud.classList.toggle('hidden', !battle.connected);
+  document.body.classList.toggle('v17-battlefield', battle.connected);
   if (!battle.connected) return;
   const authority = battle.peers.get(battle.authorityId);
   const snapshot = battle.latest;
@@ -240,6 +241,7 @@ async function connectBattle(room) {
     console.error('[WAE V17] Shared battlefield connection failed', error);
     battle.connected = false;
     battle.connecting = false;
+    renderHud();
     setStatus('CAMPO COMPARTIDO NO DISPONIBLE · EL JUEGO LOCAL SIGUE ACTIVO', true);
   }
 }
@@ -278,13 +280,14 @@ function receivePilot(payload) {
   electAuthority();
 }
 
-function electAuthority() {
+function electAuthority(force = false) {
   const selected = authorityPeer();
   const nextId = selected?.playerId || battle.playerId;
-  if (battle.authorityId === nextId && battle.isAuthority === (nextId === battle.playerId)) return;
+  const nextIsAuthority = nextId === battle.playerId;
+  if (!force && battle.authorityId === nextId && battle.isAuthority === nextIsAuthority) return;
   const wasAuthority = battle.isAuthority;
   battle.authorityId = nextId;
-  battle.isAuthority = nextId === battle.playerId;
+  battle.isAuthority = nextIsAuthority;
   if (battle.isAuthority) becomeAuthority(!wasAuthority);
   else becomeClient();
   renderHud();
@@ -411,8 +414,7 @@ function createShadow(kind, item) {
   group.name = `V17_${kind}_${item.id}`;
   const materials = shadowMaterial(kind, item.role);
   if (kind === 'asteroid') {
-    const mesh = new THREE.Mesh(new THREE.DodecahedronGeometry(item.radius || 1.2, 1), materials.metal);
-    group.add(mesh);
+    group.add(new THREE.Mesh(new THREE.DodecahedronGeometry(item.radius || 1.2, 1), materials.metal));
   } else if (kind === 'bullet') {
     const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.23, 8, 8), materials.glow);
     const light = new THREE.PointLight(materials.glow.color, 1.4, 4, 2);
@@ -527,7 +529,7 @@ function ensureBattleHooks() {
     updateDrones: g.updateDrones?.bind(g), updateBoss: g.updateBoss?.bind(g), updateEnemyBullets: g.updateEnemyBullets?.bind(g), updateAsteroids: g.updateAsteroids?.bind(g),
     updateLasers: g.updateLasers?.bind(g), updateMission: g.updateMission?.bind(g), activateSecondary: g.activateSecondary?.bind(g),
   };
-  electAuthority();
+  electAuthority(true);
 }
 
 function restoreOriginals() {
@@ -570,10 +572,7 @@ function becomeAuthority(fromMigration = false) {
   if (!g || !battle.originals) return;
   restoreOriginals();
   clearShadows();
-  const originalFireEnemy = battle.originals.fireEnemy;
-  if (originalFireEnemy) {
-    g.fireEnemy = (origin, speed = COMBAT_CONFIG.drone.bulletSpeed, spread = 0) => fireSharedEnemy(origin, speed, spread);
-  }
+  if (battle.originals.fireEnemy) g.fireEnemy = (origin, speed = COMBAT_CONFIG.drone.bulletSpeed, spread = 0) => fireSharedEnemy(origin, speed, spread);
   if (fromMigration && battle.latest && !battle.takeoverPending) {
     battle.takeoverPending = true;
     g.sector = battle.latest.sector || g.sector;
@@ -592,9 +591,10 @@ function fireSharedEnemy(origin, speed, spread) {
   const g = game();
   if (!g?.scene || !battle.isAuthority) return;
   const candidates = [...battle.peers.values()].filter((peer) => peer.state === 'playing' && Date.now() - (peer.lastSeen ?? 0) < STALE_MS);
-  candidates.push({ playerId: battle.playerId, ...localPilotState() });
+  const local = localPilotState();
+  if (local) candidates.push(local);
   const unique = [...new Map(candidates.map((item) => [item.playerId, item])).values()];
-  const target = unique[Math.floor(Math.random() * Math.max(1, unique.length))] || localPilotState();
+  const target = unique[Math.floor(Math.random() * Math.max(1, unique.length))] || local;
   const bullet = new THREE.Mesh(g.resources.enemyBulletGeometry, g.resources.enemyBulletMaterial);
   bullet.position.copy(origin);
   const targetVector = new THREE.Vector3(target?.x ?? g.ship.position.x, target?.y ?? g.ship.position.y, target?.z ?? g.ship.position.z);
@@ -634,9 +634,10 @@ function detectLaserHits() {
 }
 
 function sendAreaHit() {
+  const shipPosition = game()?.ship?.position ?? new THREE.Vector3();
   const targets = [...battle.shadows.values()]
     .filter((group) => ['drone', 'boss'].includes(group.userData.v17?.kind))
-    .sort((a, b) => a.position.distanceToSquared(game()?.ship?.position ?? new THREE.Vector3()) - b.position.distanceToSquared(game()?.ship?.position ?? new THREE.Vector3()))
+    .sort((a, b) => a.position.distanceToSquared(shipPosition) - b.position.distanceToSquared(shipPosition))
     .slice(0, 8);
   for (const group of targets) {
     const data = group.userData.v17;
@@ -824,7 +825,7 @@ async function disconnectBattle() {
   battle.latest = null;
   battle.ping = 0;
   battle.pendingPings.clear();
-  ensureHud().classList.add('hidden');
+  renderHud();
 }
 
 function watchRoom() {
