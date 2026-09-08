@@ -1,0 +1,190 @@
+:root{
+  --v24-cyan:#67e8f9;
+  --v24-cyan-strong:#22d3ee;
+  --v24-violet:#a78bfa;
+  --v24-gold:#fde68a;
+  --v24-ink:#020617;
+  --v24-glass:rgba(3,8,22,.78);
+  --v24-line:rgba(125,211,252,.18);
+  --v24-soft:rgba(226,232,240,.52);
+}
+
+/* ---------- Global visual discipline ---------- */
+[data-v24-touch-through="true"]{pointer-events:none!important}
+[data-v24-touch-through="true"] button,
+[data-v24-touch-through="true"] [role="button"],
+[data-v24-touch-through="true"] input,
+[data-v24-touch-through="true"] select,
+[data-v24-touch-through="true"] textarea{pointer-events:auto!important}
+.v24-playing #touch-controls{pointer-events:none}
+.v24-playing #touch-controls button{pointer-events:auto;touch-action:none}
+.v24-playing .touch-controls{isolation:isolate}
+.v24-redundant-status{display:none!important}
+
+/* ---------- Start screen: less dashboard, more game ---------- */
+#start-screen{background:radial-gradient(circle at 50% 22%,rgba(34,211,238,.085),transparent 32%),radial-gradient(circle at 78% 74%,rgba(124,58,237,.07),transparent 30%),rgba(2,6,23,.9)}
+#start-screen .v24-start-panel{width:min(720px,calc(100vw - 24px));padding:clamp(24px,4vw,42px);border-color:rgba(103,232,249,.2);border-radius:28px;background:linear-gradient(180deg,rgba(8,18,36,.91),rgba(2,6,23,.94));box-shadow:0 32px 110px rgba(0,0,0,.62),inset 0 1px rgba(255,255,255,.045),0 0 0 1px rgba(14,165,233,.025)}
+#start-screen .v24-start-panel .eyebrow{margin-bottom:9px;color:rgba(165,243,252,.78);font-size:8px;letter-spacing:.22em}
+#start-screen .v24-start-panel h1{font-size:clamp(42px,8vw,70px);letter-spacing:-.055em;text-shadow:0 18px 50px rgba(0,0,0,.35)}
+#start-screen .v24-start-panel>p{max-width:560px;margin:14px auto 18px;color:rgba(226,232,240,.66);font-size:13px;line-height:1.5}
+#start-screen .v24-guide{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0 0 14px;padding:0;background:none;border:0}
+#start-screen .v24-guide>span{display:grid;grid-template-columns:25px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;column-gap:7px;min-width:0;padding:8px 9px;border:1px solid rgba(103,232,249,.12);border-radius:12px;background:linear-gradient(145deg,rgba(8,47,73,.13),rgba(2,6,23,.35));text-align:left}
+#start-screen .v24-guide b{grid-row:1/3;display:grid;place-items:center;width:25px;height:25px;border:1px solid rgba(103,232,249,.25);border-radius:50%;color:#67e8f9;font-size:7px}
+#start-screen .v24-guide strong{overflow:hidden;color:#f8fafc;font-size:7px;letter-spacing:.07em;text-overflow:ellipsis;white-space:nowrap}
+#start-screen .v24-guide small{margin:0;color:rgba(148,163,184,.48);font-size:5.5px;letter-spacing:.11em}
+#start-screen .v24-start-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:0 0 12px}
+#start-screen .v24-start-meta>.v24-module-button,
+#start-screen .v24-start-meta>.v21-hangar-launch,
+#start-screen .v24-start-meta>.v20-command-launch,
+#start-screen .v24-start-meta>.v19-archive-launch,
+#start-screen .v24-start-meta>.v18-quick-launch,
+#start-screen .v24-start-meta>.v16-squad-launch{min-width:0!important;min-height:44px!important;margin:0!important;padding:8px 10px!important;border-radius:13px!important;border-color:rgba(125,211,252,.16)!important;background:linear-gradient(145deg,rgba(9,20,39,.72),rgba(6,15,31,.82))!important;box-shadow:inset 0 1px rgba(255,255,255,.035)!important;color:#dbeafe!important;font-size:7px!important;letter-spacing:.08em!important;transform:none!important}
+#start-screen .v24-start-meta>button:hover{border-color:rgba(103,232,249,.34)!important;background:linear-gradient(145deg,rgba(8,47,73,.38),rgba(49,18,75,.24))!important;box-shadow:0 8px 24px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.05)!important}
+#start-screen .v24-pilot-chip{grid-column:1/2;min-height:44px;padding:7px 9px;border-radius:13px;background:linear-gradient(145deg,rgba(8,47,73,.2),rgba(2,6,23,.55))}
+#start-screen .v24-pilot-chip i{width:25px;height:25px;flex-basis:25px}
+#start-screen .v24-system-status{grid-column:2/3;display:flex;align-items:center;gap:8px;min-height:44px;padding:7px 9px;border:1px solid rgba(125,211,252,.11);border-radius:13px;background:linear-gradient(145deg,rgba(2,6,23,.44),rgba(30,27,75,.14));text-align:left}
+#start-screen .v24-system-status>i{width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:#34d399;box-shadow:0 0 12px rgba(52,211,153,.72)}
+#start-screen .v24-system-status strong,#start-screen .v24-system-status span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#start-screen .v24-system-status strong{color:#e2e8f0;font-size:6.5px;letter-spacing:.08em}
+#start-screen .v24-system-status span{margin-top:2px;color:rgba(148,163,184,.48);font-size:5px;letter-spacing:.07em}
+#start-screen .v10-mastery-card{margin:9px 0 12px;padding:8px 11px;border-radius:12px}
+#start-screen .v10-mastery-card small{margin-top:2px}
+#start-screen .primary-btn{min-width:min(340px,90%);min-height:52px;padding:13px 24px;font-size:11px;box-shadow:0 12px 34px rgba(14,165,233,.18),0 0 34px rgba(34,211,238,.08)}
+#start-screen .v24-start-panel>small:last-child{margin-top:10px;font-size:7px;color:rgba(100,116,139,.58)}
+
+/* ---------- Mobile gameplay: information becomes instruments, not windows ---------- */
+.v24-playing .brand-seal{opacity:.62;transform:scale(.82);transform-origin:top right}
+.v24-playing #hud{pointer-events:none}
+.v24-playing .combat-stack,.v24-playing .meta-strip,.v24-playing .biome-pill,.v24-playing .contract-pill,.v24-playing .encounter-pill,.v24-playing .campaign-ribbon{pointer-events:none}
+.v24-flight-strip{position:fixed;top:max(10px,env(safe-area-inset-top,0px) + 8px);left:50%;z-index:44;display:flex;align-items:center;gap:7px;max-width:min(300px,calc(100vw - 180px));padding:5px 10px;border:1px solid rgba(103,232,249,.14);border-radius:999px;background:linear-gradient(135deg,rgba(2,6,23,.72),rgba(15,23,42,.58));backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(0,0,0,.22);transform:translateX(-50%);pointer-events:none}
+.v24-flight-strip.hidden{display:none}
+.v24-flight-strip>i{width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 10px rgba(52,211,153,.7)}
+.v24-flight-strip strong,.v24-flight-strip span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v24-flight-strip strong{color:#e0f2fe;font-size:6px;letter-spacing:.1em}
+.v24-flight-strip span{margin-top:1px;color:rgba(148,163,184,.52);font-size:4.8px;letter-spacing:.08em}
+
+/* Shared Battlefield: collapse the giant panel seen in the audit clip. */
+.v24-playing .v17-shared-hud{top:max(61px,env(safe-area-inset-top,0px) + 54px);width:auto;max-width:calc(100vw - 22px);padding:5px 8px;border-radius:999px;background:linear-gradient(135deg,rgba(8,47,73,.52),rgba(30,27,75,.48),rgba(2,6,23,.78));box-shadow:0 8px 24px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.04);backdrop-filter:blur(10px)}
+.v24-playing .v17-shared-hud__top{min-height:0;gap:6px;font-size:6px;letter-spacing:.09em}
+.v24-playing .v17-shared-hud__top strong{font-size:6.5px;white-space:nowrap}
+.v24-playing .v17-shared-hud__top b{padding:2px 5px;font-size:5.5px}
+.v24-playing .v17-live-dot{width:5px;height:5px}
+.v24-playing .v17-shared-hud__grid,.v24-playing .v17-boss,.v24-playing .v17-shared-hud>small{display:none!important}
+
+/* Squadron: retain tactic button, remove the dashboard wall. */
+.v24-playing .v18-squad-hud{top:max(91px,env(safe-area-inset-top,0px) + 83px);right:max(8px,env(safe-area-inset-right,0px) + 6px);bottom:auto;width:min(184px,calc(100vw - 16px));padding:6px;border-radius:12px;background:linear-gradient(145deg,rgba(8,47,73,.38),rgba(30,27,75,.35),rgba(2,6,23,.8));box-shadow:0 10px 28px rgba(0,0,0,.24);backdrop-filter:blur(10px);pointer-events:none!important}
+.v24-playing .v18-hud-head{gap:5px}
+.v24-playing .v18-hud-head>div span{display:none}
+.v24-playing .v18-hud-head>div strong{margin:0;font-size:7px;letter-spacing:.05em}
+.v24-playing .v18-hud-head>b{padding:2px 5px;font-size:5.5px}
+.v24-playing .v18-synergy{margin-top:5px;padding:5px 6px;border-radius:8px}
+.v24-playing .v18-synergy span{font-size:5px}.v24-playing .v18-synergy strong{font-size:5.5px}.v24-playing .v18-synergy i{height:3px;margin-top:4px}
+.v24-playing .v18-peer-list,.v24-playing .v18-squad-hud>small{display:none!important}
+.v24-playing .v18-hud-actions{display:grid;grid-template-columns:1fr;margin-top:5px;pointer-events:auto!important}
+.v24-playing .v18-hud-actions button{min-height:29px;border-radius:8px;font-size:5.8px;letter-spacing:.06em;touch-action:manipulation;pointer-events:auto!important}
+.v24-playing #v21-game-identity{display:none!important}
+
+/* Raid and universe information is allowed, but stays slim. */
+.v24-playing .v19-raid-hud{width:min(228px,calc(100vw - 18px));padding:7px;border-radius:12px;left:8px;bottom:max(126px,env(safe-area-inset-bottom,0px) + 116px);background:linear-gradient(145deg,rgba(15,23,42,.78),rgba(2,6,23,.75));backdrop-filter:blur(10px)}
+.v24-playing .v19-raid-grid{display:none}.v24-playing .v19-raid-bars{margin-top:5px;padding:5px}.v24-playing .v19-raid-hud>small{display:none}
+.v24-playing .v19-telegraph__label{top:18%;min-width:0;padding:6px 10px;background:rgba(2,6,23,.7);backdrop-filter:blur(6px)}
+.v24-playing .v23-world-hud{max-width:min(230px,calc(100vw - 18px));pointer-events:none!important}
+
+/* Touch controls own the bottom layer. */
+.v24-playing .touch-controls{z-index:90!important;left:calc(10px + var(--safe-area-left));right:calc(10px + var(--safe-area-right));bottom:calc(10px + var(--safe-area-bottom))}
+.v24-playing .control-btn,.v24-playing .fire-btn,.v24-playing .ability-btn,.v24-playing .dash-btn,.v24-playing .missile-btn{backdrop-filter:blur(7px);box-shadow:inset 0 1px rgba(255,255,255,.045),0 8px 24px rgba(0,0,0,.2)}
+.v24-playing .control-btn{border-color:rgba(103,232,249,.23);background:rgba(3,10,24,.5)}
+.v24-playing .fire-btn{border-color:rgba(248,113,113,.38);background:radial-gradient(circle at 50% 42%,rgba(127,29,29,.34),rgba(30,7,15,.52));box-shadow:inset 0 1px rgba(255,255,255,.05),0 0 26px rgba(239,68,68,.09)}
+
+/* ---------- Identity Hangar visual recovery ---------- */
+.v21-identity-hangar .v21-shell{background:linear-gradient(180deg,rgba(2,6,23,.985),rgba(4,12,28,.985))}
+.v21-identity-hangar .v21-visual-stage{background:radial-gradient(circle at 50% 40%,rgba(34,211,238,.07),transparent 30%),radial-gradient(circle at 72% 28%,rgba(124,58,237,.07),transparent 28%),linear-gradient(180deg,rgba(3,12,28,.9),rgba(2,6,23,.96));overflow:hidden}
+.v21-identity-hangar .v21-visual-stage::before{content:"";position:absolute;inset:8% 10% 12%;border:1px solid rgba(103,232,249,.08);border-radius:50%;box-shadow:0 0 0 22px rgba(103,232,249,.012),0 0 80px rgba(34,211,238,.025);pointer-events:none}
+.v21-identity-hangar [data-v21-canvas]{transform:scale(.78);transform-origin:50% 46%;filter:drop-shadow(0 20px 30px rgba(0,0,0,.28)) saturate(.9)}
+.v21-identity-hangar .v21-stage-copy{left:24px;bottom:24px}
+.v21-identity-hangar .v21-profile-card,.v21-identity-hangar .v21-card{background:linear-gradient(145deg,rgba(6,15,31,.82),rgba(2,6,23,.9));border-color:rgba(125,211,252,.11);box-shadow:inset 0 1px rgba(255,255,255,.025)}
+.v21-identity-hangar .v21-avatar{box-shadow:0 18px 48px rgba(0,0,0,.28),0 0 32px rgba(34,211,238,.07)}
+
+/* ---------- Galactic map: reduce giant circles from the audit clip ---------- */
+#galaxy-screen .meta-panel{width:min(860px,calc(100vw - 18px))}
+#galaxy-screen .galaxy-stage{padding:16px}
+#galaxy-screen .galaxy-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+#galaxy-screen .sector-node{aspect-ratio:1;min-width:0!important;min-height:0!important;width:100%!important;border-radius:24px!important}
+#galaxy-screen .sector-node strong{font-size:clamp(19px,4vw,34px)}
+
+/* ---------- Squadron lobby polish ---------- */
+.v16-squad-overlay{background:radial-gradient(circle at 50% 18%,rgba(34,211,238,.06),transparent 34%),rgba(1,4,12,.88)}
+.v16-squad-panel{border-color:rgba(103,232,249,.16);background:linear-gradient(160deg,rgba(5,15,31,.98),rgba(2,6,23,.99));box-shadow:0 34px 110px rgba(0,0,0,.68),inset 0 1px rgba(255,255,255,.035)}
+.v16-squad-connect input{background:rgba(2,6,23,.68)}
+
+.v24-recovery-toast{position:fixed;left:50%;top:max(18px,env(safe-area-inset-top,0px) + 12px);z-index:300;max-width:calc(100vw - 24px);padding:8px 12px;border:1px solid rgba(103,232,249,.2);border-radius:999px;background:rgba(2,6,23,.94);color:#dffbff;box-shadow:0 16px 44px rgba(0,0,0,.36);opacity:0;transform:translate(-50%,-10px);pointer-events:none;font-size:6px;letter-spacing:.09em;transition:.25s ease}.v24-recovery-toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:760px),(pointer:coarse){
+  #start-screen{align-items:start;overflow:auto;padding:10px 8px max(18px,env(safe-area-inset-bottom,0px) + 12px)}
+  #start-screen .v24-start-panel{margin:auto;padding:18px 14px 20px;border-radius:22px}
+  #start-screen .v24-start-panel .eyebrow{font-size:6.5px}
+  #start-screen .v24-start-panel h1{font-size:clamp(38px,13vw,58px);line-height:.9}
+  #start-screen .v24-start-panel>p{margin:11px auto 13px;font-size:10.5px;line-height:1.42}
+  #start-screen .v24-guide{gap:5px;margin-bottom:9px}
+  #start-screen .v24-guide>span{grid-template-columns:20px minmax(0,1fr);padding:6px;border-radius:10px;column-gap:5px}
+  #start-screen .v24-guide b{width:20px;height:20px;font-size:6px}
+  #start-screen .v24-guide strong{font-size:5.5px}#start-screen .v24-guide small{font-size:4.5px}
+  #start-screen .v24-start-meta{gap:5px;margin-bottom:8px}
+  #start-screen .v24-start-meta>.v24-module-button,#start-screen .v24-start-meta>.v21-hangar-launch,#start-screen .v24-start-meta>.v20-command-launch,#start-screen .v24-start-meta>.v19-archive-launch,#start-screen .v24-start-meta>.v18-quick-launch,#start-screen .v24-start-meta>.v16-squad-launch{min-height:39px!important;padding:6px 7px!important;border-radius:11px!important;font-size:6px!important;line-height:1.15!important}
+  #start-screen .v24-pilot-chip,#start-screen .v24-system-status{min-height:39px;padding:5px 7px;border-radius:11px}
+  #start-screen .v24-pilot-chip strong{font-size:6px}#start-screen .v24-pilot-chip span{font-size:4.7px}
+  #start-screen .v24-system-status strong{font-size:5.5px}#start-screen .v24-system-status span{font-size:4.1px}
+  #start-screen .v10-mastery-card{margin:7px 0 9px;padding:6px 9px}
+  #start-screen .primary-btn{min-height:48px;font-size:9px}
+  #start-screen .v24-start-panel>small:last-child{display:none}
+
+  .v24-playing .brand-seal{display:none!important}
+  .v24-playing .utility-controls{top:calc(8px + var(--safe-area-top));left:calc(8px + var(--safe-area-left));gap:5px}
+  .v24-playing .utility-controls .icon-btn{width:32px;height:32px;border-radius:9px;background:rgba(2,6,23,.52)}
+  .v24-playing #hud{top:calc(46px + var(--safe-area-top));left:8px;right:8px;gap:5px}
+  .v24-playing #hud .hud-card{padding:6px 8px;border-radius:9px;background:rgba(2,6,23,.48);backdrop-filter:blur(8px)}
+  .v24-playing #hud .hud-card:nth-child(2),.v24-playing #hud .hud-card--compact{display:none!important}
+  .v24-playing #hud .hud-card>span{font-size:5.5px}.v24-playing #hud .hud-card>strong{font-size:14px}
+  .v24-playing #hud .hud-shield{display:block!important;flex:1.15}.v24-playing #hud .hud-shield .hud-row span{font-size:5.5px}.v24-playing #hud .hud-shield .hud-row strong{font-size:8px}.v24-playing #hud .hud-shield .meter{height:4px;margin-top:4px}
+  .v24-flight-strip{top:calc(9px + var(--safe-area-top));max-width:calc(100vw - 150px)}
+
+  .v24-playing .v17-shared-hud{top:calc(84px + var(--safe-area-top))}
+  .v24-playing .v18-squad-hud{top:calc(112px + var(--safe-area-top));width:166px}
+  .v24-playing .combat-stack{top:calc(142px + var(--safe-area-top));right:8px;max-width:150px;opacity:.72;transform:scale(.82);transform-origin:top right}
+  .v24-playing .combat-stack>*{backdrop-filter:blur(8px)}
+  .v24-playing .meta-strip,.v24-playing .biome-pill,.v24-playing .contract-pill,.v24-playing .encounter-pill,.v24-playing .campaign-ribbon{display:none!important}
+
+  .v24-playing .touch-controls{bottom:calc(8px + var(--safe-area-bottom));align-items:end}
+  .v24-playing .dpad{width:148px;height:148px}.v24-playing .control-btn{width:48px;height:48px;border-radius:14px}.v24-playing .control-btn.up{left:50px}.v24-playing .control-btn.left{top:50px}.v24-playing .control-btn.right{top:50px}.v24-playing .control-btn.down{left:50px}
+  .v24-playing .fire-btn{width:88px;height:88px}.v24-playing .fire-core{width:23px;height:23px}
+  .v24-playing .ability-btn,.v24-playing .dash-btn,.v24-playing .missile-btn{transform:scale(.9);transform-origin:bottom center}
+
+  .v21-identity-hangar .v21-head{padding:12px 14px}.v21-identity-hangar .v21-head strong{font-size:17px}
+  .v21-identity-hangar .v21-layout{gap:10px;padding:10px}
+  .v21-identity-hangar .v21-visual-stage{min-height:360px;border-radius:18px}
+  .v21-identity-hangar [data-v21-canvas]{transform:scale(.64)}
+  .v21-identity-hangar .v21-stage-copy{left:16px;bottom:16px}.v21-identity-hangar .v21-stage-copy strong{font-size:18px}
+  .v21-identity-hangar .v21-profile-card,.v21-identity-hangar .v21-card{border-radius:16px}
+
+  #galaxy-screen .meta-panel{padding:12px;border-radius:20px}
+  #galaxy-screen .galaxy-stage{padding:10px}
+  #galaxy-screen .galaxy-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  #galaxy-screen .sector-node{border-radius:18px!important}
+}
+
+@media(max-width:430px){
+  #start-screen .v24-guide{grid-template-columns:1fr 1fr 1fr}
+  #start-screen .v24-guide strong{white-space:normal;line-height:1.1}
+  .v24-playing .v18-squad-hud{width:150px}
+  .v24-playing .combat-stack{display:none!important}
+  .v24-playing .v19-raid-hud{width:190px;bottom:118px}
+  .v24-playing .dpad{width:140px;height:140px}.v24-playing .control-btn{width:46px;height:46px}.v24-playing .control-btn.up{left:47px}.v24-playing .control-btn.left{top:47px}.v24-playing .control-btn.right{top:47px}.v24-playing .control-btn.down{left:47px}
+  .v24-playing .fire-btn{width:82px;height:82px}
+}
+
+@media(max-height:600px) and (orientation:landscape){
+  .v24-playing #hud{top:8px;left:88px;right:88px}.v24-flight-strip{display:none!important}.v24-playing .v17-shared-hud{top:46px}.v24-playing .v18-squad-hud{top:74px;right:8px;width:150px}.v24-playing .combat-stack{display:none!important}.v24-playing .v19-raid-hud{left:8px;bottom:84px;width:190px}.v24-playing .touch-controls{bottom:6px}
+  .v21-identity-hangar .v21-visual-stage{min-height:300px}
+}
+
+@media(prefers-reduced-motion:reduce){.v24-recovery-toast{transition:none}.v24-playing .brand-seal{transform:none}}
