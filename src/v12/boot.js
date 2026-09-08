@@ -1,3 +1,4 @@
-// P0 recovery entrypoint: keep the production path stable while booting only the known-good V15 core.
-// V16-V28 remain in the repository but are intentionally excluded from startup until mobile boot is re-certified.
-import '../v15/boot.js';
+// Stable production entrypoint.
+// Default boot remains the physically certified V15 core.
+// Higher stacks are opt-in via ?stack=16 ... ?stack=28 for isolated mobile certification.
+import './boot-router.js';
