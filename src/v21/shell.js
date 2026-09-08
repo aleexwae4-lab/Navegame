@@ -1,8 +1,10 @@
 const $ = (selector, root = document) => root.querySelector(selector);
 const LIVEOPS_KEY = 'wae_neon_rider_v20_liveops_profile';
 const CALLSIGN_KEY = 'wae_neon_rider_callsign';
+const ROLE_KEY = 'wae_neon_rider_v18_role';
 
 let identityPromise = null;
+let badgeTimer = 0;
 
 function safeJson(key, fallback = {}) {
   try {
@@ -20,6 +22,7 @@ function identitySnapshot() {
     callsign: String(localStorage.getItem(CALLSIGN_KEY) || 'PILOTO').slice(0, 18),
     title: String(cosmetic.title || 'PILOT').slice(0, 24),
     frame: String(cosmetic.frame || 'STANDARD').slice(0, 24),
+    role: String(localStorage.getItem(ROLE_KEY) || 'assault').toUpperCase().slice(0, 16),
   };
 }
 
@@ -60,6 +63,20 @@ function installPilotChip() {
   document.body.dataset.v21Frame = id.frame.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 }
 
+function syncGameplayBadge() {
+  const badge = $('#v21-game-identity');
+  if (!badge) return;
+  const id = identitySnapshot();
+  const playing = window.__waeNeonRiderGame?.state === 'playing';
+  badge.classList.toggle('hidden', !playing);
+  const name = $('[data-v21-game-name]', badge);
+  const title = $('[data-v21-game-title]', badge);
+  const role = $('[data-v21-game-role]', badge);
+  if (name) name.textContent = id.callsign;
+  if (title) title.textContent = `${id.title} · ${id.frame}`;
+  if (role) role.textContent = id.role;
+}
+
 function showToast(text, danger = false) {
   let toast = $('#v21-shell-toast');
   if (!toast) {
@@ -78,10 +95,24 @@ function showToast(text, danger = false) {
 
 async function loadIdentity() {
   if (identityPromise) return identityPromise;
+  const nativeSetInterval = window.setInterval.bind(window);
+  const captured = [];
+  window.setInterval = (fn, delay, ...args) => {
+    const timer = nativeSetInterval(fn, delay, ...args);
+    if (delay === 1200) captured.push(timer);
+    return timer;
+  };
   identityPromise = Promise.all([
     import('./identity-hangar.js'),
     import('./styles.css'),
-  ]).then(([module]) => module).catch((error) => {
+  ]).then(([module]) => {
+    for (const timer of captured) window.clearInterval(timer);
+    window.setInterval = nativeSetInterval;
+    syncGameplayBadge();
+    return module;
+  }).catch((error) => {
+    for (const timer of captured) window.clearInterval(timer);
+    window.setInterval = nativeSetInterval;
     identityPromise = null;
     console.error('[WAE V21] Identity Hangar failed to load', error);
     showToast('IDENTITY HANGAR NO DISPONIBLE · EL JUEGO SIGUE ACTIVO', true);
@@ -106,7 +137,10 @@ window.addEventListener('pageshow', () => {
   installHangarButton();
   installPilotChip();
 });
-window.addEventListener('wae:v21-identity-changed', installPilotChip);
+window.addEventListener('wae:v21-identity-changed', () => {
+  installPilotChip();
+  syncGameplayBadge();
+});
 
 document.addEventListener('click', (event) => {
   if (event.target.closest('[data-v21-hangar]')) {
@@ -120,6 +154,9 @@ document.addEventListener('click', (event) => {
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') identityPromise?.then((module) => module.closeIdentityHangar?.()).catch(() => {});
 });
+
+window.clearInterval(badgeTimer);
+badgeTimer = window.setInterval(syncGameplayBadge, 1000);
 
 const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 const canWarm = !connection?.saveData && !/2g/i.test(connection?.effectiveType || '');
