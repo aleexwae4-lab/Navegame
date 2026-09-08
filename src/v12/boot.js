@@ -4,3 +4,6 @@ import './styles.css';
 import './commerce-live.js';
 import '../v13/styles.css';
 import '../v13/collection.js';
+import '../v14/styles.css';
+import '../v14/showroom.js';
+import '../v14/cinematic.js';
