@@ -32,7 +32,7 @@ function recoverStartHierarchy() {
     feature.innerHTML = '<span><b>01</b><strong>ARRASTRA</strong><small>MOVER</small></span><span><b>02</b><strong>FUEGO</strong><small>MANTÉN</small></span><span><b>03</b><strong>PULSO · ESQUIVA · MISIL</strong><small>TÁCTICO</small></span>';
   }
 
-  const redundant = ['.v22-signal-chip', '.v23-signal-chip'];
+  const redundant = ['.v22-signal-chip', '.v23-world-chip'];
   for (const selector of redundant) meta.querySelector(selector)?.classList.add('v24-redundant-status');
 
   let status = meta.querySelector('.v24-system-status');
