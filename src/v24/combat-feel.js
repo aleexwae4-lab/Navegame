@@ -220,16 +220,12 @@ function abilityPulse(kind) {
   if (kind === 'nova') spawnDebris(position, palette, 5, .55);
 }
 
-function hook(g, name, after) {
+function hookAfter(g, name, after) {
   const current = g?.[name];
   if (typeof current !== 'function' || current.__waeV24Wrapped) return;
   function wrapped(...args) {
-    let result;
-    let error;
-    try { result = current.apply(this, args); }
-    catch (err) { error = err; }
+    const result = current.apply(this, args);
     try { after.call(this, { args, result }); } catch (fxError) { console.warn(`[WAE V24] ${name} FX`, fxError); }
-    if (error) throw error;
     return result;
   }
   wrapped.__waeV24Wrapped = true;
@@ -237,13 +233,68 @@ function hook(g, name, after) {
   g[name] = wrapped;
 }
 
-function installHooks(g) {
-  hook(g, 'fire', function ({ result }) {
-    spawnMuzzle(this);
+function hookFire(g) {
+  const current = g?.fire;
+  if (typeof current !== 'function' || current.__waeV24Wrapped) return;
+  function wrapped(...args) {
+    const before = Array.isArray(this.lasers) ? this.lasers.length : 0;
+    const result = current.apply(this, args);
+    const after = Array.isArray(this.lasers) ? this.lasers.length : before;
+    if (after > before) spawnMuzzle(this);
     return result;
-  });
+  }
+  wrapped.__waeV24Wrapped = true;
+  wrapped.__waeV24Base = current;
+  g.fire = wrapped;
+}
 
-  hook(g, 'createExplosion', function ({ args }) {
+function hookDamage(g) {
+  const current = g?.damageShip;
+  if (typeof current !== 'function' || current.__waeV24Wrapped) return;
+  function wrapped(...args) {
+    const before = Number(this.shield) || 0;
+    const result = current.apply(this, args);
+    const after = Number(this.shield) || 0;
+    const taken = Math.max(0, before - after);
+    if (taken > .01) {
+      const source = args?.[1];
+      pulseShield(this, taken);
+      directionalImpact(this, source, taken);
+      document.body.classList.add('v24-damage-punch');
+      window.clearTimeout(hookDamage.timer);
+      hookDamage.timer = window.setTimeout(() => document.body.classList.remove('v24-damage-punch'), 95);
+    }
+    return result;
+  }
+  wrapped.__waeV24Wrapped = true;
+  wrapped.__waeV24Base = current;
+  g.damageShip = wrapped;
+}
+
+function hookBoss(g) {
+  const current = g?.defeatBoss;
+  if (typeof current !== 'function' || current.__waeV24Wrapped) return;
+  function wrapped(...args) {
+    const position = this.boss?.position?.clone?.() || new THREE.Vector3(0, 0, -24);
+    const result = current.apply(this, args);
+    spawnShock(position, 0xfde68a, 2.4);
+    spawnDebris(position, 0xfde68a, 12, 1.45);
+    combatText(position, 'GUARDIAN DOWN', 'gold');
+    document.body.classList.add('v24-boss-break');
+    window.setTimeout(() => document.body.classList.remove('v24-boss-break'), 460);
+    return result;
+  }
+  wrapped.__waeV24Wrapped = true;
+  wrapped.__waeV24Base = current;
+  g.defeatBoss = wrapped;
+}
+
+function installHooks(g) {
+  hookFire(g);
+  hookDamage(g);
+  hookBoss(g);
+
+  hookAfter(g, 'createExplosion', function ({ args }) {
     const position = args?.[0];
     const color = Number(args?.[1]) || accent();
     const count = Number(args?.[2]) || 5;
@@ -253,17 +304,7 @@ function installHooks(g) {
     }
   });
 
-  hook(g, 'damageShip', function ({ args }) {
-    const damage = Number(args?.[0]) || 0;
-    const source = args?.[1];
-    pulseShield(this, damage);
-    directionalImpact(this, source, damage);
-    document.body.classList.add('v24-damage-punch');
-    window.clearTimeout(installHooks.damageTimer);
-    installHooks.damageTimer = window.setTimeout(() => document.body.classList.remove('v24-damage-punch'), 95);
-  });
-
-  hook(g, 'registerDroneKill', function ({ args }) {
+  hookAfter(g, 'registerDroneKill', function ({ args }) {
     const position = args?.[0];
     if (position?.isVector3) {
       spawnShock(position, accent(), .78);
@@ -271,18 +312,9 @@ function installHooks(g) {
     }
   });
 
-  hook(g, 'defeatBoss', function () {
-    const position = this.boss?.position?.clone?.() || new THREE.Vector3(0, 0, -24);
-    spawnShock(position, 0xfde68a, 2.4);
-    spawnDebris(position, 0xfde68a, 12, 1.45);
-    combatText(position, 'GUARDIAN DOWN', 'gold');
-    document.body.classList.add('v24-boss-break');
-    window.setTimeout(() => document.body.classList.remove('v24-boss-break'), 460);
-  });
-
-  hook(g, 'activateSecondary', function ({ result }) { if (result !== false) abilityPulse('nova'); });
-  hook(g, 'activateDash', function ({ result }) { if (result !== false) abilityPulse('dash'); });
-  hook(g, 'activateMissile', function ({ result }) { if (result !== false) abilityPulse('missile'); });
+  hookAfter(g, 'activateSecondary', function ({ result }) { if (result) abilityPulse('nova'); });
+  hookAfter(g, 'activateDash', function ({ result }) { if (result) abilityPulse('dash'); });
+  hookAfter(g, 'activateMissile', function ({ result }) { if (result) abilityPulse('missile'); });
 }
 
 function updateReticle(g) {
