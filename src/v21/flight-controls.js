@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 const $ = (selector, root = document) => root.querySelector(selector);
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
@@ -14,6 +16,17 @@ const ELASTIC_MAX_SHIFT = 14;
 const FULL_THROW_ENTER = 0.93;
 const FULL_THROW_EXIT = 0.78;
 const PREMIUM_SCALE = 0.94;
+const EDGE_SOFT_ZONE = 1.15;
+const EDGE_CONTACT_ZONE = 0.12;
+const ENVELOPE_REFRESH_MS = 160;
+const SHIP_FRAME_MARGIN = 0.26;
+const SAFE_NDC = Object.freeze({ left: -0.94, right: 0.94, bottom: -0.89, top: 0.88 });
+
+const tmpBox = new THREE.Box3();
+const tmpSize = new THREE.Vector3();
+const tmpNear = new THREE.Vector3();
+const tmpFar = new THREE.Vector3();
+const tmpDirection = new THREE.Vector3();
 
 const flight = {
   pointerId: null,
@@ -28,9 +41,16 @@ const flight = {
   baseUpdate: null,
   lastHaptic: 0,
   fullThrow: false,
+  edgeContact: false,
   surface: null,
   stick: null,
   knob: null,
+  envelope: {
+    ship: null,
+    updatedAt: 0,
+    halfX: 1.8,
+    halfY: 1.2,
+  },
 };
 
 function game() {
@@ -56,8 +76,21 @@ function shipSpeedMultiplier(g) {
 function radialResponse(magnitude) {
   if (magnitude <= DEADZONE) return 0;
   const normalized = clamp((magnitude - DEADZONE) / (1 - DEADZONE), 0, 1);
-  // Low throw stays precise while the outer half ramps decisively to full speed.
   return clamp(normalized * 0.72 + Math.pow(normalized, 1.72) * 0.28, 0, 1);
+}
+
+function lightHaptic(duration = 7) {
+  const now = performance.now();
+  if (now - flight.lastHaptic < 55) return;
+  flight.lastHaptic = now;
+  try { navigator.vibrate?.(duration); } catch {}
+}
+
+function setBoundaryFeedback(active) {
+  const next = Boolean(active);
+  flight.stick?.classList.toggle('is-edge', next);
+  if (next && !flight.edgeContact) lightHaptic(2);
+  flight.edgeContact = next;
 }
 
 function setStickVisual(dx = 0, dy = 0, power = 0) {
@@ -123,13 +156,6 @@ function latestPointerSample(event) {
   return samples?.length ? samples[samples.length - 1] : event;
 }
 
-function lightHaptic(duration = 7) {
-  const now = performance.now();
-  if (now - flight.lastHaptic < 55) return;
-  flight.lastHaptic = now;
-  try { navigator.vibrate?.(duration); } catch {}
-}
-
 function resetSteeringVisual({ hard = false } = {}) {
   flight.pointerId = null;
   flight.targetX = 0;
@@ -137,6 +163,7 @@ function resetSteeringVisual({ hard = false } = {}) {
   flight.power = 0;
   flight.fullThrow = false;
   flight.surface?.classList.remove('engaged');
+  setBoundaryFeedback(false);
   setStickVisual(0, 0, 0);
   if (hard) {
     flight.currentX = 0;
@@ -156,6 +183,7 @@ function beginSteering(event) {
   flight.targetY = 0;
   flight.power = 0;
   flight.fullThrow = false;
+  setBoundaryFeedback(false);
   setStickOrigin(flight.originX, flight.originY);
   setStickVisual(0, 0, 0);
   flight.surface.classList.add('engaged');
@@ -214,10 +242,107 @@ function applyPremiumShipScale(playing) {
   if (playing && shellScaleReady && !premiumApplied) {
     ship.scale.multiplyScalar(PREMIUM_SCALE);
     ship.userData.v21PremiumScaleApplied = true;
+    flight.envelope.updatedAt = 0;
   } else if (!playing && premiumApplied) {
     ship.scale.multiplyScalar(1 / PREMIUM_SCALE);
     ship.userData.v21PremiumScaleApplied = false;
+    flight.envelope.updatedAt = 0;
   }
+}
+
+function refreshShipEnvelope(g) {
+  const ship = g?.ship;
+  const now = performance.now();
+  if (!ship) return flight.envelope;
+  if (flight.envelope.ship === ship && now - flight.envelope.updatedAt < ENVELOPE_REFRESH_MS) return flight.envelope;
+
+  try {
+    ship.updateWorldMatrix?.(true, true);
+    tmpBox.setFromObject(ship);
+    tmpBox.getSize(tmpSize);
+    const halfX = clamp(tmpSize.x * 0.5 + SHIP_FRAME_MARGIN, 0.8, 5.2);
+    const halfY = clamp(tmpSize.y * 0.5 + SHIP_FRAME_MARGIN, 0.62, 3.8);
+    if (Number.isFinite(halfX) && Number.isFinite(halfY)) {
+      flight.envelope = { ship, updatedAt: now, halfX, halfY };
+    }
+  } catch {
+    flight.envelope.ship = ship;
+    flight.envelope.updatedAt = now;
+  }
+  return flight.envelope;
+}
+
+function intersectCameraRayAtZ(camera, ndcX, ndcY, z) {
+  tmpNear.set(ndcX, ndcY, -1).unproject(camera);
+  tmpFar.set(ndcX, ndcY, 1).unproject(camera);
+  tmpDirection.subVectors(tmpFar, tmpNear);
+  if (Math.abs(tmpDirection.z) < 1e-5) return null;
+  const t = (z - tmpNear.z) / tmpDirection.z;
+  if (!Number.isFinite(t) || t < 0) return null;
+  return {
+    x: tmpNear.x + tmpDirection.x * t,
+    y: tmpNear.y + tmpDirection.y * t,
+  };
+}
+
+function cameraFlightBounds(g) {
+  const ship = g?.ship;
+  const camera = g?.camera;
+  if (!ship?.position || !camera?.isCamera) return WORLD;
+
+  camera.updateMatrixWorld?.(true);
+  const z = ship.position.z;
+  const corners = [
+    intersectCameraRayAtZ(camera, SAFE_NDC.left, SAFE_NDC.bottom, z),
+    intersectCameraRayAtZ(camera, SAFE_NDC.left, SAFE_NDC.top, z),
+    intersectCameraRayAtZ(camera, SAFE_NDC.right, SAFE_NDC.bottom, z),
+    intersectCameraRayAtZ(camera, SAFE_NDC.right, SAFE_NDC.top, z),
+  ].filter(Boolean);
+
+  if (corners.length !== 4) return WORLD;
+
+  const envelope = refreshShipEnvelope(g);
+  const rawMinX = Math.min(...corners.map((point) => point.x));
+  const rawMaxX = Math.max(...corners.map((point) => point.x));
+  const rawMinY = Math.min(...corners.map((point) => point.y));
+  const rawMaxY = Math.max(...corners.map((point) => point.y));
+
+  let xMin = Math.max(WORLD.xMin, rawMinX + envelope.halfX);
+  let xMax = Math.min(WORLD.xMax, rawMaxX - envelope.halfX);
+  let yMin = Math.max(WORLD.yMin, rawMinY + envelope.halfY);
+  let yMax = Math.min(WORLD.yMax, rawMaxY - envelope.halfY);
+
+  if (xMin > xMax) {
+    const center = clamp((rawMinX + rawMaxX) * 0.5, WORLD.xMin, WORLD.xMax);
+    xMin = center;
+    xMax = center;
+  }
+  if (yMin > yMax) {
+    const center = clamp((rawMinY + rawMaxY) * 0.5, WORLD.yMin, WORLD.yMax);
+    yMin = center;
+    yMax = center;
+  }
+
+  return { xMin, xMax, yMin, yMax };
+}
+
+function smoothEdgeFactor(distance) {
+  const t = clamp(distance / EDGE_SOFT_ZONE, 0, 1);
+  return t * t * (3 - 2 * t);
+}
+
+function edgeAwareAxis(position, axis, min, max) {
+  if (axis < 0) return axis * smoothEdgeFactor(position - min);
+  if (axis > 0) return axis * smoothEdgeFactor(max - position);
+  return 0;
+}
+
+function enforceVisibleBounds(g, bounds = cameraFlightBounds(g)) {
+  const ship = g?.ship;
+  if (!ship?.position) return bounds;
+  ship.position.x = clamp(ship.position.x, bounds.xMin, bounds.xMax);
+  ship.position.y = clamp(ship.position.y, bounds.yMin, bounds.yMax);
+  return bounds;
 }
 
 function installGameHook() {
@@ -229,7 +354,12 @@ function installGameHook() {
 
   const wrapped = (delta, elapsed, ...args) => {
     const activeTouch = touchLayout();
+    let bounds = null;
+
     if (activeTouch) {
+      bounds = cameraFlightBounds(g);
+      enforceVisibleBounds(g, bounds);
+
       const targetMagnitude = Math.hypot(flight.targetX, flight.targetY);
       const reversingX = flight.targetX && flight.currentX && Math.sign(flight.targetX) !== Math.sign(flight.currentX);
       const reversingY = flight.targetY && flight.currentY && Math.sign(flight.targetY) !== Math.sign(flight.currentY);
@@ -254,13 +384,31 @@ function installGameHook() {
           let y = flight.currentY;
           const length = Math.hypot(x, y);
           if (length > 1) { x /= length; y /= length; }
-          ship.position.x = clamp(ship.position.x + x * speed * delta, WORLD.xMin, WORLD.xMax);
-          ship.position.y = clamp(ship.position.y + y * speed * delta, WORLD.yMin, WORLD.yMax);
+
+          x = edgeAwareAxis(ship.position.x, x, bounds.xMin, bounds.xMax);
+          y = edgeAwareAxis(ship.position.y, y, bounds.yMin, bounds.yMax);
+          ship.position.x += x * speed * delta;
+          ship.position.y += y * speed * delta;
+          enforceVisibleBounds(g, bounds);
         }
       }
     }
 
     const result = baseUpdate(delta, elapsed, ...args);
+
+    if (activeTouch) {
+      bounds = enforceVisibleBounds(g, cameraFlightBounds(g));
+      const ship = g.ship;
+      const touchingEdge = Boolean(ship?.position) && (
+        (flight.currentX < -0.04 && ship.position.x <= bounds.xMin + EDGE_CONTACT_ZONE)
+        || (flight.currentX > 0.04 && ship.position.x >= bounds.xMax - EDGE_CONTACT_ZONE)
+        || (flight.currentY < -0.04 && ship.position.y <= bounds.yMin + EDGE_CONTACT_ZONE)
+        || (flight.currentY > 0.04 && ship.position.y >= bounds.yMax - EDGE_CONTACT_ZONE)
+      );
+      setBoundaryFeedback(touchingEdge && flight.pointerId !== null);
+    } else {
+      setBoundaryFeedback(false);
+    }
 
     if (activeTouch && g.ship?.rotation && (flight.pointerId !== null || Math.abs(flight.currentX) + Math.abs(flight.currentY) > 0.005)) {
       const magnitude = clamp(Math.hypot(flight.currentX, flight.currentY), 0, 1);
@@ -288,6 +436,7 @@ function syncPremiumState() {
   applyPremiumShipScale(playing);
   installGameHook();
 
+  if (usable) enforceVisibleBounds(g);
   if (!usable && flight.pointerId !== null) resetSteeringVisual({ hard: true });
 }
 
@@ -312,12 +461,25 @@ function installImmersiveLaunch() {
   }, true);
 }
 
+function invalidateSafeFrame() {
+  flight.envelope.updatedAt = 0;
+  const g = game();
+  if (g?.state === 'playing' && touchLayout()) enforceVisibleBounds(g);
+}
+
 ensureFlightSurface();
 installActionHaptics();
 installImmersiveLaunch();
 syncPremiumState();
 
 window.setInterval(syncPremiumState, 320);
-window.addEventListener('resize', syncPremiumState);
-window.addEventListener('pageshow', syncPremiumState);
+window.addEventListener('resize', () => {
+  invalidateSafeFrame();
+  syncPremiumState();
+});
+window.addEventListener('orientationchange', invalidateSafeFrame);
+window.addEventListener('pageshow', () => {
+  invalidateSafeFrame();
+  syncPremiumState();
+});
 window.addEventListener('blur', () => resetSteeringVisual({ hard: true }));
