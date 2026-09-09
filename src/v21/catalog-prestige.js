@@ -52,7 +52,7 @@ function ensureArenaPrize() {
       <div class="v2116-prize-meta"><strong>${money(OMEGA_PRICE)}</strong><small>VALOR DE CATÁLOGO</small><b>OMEGA</b></div>
     </div>
     <div class="v2116-prize-actions">
-      <button type="button" data-v2116-view-omega>VER EN TIENDA</button>
+      <button type="button" data-v2116-view-omega>VER REVEAL 3D</button>
       <button type="button" data-v2116-compete>COMPETIR</button>
       <small>La concesión como premio exige resultado oficial y validación del backend; no se entrega por almacenamiento local.</small>
     </div>`;
@@ -65,13 +65,20 @@ function openOmegaStore() {
   const launcher = $('[data-open-v11-store]');
   launcher?.click();
   window.setTimeout(() => {
-    const ships = $('[data-store-filter="ship"]');
-    ships?.click();
+    $('[data-store-filter="ship"]')?.click();
     const omega = $(`[data-buy-sku="${OMEGA_SKU}"]`)?.closest('.v11-product');
     omega?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
     omega?.classList.add('v2116-focus');
     window.setTimeout(() => omega?.classList.remove('v2116-focus'), 1800);
   }, 80);
+}
+
+function openOmegaExperience() {
+  if (window.__waeLuxuryShowroom?.openOmega) {
+    window.__waeLuxuryShowroom.openOmega();
+    return;
+  }
+  openOmegaStore();
 }
 
 function sync() {
@@ -82,21 +89,19 @@ function sync() {
 document.addEventListener('click', (event) => {
   if (event.target.closest('[data-v2116-view-omega]')) {
     event.preventDefault();
-    openOmegaStore();
+    openOmegaExperience();
     return;
   }
   if (event.target.closest('[data-v2116-compete]')) {
     event.preventDefault();
     const arena = $('#v2115-competition-arena');
-    const firstMode = arena?.querySelector('[data-v2115-arena-play]');
-    firstMode?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+    arena?.querySelector('[data-v2115-arena-play]')?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
   }
 }, true);
 
 sync();
 window.setInterval(sync, 1200);
 window.addEventListener('pageshow', sync);
-
 document.addEventListener('wae:achievement-unlocked', sync);
 
-window.__waeOmegaFlagship = Object.freeze({ sku: OMEGA_SKU, priceMxn: OMEGA_PRICE, sync });
+window.__waeOmegaFlagship = Object.freeze({ sku: OMEGA_SKU, priceMxn: OMEGA_PRICE, sync, open: openOmegaExperience });
