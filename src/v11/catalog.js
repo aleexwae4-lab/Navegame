@@ -1,4 +1,4 @@
-export const COMMERCE_VERSION = '11.0.0';
+export const COMMERCE_VERSION = '11.1.0';
 export const CURRENCY = 'MXN';
 
 const product = (entry) => Object.freeze({
@@ -8,48 +8,16 @@ const product = (entry) => Object.freeze({
 });
 
 export const PREMIUM_SHIPS = Object.freeze([
-  product({
-    id: 'viper-black', sku: 'WAE-SHIP-VIPER-BLK', kind: 'ship', rarity: 'PREMIUM',
-    name: 'VIPER R BLACK EDITION', series: 'WAE BLACK SERIES', priceMxn: 49,
-    tagline: 'Velocidad brutal en acabado obsidiana.',
-    description: 'Interceptor premium de respuesta inmediata, firma luminosa negra/cian y reactor de alta cadencia.',
-    stats: { speed: 128, shield: 108, fireRate: 118, power: 116 }, accent: '#22d3ee',
-  }),
-  product({
-    id: 'aegis-sovereign', sku: 'WAE-SHIP-AEGIS-SOV', kind: 'ship', rarity: 'ELITE',
-    name: 'AEGIS SOVEREIGN', series: 'WAE SOVEREIGN SERIES', priceMxn: 89,
-    tagline: 'Blindaje de élite. Presencia imperial.',
-    description: 'Chasis pesado con escudo reforzado, estabilización de fuego y arquitectura visual de lujo.',
-    stats: { speed: 105, shield: 152, fireRate: 112, power: 134 }, accent: '#fbbf24',
-  }),
-  product({
-    id: 'nova-imperium', sku: 'WAE-SHIP-NOVA-IMP', kind: 'ship', rarity: 'LEGENDARY',
-    name: 'NOVA IMPERIUM', series: 'WAE IMPERIUM SERIES', priceMxn: 149,
-    tagline: 'Potencia de crucero con núcleo Nova.',
-    description: 'Nave legendaria balanceada para dominar oleadas, élites y Guardianes con presencia cinematográfica.',
-    stats: { speed: 122, shield: 138, fireRate: 132, power: 158 }, accent: '#f472b6',
-  }),
-  product({
-    id: 'eclipse-x', sku: 'WAE-SHIP-ECLIPSE-X', kind: 'ship', rarity: 'MYTHIC',
-    name: 'WAE ECLIPSE X', series: 'WAE ECLIPSE SERIES', priceMxn: 249,
-    tagline: 'Depredador de Guardianes.',
-    description: 'Plataforma mítica de asalto con sobrecarga energética, escudo activo y multiplicador de armamento pesado.',
-    stats: { speed: 135, shield: 156, fireRate: 148, power: 188 }, accent: '#a78bfa',
-  }),
-  product({
-    id: 'obsidian-one', sku: 'WAE-SHIP-OBSIDIAN-1', kind: 'ship', rarity: 'COLLECTOR',
-    name: 'WAE OBSIDIAN ONE', series: 'WAE OBSIDIAN SERIES', priceMxn: 399,
-    tagline: 'Colección negra de máxima especificación.',
-    description: 'Edición de coleccionista con perfil oscuro, reactor exclusivo y estadísticas superiores para PvE.',
-    stats: { speed: 146, shield: 172, fireRate: 158, power: 216 }, accent: '#94a3b8',
-  }),
-  product({
-    id: 'celestial-crown', sku: 'WAE-SHIP-CELESTIAL', kind: 'ship', rarity: 'FOUNDER',
-    name: 'WAE CELESTIAL CROWN', series: 'WAE FOUNDER SERIES', priceMxn: 699,
-    tagline: 'La nave insignia de la colección WAE.',
-    description: 'Founder flagship: máxima potencia de catálogo, firma dorada, presencia única y estatus de colección.',
-    stats: { speed: 158, shield: 188, fireRate: 172, power: 250 }, accent: '#fde68a',
-  }),
+  product({ id: 'viper-black', sku: 'WAE-SHIP-VIPER-BLK', kind: 'ship', rarity: 'PREMIUM', name: 'VIPER R BLACK EDITION', series: 'WAE BLACK SERIES', priceMxn: 49, tagline: 'Velocidad brutal en acabado obsidiana.', description: 'Interceptor premium de respuesta inmediata, firma luminosa negra/cian y reactor de alta cadencia.', stats: { speed: 128, shield: 108, fireRate: 118, power: 116 }, accent: '#22d3ee' }),
+  product({ id: 'aegis-sovereign', sku: 'WAE-SHIP-AEGIS-SOV', kind: 'ship', rarity: 'ELITE', name: 'AEGIS SOVEREIGN', series: 'WAE SOVEREIGN SERIES', priceMxn: 89, tagline: 'Blindaje de élite. Presencia imperial.', description: 'Chasis pesado con escudo reforzado, estabilización de fuego y arquitectura visual de lujo.', stats: { speed: 105, shield: 152, fireRate: 112, power: 134 }, accent: '#fbbf24' }),
+  product({ id: 'nova-imperium', sku: 'WAE-SHIP-NOVA-IMP', kind: 'ship', rarity: 'LEGENDARY', name: 'NOVA IMPERIUM', series: 'WAE IMPERIUM SERIES', priceMxn: 149, tagline: 'Potencia de crucero con núcleo Nova.', description: 'Nave legendaria balanceada para dominar oleadas, élites y Guardianes con presencia cinematográfica.', stats: { speed: 122, shield: 138, fireRate: 132, power: 158 }, accent: '#f472b6' }),
+  product({ id: 'eclipse-x', sku: 'WAE-SHIP-ECLIPSE-X', kind: 'ship', rarity: 'MYTHIC', name: 'WAE ECLIPSE X', series: 'WAE ECLIPSE SERIES', priceMxn: 249, tagline: 'Depredador de Guardianes.', description: 'Plataforma mítica de asalto con sobrecarga energética, escudo activo y multiplicador de armamento pesado.', stats: { speed: 135, shield: 156, fireRate: 148, power: 188 }, accent: '#a78bfa' }),
+  product({ id: 'obsidian-one', sku: 'WAE-SHIP-OBSIDIAN-1', kind: 'ship', rarity: 'COLLECTOR', name: 'WAE OBSIDIAN ONE', series: 'WAE OBSIDIAN SERIES', priceMxn: 399, tagline: 'Colección negra de máxima especificación.', description: 'Edición de coleccionista con perfil oscuro, reactor exclusivo y estadísticas superiores para PvE.', stats: { speed: 146, shield: 172, fireRate: 158, power: 216 }, accent: '#94a3b8' }),
+  product({ id: 'celestial-crown', sku: 'WAE-SHIP-CELESTIAL', kind: 'ship', rarity: 'FOUNDER', name: 'WAE CELESTIAL CROWN', series: 'WAE FOUNDER SERIES', priceMxn: 699, tagline: 'La nave insignia de la colección WAE.', description: 'Founder flagship: máxima potencia de catálogo clásico, firma dorada, presencia única y estatus de colección.', stats: { speed: 158, shield: 188, fireRate: 172, power: 250 }, accent: '#fde68a' }),
+  product({ id: 'specter-valkyrie', sku: 'WAE-SHIP-SPECTER-VLK', kind: 'ship', rarity: 'APEX', name: 'WAE SPECTER VALKYRIE', series: 'WAE APEX SERIES', priceMxn: 899, tagline: 'Interceptor de lujo para pilotos de reflejos extremos.', description: 'Arquitectura de baja firma, velocidad superior, escudo reactivo y geometría de ataque optimizada para maniobra agresiva.', stats: { speed: 172, shield: 198, fireRate: 186, power: 278 }, accent: '#38bdf8' }),
+  product({ id: 'titan-dominion', sku: 'WAE-SHIP-TITAN-DOM', kind: 'ship', rarity: 'ASCENDANT', name: 'WAE TITAN DOMINION', series: 'WAE DOMINION SERIES', priceMxn: 1299, tagline: 'Una fortaleza móvil con autoridad de mando.', description: 'Nave pesada de mando con blindaje masivo, reactor dual y potencia sostenida para campañas prolongadas y Guardianes.', stats: { speed: 162, shield: 242, fireRate: 178, power: 322 }, accent: '#f97316' }),
+  product({ id: 'seraph-quantum', sku: 'WAE-SHIP-SERAPH-QNT', kind: 'ship', rarity: 'TRANSCENDENT', name: 'WAE SERAPH QUANTUM', series: 'WAE QUANTUM SERIES', priceMxn: 1999, tagline: 'Precisión cuántica. Presencia trascendente.', description: 'Plataforma de asalto de prestigio con control energético avanzado, alta aceleración y potencia crítica para juego endgame.', stats: { speed: 188, shield: 226, fireRate: 204, power: 368 }, accent: '#e879f9' }),
+  product({ id: 'aurelion-sovereign-omega', sku: 'WAE-SHIP-AURELION-OMG', kind: 'ship', rarity: 'OMEGA', name: 'WAE AURELION SOVEREIGN Ω', series: 'WAE OMEGA CROWN', priceMxn: 4999, tagline: 'La nave más lujosa, poderosa y exclusiva de Neon Rider.', description: 'Flagship OMEGA de máxima especificación: acabado imperial oro-blanco, reactor Sovereign, escudo de supremacía y presencia visual reservada al objeto más aspiracional del juego. Disponible para compra y designada como premio mayor de temporada.', stats: { speed: 214, shield: 286, fireRate: 232, power: 450 }, accent: '#fff1a8', grandPrize: true }),
 ]);
 
 export const PREMIUM_WEAPONS = Object.freeze([
@@ -58,13 +26,17 @@ export const PREMIUM_WEAPONS = Object.freeze([
   product({ id: 'eclipse-cannon', sku: 'WAE-WPN-ECLIPSE-CNN', kind: 'weapon', rarity: 'LEGENDARY', name: 'ECLIPSE CANNON', series: 'ECLIPSE ARSENAL', priceMxn: 99, tagline: 'Impacto penetrante de alto calibre.', description: 'Disparo concentrado pensado para élites, mini-bosses y blindaje pesado.', stats: { damage: 166, cadence: 112, coverage: 116, special: 152 }, accent: '#c084fc' }),
   product({ id: 'helix-railgun', sku: 'WAE-WPN-HELIX-RG', kind: 'weapon', rarity: 'MYTHIC', name: 'HELIX RAILGUN', series: 'HELIX ARSENAL', priceMxn: 129, tagline: 'Precisión hiperveloz.', description: 'Railgun de trayectoria estable con potencia crítica y control quirúrgico.', stats: { damage: 182, cadence: 128, coverage: 108, special: 176 }, accent: '#67e8f9' }),
   product({ id: 'nova-destroyer', sku: 'WAE-WPN-NOVA-DST', kind: 'weapon', rarity: 'COLLECTOR', name: 'NOVA DESTROYER', series: 'NOVA ARSENAL', priceMxn: 179, tagline: 'Explosión energética de área.', description: 'Sistema de destrucción pesada diseñado para limpiar zonas de combate.', stats: { damage: 198, cadence: 132, coverage: 162, special: 188 }, accent: '#fb7185' }),
-  product({ id: 'wae-singularity', sku: 'WAE-WPN-SINGULARITY', kind: 'weapon', rarity: 'FOUNDER', name: 'WAE SINGULARITY', series: 'FOUNDER ARSENAL', priceMxn: 249, tagline: 'El arma máxima del catálogo.', description: 'Tecnología Founder con daño, cobertura y efecto especial de máxima categoría.', stats: { damage: 235, cadence: 148, coverage: 188, special: 250 }, accent: '#fde68a' }),
+  product({ id: 'wae-singularity', sku: 'WAE-WPN-SINGULARITY', kind: 'weapon', rarity: 'FOUNDER', name: 'WAE SINGULARITY', series: 'FOUNDER ARSENAL', priceMxn: 249, tagline: 'El arma máxima del catálogo clásico.', description: 'Tecnología Founder con daño, cobertura y efecto especial de máxima categoría.', stats: { damage: 235, cadence: 148, coverage: 188, special: 250 }, accent: '#fde68a' }),
+  product({ id: 'orion-lance', sku: 'WAE-WPN-ORION-LNC', kind: 'weapon', rarity: 'APEX', name: 'ORION LANCE', series: 'APEX ARSENAL', priceMxn: 349, tagline: 'Lanza de energía para blancos prioritarios.', description: 'Descarga longitudinal de alta precisión con daño sostenido contra élites y Guardianes.', stats: { damage: 268, cadence: 154, coverage: 132, special: 282 }, accent: '#38bdf8' }),
+  product({ id: 'chronos-array', sku: 'WAE-WPN-CHRONOS-ARR', kind: 'weapon', rarity: 'ASCENDANT', name: 'CHRONOS ARRAY', series: 'CHRONOS ARSENAL', priceMxn: 499, tagline: 'Matriz temporal de saturación multivector.', description: 'Sistema de múltiples carriles con respuesta rápida y cobertura superior para control de campo.', stats: { damage: 286, cadence: 182, coverage: 226, special: 304 }, accent: '#fb923c' }),
+  product({ id: 'abyss-reaper', sku: 'WAE-WPN-ABYSS-RPR', kind: 'weapon', rarity: 'TRANSCENDENT', name: 'ABYSS REAPER', series: 'ABYSS ARSENAL', priceMxn: 799, tagline: 'Siega blindajes con energía de vacío.', description: 'Armamento de asedio con potencia extrema, ecos de impacto y alto rendimiento contra objetivos pesados.', stats: { damage: 342, cadence: 176, coverage: 198, special: 362 }, accent: '#d946ef' }),
+  product({ id: 'omega-crown-arsenal', sku: 'WAE-WPN-OMEGA-CROWN', kind: 'weapon', rarity: 'OMEGA', name: 'OMEGA CROWN ARSENAL', series: 'OMEGA CROWN ARSENAL', priceMxn: 1499, tagline: 'El sistema de armas definitivo de la línea WAE.', description: 'Arquitectura OMEGA de múltiples vectores, cobertura total y daño máximo para la nave insignia y builds endgame.', stats: { damage: 410, cadence: 214, coverage: 286, special: 430 }, accent: '#fff1a8' }),
 ]);
 
 export const PREMIUM_PRODUCTS = Object.freeze([...PREMIUM_SHIPS, ...PREMIUM_WEAPONS]);
 
 export const STORE_POLICY = Object.freeze({
-  checkoutEnabled: false,
+  checkoutEnabled: true,
   entitlementSource: 'server',
-  message: 'El pago real todavía no está conectado. Ningún producto se concede sin confirmación segura del servidor.',
+  message: 'Compras protegidas por cuenta, Checkout y entitlement de servidor. El premio de competencia se concede únicamente mediante validación oficial del backend.',
 });
