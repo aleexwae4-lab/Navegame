@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { PREMIUM_PRODUCTS } from '../v11/catalog.js';
 
-export const COMMERCE_RUNTIME_VERSION = '12.0.0';
+export const COMMERCE_RUNTIME_VERSION = '12.1.0';
 
 const productBySku = new Map(PREMIUM_PRODUCTS.map((item) => [item.sku, item]));
 
@@ -34,6 +34,10 @@ export const PREMIUM_SHIP_RUNTIME = Object.freeze({
   'WAE-SHIP-ECLIPSE-X': ship('WAE-SHIP-ECLIPSE-X', { speed: 1.35, shield: 1.56, fireRate: 0.64, heatGain: 1.45, accent: 0xa78bfa, scale: [1.08, 0.94, 1.18], visualTier: 4 }),
   'WAE-SHIP-OBSIDIAN-1': ship('WAE-SHIP-OBSIDIAN-1', { speed: 1.46, shield: 1.72, fireRate: 0.58, heatGain: 1.55, accent: 0x94a3b8, scale: [1.10, 0.96, 1.22], visualTier: 5 }),
   'WAE-SHIP-CELESTIAL': ship('WAE-SHIP-CELESTIAL', { speed: 1.58, shield: 1.88, fireRate: 0.52, heatGain: 1.65, accent: 0xfde68a, scale: [1.12, 0.98, 1.25], visualTier: 6 }),
+  'WAE-SHIP-SPECTER-VLK': ship('WAE-SHIP-SPECTER-VLK', { speed: 1.72, shield: 1.98, fireRate: 0.48, heatGain: 1.72, accent: 0x38bdf8, scale: [1.06, 0.92, 1.28], visualTier: 7 }),
+  'WAE-SHIP-TITAN-DOM': ship('WAE-SHIP-TITAN-DOM', { speed: 1.62, shield: 2.42, fireRate: 0.50, heatGain: 1.78, accent: 0xf97316, scale: [1.24, 1.12, 1.22], visualTier: 8 }),
+  'WAE-SHIP-SERAPH-QNT': ship('WAE-SHIP-SERAPH-QNT', { speed: 1.88, shield: 2.26, fireRate: 0.43, heatGain: 1.88, accent: 0xe879f9, scale: [1.12, 0.96, 1.32], visualTier: 9 }),
+  'WAE-SHIP-AURELION-OMG': ship('WAE-SHIP-AURELION-OMG', { speed: 2.14, shield: 2.86, fireRate: 0.36, heatGain: 2.00, accent: 0xfff1a8, scale: [1.20, 1.02, 1.40], visualTier: 12, omega: true }),
 });
 
 export const PREMIUM_WEAPON_RUNTIME = Object.freeze({
@@ -43,6 +47,10 @@ export const PREMIUM_WEAPON_RUNTIME = Object.freeze({
   'WAE-WPN-HELIX-RG': weapon('WAE-WPN-HELIX-RG', { lanes: [-3.2, -0.7, 0.7, 3.2], cooldown: 0.68, damageTier: 2, accent: 0x67e8f9 }),
   'WAE-WPN-NOVA-DST': weapon('WAE-WPN-NOVA-DST', { lanes: [-3.2, -2.1, -1.05, 0, 1.05, 2.1, 3.2], cooldown: 0.72, damageTier: 2, accent: 0xfb7185 }),
   'WAE-WPN-SINGULARITY': weapon('WAE-WPN-SINGULARITY', { lanes: [-3.2, -2.4, -1.6, -0.8, 0, 0.8, 1.6, 2.4, 3.2], cooldown: 0.62, damageTier: 3, accent: 0xfde68a }),
+  'WAE-WPN-ORION-LNC': weapon('WAE-WPN-ORION-LNC', { lanes: [-3.2, -1.15, 0, 1.15, 3.2], cooldown: 0.54, damageTier: 4, accent: 0x38bdf8 }),
+  'WAE-WPN-CHRONOS-ARR': weapon('WAE-WPN-CHRONOS-ARR', { lanes: [-3.2, -2.4, -1.6, -0.8, 0, 0.8, 1.6, 2.4, 3.2], cooldown: 0.50, damageTier: 4, accent: 0xfb923c }),
+  'WAE-WPN-ABYSS-RPR': weapon('WAE-WPN-ABYSS-RPR', { lanes: [-3.2, -2.55, -1.9, -1.25, -0.62, 0, 0.62, 1.25, 1.9, 2.55, 3.2], cooldown: 0.46, damageTier: 5, accent: 0xd946ef }),
+  'WAE-WPN-OMEGA-CROWN': weapon('WAE-WPN-OMEGA-CROWN', { lanes: [-3.2, -2.7, -2.15, -1.6, -1.05, -0.52, 0, 0.52, 1.05, 1.6, 2.15, 2.7, 3.2], cooldown: 0.38, damageTier: 6, accent: 0xfff1a8 }),
 });
 
 export function installPremiumRuntime(game, commerceState) {
@@ -69,8 +77,8 @@ export function installPremiumRuntime(game, commerceState) {
     const current = game.getShip();
     if (!current?.premium || !game.loadoutVisualGroup) return;
 
-    const material = new THREE.MeshBasicMaterial({ color: current.accent, transparent: true, opacity: 0.84 });
-    const glow = new THREE.MeshBasicMaterial({ color: current.accent, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false });
+    const material = new THREE.MeshBasicMaterial({ color: current.accent, transparent: true, opacity: current.omega ? 0.96 : 0.84 });
+    const glow = new THREE.MeshBasicMaterial({ color: current.accent, transparent: true, opacity: current.omega ? 0.72 : 0.55, blending: THREE.AdditiveBlending, depthWrite: false });
     const tier = Math.max(1, current.visualTier ?? 1);
 
     const ring = new THREE.Mesh(new THREE.TorusGeometry(1.35 + tier * 0.08, 0.07 + tier * 0.01, 8, 32), glow.clone());
@@ -95,6 +103,22 @@ export function installPremiumRuntime(game, commerceState) {
       crown.rotation.z = Math.PI / 4;
       crown.position.z = 0.15;
       game.loadoutVisualGroup.add(crown);
+    }
+
+    if (current.omega) {
+      const halo = new THREE.Mesh(new THREE.TorusGeometry(2.75, 0.065, 8, 48), glow.clone());
+      halo.rotation.x = Math.PI / 2;
+      halo.position.z = -0.2;
+      game.loadoutVisualGroup.add(halo);
+      for (const side of [-1, 1]) {
+        const spear = new THREE.Mesh(new THREE.ConeGeometry(0.12, 2.6, 8), material.clone());
+        spear.rotation.x = Math.PI / 2;
+        spear.position.set(side * 3.25, 0.08, 0.15);
+        game.loadoutVisualGroup.add(spear);
+      }
+      const omegaLight = new THREE.PointLight(current.accent, 5.6, 18, 2);
+      omegaLight.position.set(0, 0.5, 1.3);
+      game.loadoutVisualGroup.add(omegaLight);
     }
   };
 
