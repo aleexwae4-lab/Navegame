@@ -1,4 +1,4 @@
-/* WAE Neon Rider V21.6 — adaptive premium joystick + Safe Flight Frame */
+/* WAE Neon Rider V21.8 — fixed-origin premium joystick */
 
 @media (pointer: coarse), (max-width: 900px) {
   .v21-flight-surface {
@@ -8,41 +8,37 @@
 
   .v21-flight-stick {
     --v21-stick-power: 0;
-    width: 104px;
-    height: 104px;
-    margin: -52px 0 0 -52px;
+    width: clamp(124px, 34vw, 148px);
+    height: clamp(124px, 34vw, 148px);
+    margin: 0;
+    transform: translate(-50%, -50%) scale(.965);
     border-color: rgba(103, 232, 249, .12);
     background:
-      radial-gradient(circle, rgba(8, 47, 73, .17) 0 18%, rgba(15, 23, 42, .115) 19% 47%, transparent 48%),
-      conic-gradient(from 45deg, rgba(103, 232, 249, .08), transparent 14% 36%, rgba(167, 139, 250, .07) 50%, transparent 64% 86%, rgba(103, 232, 249, .08));
-    box-shadow: inset 0 0 24px rgba(34, 211, 238, .028), 0 8px 22px rgba(0, 0, 0, .12);
+      radial-gradient(circle, rgba(8, 47, 73, .17) 0 16%, rgba(15, 23, 42, .11) 17% 48%, transparent 49%),
+      conic-gradient(from 45deg, rgba(103, 232, 249, .075), transparent 14% 36%, rgba(167, 139, 250, .06) 50%, transparent 64% 86%, rgba(103, 232, 249, .075));
+    box-shadow: inset 0 0 28px rgba(34, 211, 238, .026), 0 10px 26px rgba(0, 0, 0, .12);
     backdrop-filter: blur(2.5px);
     will-change: transform, opacity, left, top;
     contain: layout paint style;
-    transition: opacity .08s ease, transform .08s ease, border-color .1s ease, box-shadow .1s ease;
+    transition: opacity .07s ease, transform .07s ease, border-color .08s ease, box-shadow .08s ease;
   }
 
   .v21-flight-surface.engaged .v21-flight-stick {
-    opacity: .66;
-    transform: scale(1);
+    opacity: .62;
+    transform: translate(-50%, -50%) scale(1);
   }
 
   .v21-flight-stick.is-full {
-    border-color: rgba(125, 211, 252, .30);
-    box-shadow: inset 0 0 28px rgba(34, 211, 238, .05), 0 0 0 1px rgba(103, 232, 249, .055), 0 10px 28px rgba(0, 0, 0, .15);
-  }
-
-  .v21-flight-stick.is-edge {
-    border-color: rgba(253, 230, 138, .24);
-    box-shadow: inset 0 0 26px rgba(251, 191, 36, .045), 0 0 0 1px rgba(253, 230, 138, .04), 0 10px 28px rgba(0, 0, 0, .15);
+    border-color: rgba(125, 211, 252, .28);
+    box-shadow: inset 0 0 30px rgba(34, 211, 238, .045), 0 0 0 1px rgba(103, 232, 249, .05), 0 10px 30px rgba(0, 0, 0, .15);
   }
 
   .v21-flight-ring {
-    inset: 10px;
+    inset: 12px;
     border-color: rgba(125, 211, 252, .13);
-    opacity: calc(.52 + var(--v21-stick-power) * .28);
+    opacity: calc(.48 + var(--v21-stick-power) * .30);
     transform: scale(calc(.975 + var(--v21-stick-power) * .025));
-    transition: opacity .07s linear, transform .07s linear, border-color .08s ease;
+    transition: opacity .06s linear, transform .06s linear, border-color .07s ease;
   }
 
   .v21-flight-stick.is-full .v21-flight-ring {
@@ -50,46 +46,31 @@
     border-color: rgba(165, 243, 252, .22);
   }
 
-  .v21-flight-stick.is-edge .v21-flight-ring {
-    border-style: solid;
-    border-color: rgba(253, 230, 138, .18);
-  }
-
   .v21-flight-ring::before,
-  .v21-flight-ring::after { background: rgba(103, 232, 249, .09); }
+  .v21-flight-ring::after { background: rgba(103, 232, 249, .085); }
 
   .v21-flight-knob {
-    width: 36px;
-    height: 36px;
-    margin: -18px 0 0 -18px;
-    border-color: rgba(165, 243, 252, .38);
+    width: 38px;
+    height: 38px;
+    margin: -19px 0 0 -19px;
+    border-color: rgba(165, 243, 252, .40);
     background:
-      radial-gradient(circle at 34% 28%, rgba(255, 255, 255, .16), transparent 22%),
-      radial-gradient(circle, rgba(8, 145, 178, .44), rgba(8, 47, 73, .72) 58%, rgba(2, 6, 23, .86));
-    box-shadow: 0 0 0 3px rgba(34, 211, 238, .028), 0 0 16px rgba(34, 211, 238, .12);
+      radial-gradient(circle at 34% 28%, rgba(255,255,255,.17), transparent 22%),
+      radial-gradient(circle, rgba(8,145,178,.44), rgba(8,47,73,.72) 58%, rgba(2,6,23,.88));
+    box-shadow: 0 0 0 3px rgba(34,211,238,.028), 0 0 17px rgba(34,211,238,.13);
     will-change: transform;
     transition: none;
   }
 
   .v21-flight-stick.is-full .v21-flight-knob {
-    border-color: rgba(207, 250, 254, .58);
-    box-shadow: 0 0 0 4px rgba(34, 211, 238, .04), 0 0 22px rgba(34, 211, 238, .18);
-  }
-
-  .v21-flight-stick.is-edge .v21-flight-knob {
-    border-color: rgba(254, 240, 138, .48);
-    box-shadow: 0 0 0 3px rgba(251, 191, 36, .025), 0 0 18px rgba(251, 191, 36, .11);
+    border-color: rgba(207,250,254,.58);
+    box-shadow: 0 0 0 4px rgba(34,211,238,.04), 0 0 23px rgba(34,211,238,.18);
   }
 
   .v21-flight-knob b {
     width: 7px;
     height: 7px;
-    box-shadow: 0 0 8px rgba(103, 232, 249, .68);
-  }
-
-  .v21-flight-stick.is-edge .v21-flight-knob b {
-    background: #fef3c7;
-    box-shadow: 0 0 8px rgba(253, 230, 138, .58);
+    box-shadow: 0 0 8px rgba(103,232,249,.68);
   }
 
   .v21-flight-stick small { display: none; }
@@ -167,8 +148,8 @@
     transform-origin: right bottom;
   }
 
-  .v21-flight-stick { transform: scale(.9); }
-  .v21-flight-surface.engaged .v21-flight-stick { transform: scale(.9); }
+  .v21-flight-stick { transform: translate(-50%, -50%) scale(.88); }
+  .v21-flight-surface.engaged .v21-flight-stick { transform: translate(-50%, -50%) scale(.92); }
 }
 
 @media (prefers-reduced-motion: reduce) {
