@@ -3,35 +3,46 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const SETTINGS_KEY = 'wae_neon_rider_v21_player_settings';
 const HUD_KEY = 'wae_neon_rider_v21_hud_mode';
 
+const PRESET_SENSITIVITY = Object.freeze({ precision: 82, balanced: 90, aggressive: 105 });
+
 const DEFAULTS = Object.freeze({
   controls: {
     scheme: 'classic',
+    preset: 'balanced',
     sensitivity: 90,
+    joystickSize: 100,
+    joystickOpacity: 62,
     haptics: true,
+    leftHanded: false,
   },
-  hud: {
-    mode: 'compact',
-  },
-  graphics: {
-    quality: 'balanced',
-    effects: true,
-  },
-  audio: {
-    enabled: true,
-  },
+  hud: { mode: 'compact' },
+  graphics: { quality: 'balanced', effects: true },
+  audio: { enabled: true },
 });
 
 function cloneDefaults() {
   return JSON.parse(JSON.stringify(DEFAULTS));
 }
 
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
 function normalize(raw = {}) {
   const next = cloneDefaults();
-  const scheme = raw?.controls?.scheme;
-  if (scheme === 'classic' || scheme === 'joystick') next.controls.scheme = scheme;
-  const sensitivity = Number(raw?.controls?.sensitivity);
-  if (Number.isFinite(sensitivity)) next.controls.sensitivity = Math.max(70, Math.min(115, Math.round(sensitivity)));
-  if (typeof raw?.controls?.haptics === 'boolean') next.controls.haptics = raw.controls.haptics;
+  const controls = raw?.controls || {};
+
+  if (controls.scheme === 'classic' || controls.scheme === 'joystick') next.controls.scheme = controls.scheme;
+  if (['precision', 'balanced', 'aggressive', 'custom'].includes(controls.preset)) next.controls.preset = controls.preset;
+
+  const sensitivity = Number(controls.sensitivity);
+  if (Number.isFinite(sensitivity)) next.controls.sensitivity = clamp(Math.round(sensitivity), 70, 115);
+  const joystickSize = Number(controls.joystickSize);
+  if (Number.isFinite(joystickSize)) next.controls.joystickSize = clamp(Math.round(joystickSize), 80, 125);
+  const joystickOpacity = Number(controls.joystickOpacity);
+  if (Number.isFinite(joystickOpacity)) next.controls.joystickOpacity = clamp(Math.round(joystickOpacity), 35, 90);
+  if (typeof controls.haptics === 'boolean') next.controls.haptics = controls.haptics;
+  if (typeof controls.leftHanded === 'boolean') next.controls.leftHanded = controls.leftHanded;
 
   const hud = raw?.hud?.mode;
   if (['compact', 'off', 'full'].includes(hud)) next.hud.mode = hud;
@@ -52,20 +63,24 @@ function readSettings() {
   }
 }
 
-function writeSettings(next, announce = true) {
-  const normalized = normalize(next);
+function persist(settings, { announce = false, render = false } = {}) {
+  const normalized = normalize(settings);
   try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(normalized)); } catch {}
   applySettings(normalized);
   document.dispatchEvent(new CustomEvent('wae:settings-changed', { detail: normalized }));
   if (announce) showSettingsToast('CONFIGURACIÓN GUARDADA');
-  renderSettings(normalized);
+  if (render) renderSettings(normalized);
   return normalized;
 }
 
-function patchSettings(mutator) {
+function writeSettings(next, announce = true) {
+  return persist(next, { announce, render: true });
+}
+
+function patchSettings(mutator, announce = true) {
   const next = readSettings();
   mutator(next);
-  return writeSettings(next);
+  return writeSettings(next, announce);
 }
 
 function graphicsPixelRatio(quality) {
@@ -101,10 +116,14 @@ function applyAudio(settings) {
 
 function applySettings(settings = readSettings()) {
   document.body.dataset.v21ControlScheme = settings.controls.scheme;
+  document.body.dataset.v21ControlPreset = settings.controls.preset;
   document.body.classList.toggle('v21-control-classic', settings.controls.scheme === 'classic');
   document.body.classList.toggle('v21-control-joystick', settings.controls.scheme === 'joystick');
+  document.body.classList.toggle('v21-left-handed', settings.controls.leftHanded);
   document.body.dataset.v21Haptics = settings.controls.haptics ? 'on' : 'off';
   document.body.style.setProperty('--v21-control-sensitivity', String(settings.controls.sensitivity / 100));
+  document.body.style.setProperty('--v21-joystick-scale', String(settings.controls.joystickSize / 100));
+  document.body.style.setProperty('--v21-joystick-opacity', String(settings.controls.joystickOpacity / 100));
 
   try { localStorage.setItem(HUD_KEY, settings.hud.mode); } catch {}
   document.body.dataset.v21HudMode = settings.hud.mode;
@@ -134,6 +153,21 @@ function optionButton(value, label, description, current, group) {
   return `<button type="button" class="v21-setting-option${active}" data-setting-group="${group}" data-setting-value="${value}"><strong>${label}</strong><span>${description}</span></button>`;
 }
 
+function previewMarkup(settings) {
+  const joystick = settings.controls.scheme === 'joystick';
+  const left = settings.controls.leftHanded;
+  return `
+    <div class="v2111-control-preview ${joystick ? 'is-joystick' : 'is-classic'} ${left ? 'is-left-handed' : ''}" aria-label="Vista previa de controles">
+      <div class="v2111-preview-movement">
+        ${joystick
+          ? '<div class="v2111-preview-stick"><i></i><b></b></div>'
+          : '<div class="v2111-preview-dpad"><i>▲</i><i>◀</i><i>▶</i><i>▼</i></div>'}
+      </div>
+      <div class="v2111-preview-center"><span>CONTROL LAB</span><strong>${joystick ? settings.controls.preset.toUpperCase() : 'CLÁSICO'}</strong><small>${left ? 'ZURDO' : 'ESTÁNDAR'}</small></div>
+      <div class="v2111-preview-actions"><i></i><i></i><b></b></div>
+    </div>`;
+}
+
 function ensureSettingsPanel() {
   let panel = $('#v21-settings');
   if (panel) return panel;
@@ -146,19 +180,62 @@ function ensureSettingsPanel() {
   panel.innerHTML = `
     <div class="v21-settings__panel">
       <header class="v21-settings__head">
-        <div><span>WAE NEON RIDER</span><h2>CONFIGURACIÓN</h2><p>Personaliza controles y experiencia sin reiniciar la partida.</p></div>
+        <div><span>WAE NEON RIDER · V21.11</span><h2>CONFIGURACIÓN</h2><p>Control Lab, interfaz y rendimiento. Los cambios se aplican en vivo.</p></div>
         <button type="button" class="v21-settings__close" data-settings-close aria-label="Cerrar configuración">×</button>
       </header>
       <nav class="v21-settings__tabs" aria-label="Secciones de configuración">
-        <button type="button" class="active" data-settings-tab="controls">CONTROLES</button>
+        <button type="button" class="active" data-settings-tab="controls">CONTROL LAB</button>
         <button type="button" data-settings-tab="interface">INTERFAZ</button>
         <button type="button" data-settings-tab="system">SISTEMA</button>
       </nav>
       <div class="v21-settings__body" data-settings-body></div>
-      <footer class="v21-settings__foot"><button type="button" data-settings-reset>RESTABLECER</button><span>Los cambios se guardan en este dispositivo.</span></footer>
+      <footer class="v21-settings__foot"><button type="button" data-settings-reset>RESTABLECER</button><span>Preferencias guardadas en este dispositivo.</span></footer>
     </div>`;
   document.body.append(panel);
   return panel;
+}
+
+function renderControls(body, settings) {
+  const joystick = settings.controls.scheme === 'joystick';
+  const presetLabel = settings.controls.preset === 'custom' ? 'PERSONALIZADO' : settings.controls.preset.toUpperCase();
+  body.innerHTML = `
+    ${previewMarkup(settings)}
+    <section class="v21-setting-section">
+      <div class="v21-setting-title"><div><strong>ESQUEMA DE CONTROL</strong><span>Cambia de sistema sin reiniciar la partida.</span></div><b>${joystick ? 'JOYSTICK' : 'BOTONES'}</b></div>
+      <div class="v21-setting-options v21-setting-options--two">
+        ${optionButton('classic', 'BOTONES CLÁSICOS', 'Cruceta física de cuatro direcciones.', settings.controls.scheme, 'scheme')}
+        ${optionButton('joystick', 'JOYSTICK', 'Analógico con centro fijo y potencia progresiva.', settings.controls.scheme, 'scheme')}
+      </div>
+    </section>
+
+    <section class="v21-setting-section ${joystick ? '' : 'is-muted'}">
+      <div class="v21-setting-title"><div><strong>PERFIL DE PILOTAJE</strong><span>Tres curvas de respuesta listas para jugar.</span></div><b>${presetLabel}</b></div>
+      <div class="v21-setting-options v21-setting-options--three">
+        ${optionButton('precision', 'PRECISIÓN', 'Suave y estable para correcciones finas.', settings.controls.preset, 'preset')}
+        ${optionButton('balanced', 'BALANCEADO', 'Respuesta progresiva recomendada.', settings.controls.preset, 'preset')}
+        ${optionButton('aggressive', 'AGRESIVO', 'Mayor aceleración y reacción exterior.', settings.controls.preset, 'preset')}
+      </div>
+    </section>
+
+    <section class="v21-setting-section ${joystick ? '' : 'is-muted'}">
+      <div class="v21-setting-title"><div><strong>SENSIBILIDAD</strong><span>Ajuste fino sobre el perfil seleccionado.</span></div><b data-sensitivity-label>${settings.controls.sensitivity}%</b></div>
+      <input type="range" min="70" max="115" step="1" value="${settings.controls.sensitivity}" data-setting-slider="sensitivity" ${joystick ? '' : 'disabled'} />
+      <div class="v21-setting-scale"><span>CONTROL</span><span>RESPUESTA</span></div>
+    </section>
+
+    <div class="v2111-control-grid">
+      <section class="v21-setting-section ${joystick ? '' : 'is-muted'}">
+        <div class="v21-setting-title"><div><strong>TAMAÑO JOYSTICK</strong><span>Recorrido físico del pulgar.</span></div><b data-joystick-size-label>${settings.controls.joystickSize}%</b></div>
+        <input type="range" min="80" max="125" step="1" value="${settings.controls.joystickSize}" data-setting-slider="joystickSize" ${joystick ? '' : 'disabled'} />
+      </section>
+      <section class="v21-setting-section ${joystick ? '' : 'is-muted'}">
+        <div class="v21-setting-title"><div><strong>OPACIDAD</strong><span>Visibilidad del aro analógico.</span></div><b data-joystick-opacity-label>${settings.controls.joystickOpacity}%</b></div>
+        <input type="range" min="35" max="90" step="1" value="${settings.controls.joystickOpacity}" data-setting-slider="joystickOpacity" ${joystick ? '' : 'disabled'} />
+      </section>
+    </div>
+
+    <section class="v21-setting-row"><div><strong>MODO ZURDO</strong><span>Intercambia el lado de movimiento y los botones de acción.</span></div><button type="button" class="v21-switch ${settings.controls.leftHanded ? 'on' : ''}" data-setting-toggle="leftHanded" aria-pressed="${settings.controls.leftHanded}"><i></i></button></section>
+    <section class="v21-setting-row"><div><strong>RESPUESTA HÁPTICA</strong><span>Vibración sutil al pilotar y activar acciones.</span></div><button type="button" class="v21-switch ${settings.controls.haptics ? 'on' : ''}" data-setting-toggle="haptics" aria-pressed="${settings.controls.haptics}"><i></i></button></section>`;
 }
 
 function renderSettings(settings = readSettings(), tab = null) {
@@ -172,20 +249,7 @@ function renderSettings(settings = readSettings(), tab = null) {
   if (!body) return;
 
   if (activeTab === 'controls') {
-    body.innerHTML = `
-      <section class="v21-setting-section">
-        <div class="v21-setting-title"><div><strong>ESQUEMA DE CONTROL</strong><span>Elige cómo pilotar en dispositivos táctiles.</span></div><b>${settings.controls.scheme === 'classic' ? 'BOTONES' : 'JOYSTICK'}</b></div>
-        <div class="v21-setting-options v21-setting-options--two">
-          ${optionButton('classic', 'BOTONES CLÁSICOS', 'Cruceta de cuatro direcciones. Estable y directo.', settings.controls.scheme, 'scheme')}
-          ${optionButton('joystick', 'JOYSTICK', 'Control analógico progresivo con centro fijo.', settings.controls.scheme, 'scheme')}
-        </div>
-      </section>
-      <section class="v21-setting-section ${settings.controls.scheme === 'classic' ? 'is-muted' : ''}">
-        <div class="v21-setting-title"><div><strong>SENSIBILIDAD DEL JOYSTICK</strong><span>Más baja = mayor precisión. Sólo afecta al joystick.</span></div><b data-sensitivity-label>${settings.controls.sensitivity}%</b></div>
-        <input type="range" min="70" max="115" step="1" value="${settings.controls.sensitivity}" data-setting-sensitivity ${settings.controls.scheme === 'classic' ? 'disabled' : ''} />
-        <div class="v21-setting-scale"><span>PRECISIÓN</span><span>RÁPIDO</span></div>
-      </section>
-      <section class="v21-setting-row"><div><strong>RESPUESTA HÁPTICA</strong><span>Vibración sutil en controles y acciones.</span></div><button type="button" class="v21-switch ${settings.controls.haptics ? 'on' : ''}" data-setting-toggle="haptics" aria-pressed="${settings.controls.haptics}"><i></i></button></section>`;
+    renderControls(body, settings);
     return;
   }
 
@@ -212,7 +276,7 @@ function renderSettings(settings = readSettings(), tab = null) {
         ${optionButton('high', 'ALTA', 'Mayor nitidez.', settings.graphics.quality, 'quality')}
       </div>
     </section>
-    <section class="v21-setting-row"><div><strong>AUDIO DEL JUEGO</strong><span>Efectos de disparos, impactos y eventos.</span></div><button type="button" class="v21-switch ${settings.audio.enabled ? 'on' : ''}" data-setting-toggle="audio" aria-pressed="${settings.audio.enabled}"><i></i></button></section>`;
+    <section class="v21-setting-row"><div><strong>AUDIO DEL JUEGO</strong><span>Disparos, impactos y eventos.</span></div><button type="button" class="v21-switch ${settings.audio.enabled ? 'on' : ''}" data-setting-toggle="audio" aria-pressed="${settings.audio.enabled}"><i></i></button></section>`;
 }
 
 function installLaunchButtons() {
@@ -263,6 +327,40 @@ function closeSettings() {
   document.body.classList.remove('v21-settings-open');
 }
 
+function applyPreset(next, preset) {
+  if (!PRESET_SENSITIVITY[preset]) return;
+  next.controls.preset = preset;
+  next.controls.sensitivity = PRESET_SENSITIVITY[preset];
+}
+
+function updateLiveSlider(slider) {
+  const key = slider.dataset.settingSlider;
+  const next = readSettings();
+  let value = Number(slider.value);
+
+  if (key === 'sensitivity') {
+    value = clamp(Math.round(value || 90), 70, 115);
+    next.controls.sensitivity = value;
+    next.controls.preset = 'custom';
+    const label = $('[data-sensitivity-label]', ensureSettingsPanel());
+    if (label) label.textContent = `${value}%`;
+  }
+  if (key === 'joystickSize') {
+    value = clamp(Math.round(value || 100), 80, 125);
+    next.controls.joystickSize = value;
+    const label = $('[data-joystick-size-label]', ensureSettingsPanel());
+    if (label) label.textContent = `${value}%`;
+  }
+  if (key === 'joystickOpacity') {
+    value = clamp(Math.round(value || 62), 35, 90);
+    next.controls.joystickOpacity = value;
+    const label = $('[data-joystick-opacity-label]', ensureSettingsPanel());
+    if (label) label.textContent = `${value}%`;
+  }
+
+  persist(next, { render: false });
+}
+
 function installEvents() {
   document.addEventListener('click', (event) => {
     if (event.target.closest('[data-settings-open]')) {
@@ -275,12 +373,14 @@ function installEvents() {
       closeSettings();
       return;
     }
+
     const tab = event.target.closest('[data-settings-tab]');
     if (tab) {
       event.preventDefault();
       renderSettings(readSettings(), tab.dataset.settingsTab);
       return;
     }
+
     const option = event.target.closest('[data-setting-group][data-setting-value]');
     if (option) {
       event.preventDefault();
@@ -288,43 +388,54 @@ function installEvents() {
       const value = option.dataset.settingValue;
       patchSettings((next) => {
         if (group === 'scheme') next.controls.scheme = value;
+        if (group === 'preset' && next.controls.scheme === 'joystick') applyPreset(next, value);
         if (group === 'hud') next.hud.mode = value;
         if (group === 'quality') next.graphics.quality = value;
       });
       return;
     }
+
     const toggle = event.target.closest('[data-setting-toggle]');
     if (toggle) {
       event.preventDefault();
       const key = toggle.dataset.settingToggle;
       patchSettings((next) => {
         if (key === 'haptics') next.controls.haptics = !next.controls.haptics;
+        if (key === 'leftHanded') next.controls.leftHanded = !next.controls.leftHanded;
         if (key === 'effects') next.graphics.effects = !next.graphics.effects;
         if (key === 'audio') next.audio.enabled = !next.audio.enabled;
       });
       return;
     }
+
     if (event.target.closest('[data-settings-reset]')) {
       event.preventDefault();
       writeSettings(cloneDefaults());
+      showSettingsToast('CONFIGURACIÓN RESTABLECIDA');
+      return;
     }
-  }, true);
+
+    if (event.target.closest('#sound-btn')) {
+      setTimeout(() => {
+        const enabled = window.__waeNeonRiderGame?.audio?.enabled !== false;
+        const next = readSettings();
+        next.audio.enabled = enabled;
+        persist(next, { render: false });
+      }, 0);
+    }
+  });
 
   document.addEventListener('input', (event) => {
-    const slider = event.target.closest('[data-setting-sensitivity]');
+    const slider = event.target.closest('[data-setting-slider]');
     if (!slider) return;
-    const value = Math.max(70, Math.min(115, Number(slider.value) || 90));
-    const label = $('[data-sensitivity-label]', ensureSettingsPanel());
-    if (label) label.textContent = `${Math.round(value)}%`;
-    const next = readSettings();
-    next.controls.sensitivity = value;
-    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(normalize(next))); } catch {}
-    applySettings(next);
-    document.dispatchEvent(new CustomEvent('wae:settings-changed', { detail: normalize(next) }));
+    updateLiveSlider(slider);
   }, true);
 
   document.addEventListener('change', (event) => {
-    if (event.target.closest('[data-setting-sensitivity]')) showSettingsToast('SENSIBILIDAD GUARDADA');
+    const slider = event.target.closest('[data-setting-slider]');
+    if (!slider) return;
+    renderSettings(readSettings(), 'controls');
+    showSettingsToast('CONTROL LAB ACTUALIZADO');
   }, true);
 
   document.addEventListener('keydown', (event) => {
@@ -345,6 +456,7 @@ installEvents();
 
 window.__waeNeonSettings = Object.freeze({
   key: SETTINGS_KEY,
+  defaults: cloneDefaults,
   get: readSettings,
   apply: applySettings,
   open: openSettings,
