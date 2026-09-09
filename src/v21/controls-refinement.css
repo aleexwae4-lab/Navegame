@@ -1,4 +1,4 @@
-/* WAE Neon Rider V21.5 — adaptive premium joystick */
+/* WAE Neon Rider V21.6 — adaptive premium joystick + Safe Flight Frame */
 
 @media (pointer: coarse), (max-width: 900px) {
   .v21-flight-surface {
@@ -32,6 +32,11 @@
     box-shadow: inset 0 0 28px rgba(34, 211, 238, .05), 0 0 0 1px rgba(103, 232, 249, .055), 0 10px 28px rgba(0, 0, 0, .15);
   }
 
+  .v21-flight-stick.is-edge {
+    border-color: rgba(253, 230, 138, .24);
+    box-shadow: inset 0 0 26px rgba(251, 191, 36, .045), 0 0 0 1px rgba(253, 230, 138, .04), 0 10px 28px rgba(0, 0, 0, .15);
+  }
+
   .v21-flight-ring {
     inset: 10px;
     border-color: rgba(125, 211, 252, .13);
@@ -43,6 +48,11 @@
   .v21-flight-stick.is-full .v21-flight-ring {
     border-style: solid;
     border-color: rgba(165, 243, 252, .22);
+  }
+
+  .v21-flight-stick.is-edge .v21-flight-ring {
+    border-style: solid;
+    border-color: rgba(253, 230, 138, .18);
   }
 
   .v21-flight-ring::before,
@@ -66,10 +76,20 @@
     box-shadow: 0 0 0 4px rgba(34, 211, 238, .04), 0 0 22px rgba(34, 211, 238, .18);
   }
 
+  .v21-flight-stick.is-edge .v21-flight-knob {
+    border-color: rgba(254, 240, 138, .48);
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, .025), 0 0 18px rgba(251, 191, 36, .11);
+  }
+
   .v21-flight-knob b {
     width: 7px;
     height: 7px;
     box-shadow: 0 0 8px rgba(103, 232, 249, .68);
+  }
+
+  .v21-flight-stick.is-edge .v21-flight-knob b {
+    background: #fef3c7;
+    box-shadow: 0 0 8px rgba(253, 230, 138, .58);
   }
 
   .v21-flight-stick small { display: none; }
