@@ -1,0 +1,251 @@
+/* WAE Neon Rider V21.13 — Achievement Vault */
+
+:root {
+  --v2113-core: #67e8f9;
+  --v2113-rare: #60a5fa;
+  --v2113-epic: #c084fc;
+  --v2113-mythic: #fbbf24;
+}
+
+.v2113-vault-launch {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid rgba(251,191,36,.18) !important;
+  border-radius: 11px;
+  background: linear-gradient(135deg,rgba(120,53,15,.16),rgba(8,47,73,.20)) !important;
+  color: #fef3c7 !important;
+  cursor: pointer;
+}
+.v2113-vault-launch span { color:#fbbf24; text-shadow:0 0 12px rgba(251,191,36,.55); }
+.v2113-vault-launch b { font-size:7px; letter-spacing:.08em; }
+.v2113-vault-launch small { color:rgba(253,230,138,.56); font-size:6px; }
+
+.v2113-vault-pause {
+  width:100%;
+  min-height:38px;
+  margin-top:8px;
+  border:1px solid rgba(251,191,36,.18);
+  border-radius:10px;
+  background:rgba(69,26,3,.20);
+  color:#fde68a;
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+
+.v2113-featured-badge {
+  position:relative;
+  overflow:hidden;
+  min-height:62px;
+  padding:10px 12px;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  grid-template-rows:auto auto;
+  align-items:center;
+  gap:2px 9px;
+  border:1px solid rgba(251,191,36,.18);
+  border-radius:14px;
+  background:radial-gradient(circle at 0 50%,rgba(251,191,36,.10),transparent 46%),rgba(2,6,23,.40);
+  color:#f8fafc;
+  text-align:left;
+  cursor:pointer;
+}
+.v2113-featured-badge::after { content:""; position:absolute; inset:0; transform:translateX(-120%); background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.11),transparent 68%); animation:v2113-scan 6.5s ease-in-out infinite; pointer-events:none; }
+.v2113-featured-badge i { grid-row:1 / 3; font-style:normal; color:#fbbf24; font-size:22px; text-shadow:0 0 18px rgba(251,191,36,.38); }
+.v2113-featured-badge span { color:rgba(253,230,138,.48); font-size:5.5px; font-weight:900; letter-spacing:.13em; }
+.v2113-featured-badge strong { color:#fff7d6; font-size:7.5px; letter-spacing:.05em; }
+
+.v2113-vault {
+  position:fixed;
+  inset:0;
+  z-index:235;
+  display:grid;
+  place-items:center;
+  padding:max(12px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));
+}
+.v2113-vault.hidden { display:none !important; }
+.v2113-vault-backdrop {
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 16% 10%,rgba(34,211,238,.12),transparent 30%),
+    radial-gradient(circle at 82% 20%,rgba(168,85,247,.12),transparent 32%),
+    radial-gradient(circle at 50% 100%,rgba(251,191,36,.08),transparent 36%),
+    rgba(0,3,12,.90);
+  backdrop-filter:blur(22px) saturate(1.1);
+}
+.v2113-vault-backdrop::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity:.20;
+  background-image:radial-gradient(circle,rgba(255,255,255,.40) 0 1px,transparent 1.2px);
+  background-size:38px 38px;
+  mask-image:radial-gradient(circle at center,#000 20%,transparent 82%);
+}
+
+.v2113-vault-shell {
+  position:relative;
+  width:min(1040px,100%);
+  max-height:min(880px,calc(100dvh - 24px));
+  overflow:hidden;
+  display:grid;
+  grid-template-rows:auto auto minmax(0,1fr) auto;
+  border:1px solid rgba(148,163,184,.18);
+  border-radius:26px;
+  background:radial-gradient(circle at 10% 0,rgba(8,145,178,.08),transparent 27%),radial-gradient(circle at 90% 0,rgba(126,34,206,.07),transparent 28%),linear-gradient(155deg,rgba(8,15,31,.985),rgba(2,6,23,.995));
+  box-shadow:0 42px 130px rgba(0,0,0,.68),inset 0 1px rgba(255,255,255,.045);
+}
+
+.v2113-vault-head {
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:14px;
+  padding:17px 18px;
+  border-bottom:1px solid rgba(125,211,252,.10);
+  background:rgba(3,8,22,.72);
+}
+.v2113-vault-head>div:nth-child(2)>span { display:block; color:rgba(186,230,253,.48); font-size:6.5px; letter-spacing:.17em; }
+.v2113-vault-head h2 { margin:4px 0 0; color:#f8fafc; font-size:clamp(22px,4vw,35px); letter-spacing:-.04em; }
+.v2113-vault-head p { margin:5px 0 0; color:#64748b; font-size:8px; }
+.v2113-vault-head>button { width:38px; height:38px; border:1px solid rgba(148,163,184,.16); border-radius:12px; background:rgba(15,23,42,.52); color:#cbd5e1; font-size:21px; }
+
+.v2113-vault-emblem { position:relative; display:grid; place-items:center; width:54px; height:54px; border-radius:50%; border:1px solid rgba(251,191,36,.28); background:radial-gradient(circle,rgba(120,53,15,.34),rgba(2,6,23,.76) 67%); box-shadow:0 0 30px rgba(251,191,36,.08); }
+.v2113-vault-emblem::before { content:""; position:absolute; inset:6px; border:1px dashed rgba(103,232,249,.20); border-radius:50%; animation:v2113-orbit 13s linear infinite; }
+.v2113-vault-emblem i { position:relative; z-index:2; color:#fbbf24; font-style:normal; font-size:17px; text-shadow:0 0 12px rgba(251,191,36,.42); }
+.v2113-vault-emblem b { position:absolute; right:-5px; bottom:-3px; z-index:3; min-width:25px; padding:4px 5px; border:1px solid rgba(103,232,249,.18); border-radius:999px; background:#020617; color:#cffafe; font-size:5.5px; text-align:center; }
+
+.v2113-vault-summary { display:grid; grid-template-columns:1.25fr repeat(3,1fr); gap:8px; padding:12px 14px; border-bottom:1px solid rgba(125,211,252,.08); }
+.v2113-vault-summary article { min-height:66px; padding:10px 11px; border:1px solid rgba(148,163,184,.10); border-radius:12px; background:rgba(15,23,42,.38); }
+.v2113-vault-summary span { display:block; color:#64748b; font-size:5.5px; font-weight:900; letter-spacing:.12em; }
+.v2113-vault-summary strong { display:block; margin-top:5px; color:#f8fafc; font-size:17px; }
+.v2113-vault-summary small { display:block; margin-top:2px; color:#475569; font-size:5.5px; }
+.v2113-vault-summary article>i { display:block; height:5px; margin-top:7px; overflow:hidden; border-radius:99px; background:rgba(255,255,255,.06); }
+.v2113-vault-summary article>i>b { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#22d3ee,#a855f7,#fbbf24); box-shadow:0 0 13px rgba(168,85,247,.28); }
+
+.v2113-vault-grid { overflow-y:auto; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; padding:13px 14px 15px; overscroll-behavior:contain; }
+.v2113-achievement {
+  position:relative;
+  min-height:177px;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  grid-template-rows:auto 1fr auto;
+  gap:9px 10px;
+  padding:12px;
+  overflow:hidden;
+  border:1px solid rgba(148,163,184,.10);
+  border-radius:16px;
+  background:linear-gradient(145deg,rgba(15,23,42,.48),rgba(2,6,23,.52));
+}
+.v2113-achievement::before { content:""; position:absolute; left:0; top:0; width:52%; height:1px; background:linear-gradient(90deg,var(--achievement-accent),transparent); opacity:.65; }
+.v2113-achievement.is-locked { filter:saturate(.58); }
+.v2113-achievement.is-locked .v2113-achievement-icon { opacity:.48; }
+.v2113-achievement.is-unlocked { box-shadow:inset 0 1px rgba(255,255,255,.025),0 0 24px color-mix(in srgb,var(--achievement-accent) 7%,transparent); }
+.v2113-achievement.rarity-core { --achievement-accent:var(--v2113-core); }
+.v2113-achievement.rarity-rare { --achievement-accent:var(--v2113-rare); }
+.v2113-achievement.rarity-epic { --achievement-accent:var(--v2113-epic); }
+.v2113-achievement.rarity-mythic { --achievement-accent:var(--v2113-mythic); background:radial-gradient(circle at 0 0,rgba(251,191,36,.075),transparent 42%),linear-gradient(145deg,rgba(15,23,42,.52),rgba(2,6,23,.56)); }
+
+.v2113-achievement-icon { grid-row:1 / 3; position:relative; width:52px; height:52px; display:grid; place-items:center; border:1px solid color-mix(in srgb,var(--achievement-accent) 30%,transparent); border-radius:15px; background:radial-gradient(circle, color-mix(in srgb,var(--achievement-accent) 13%,transparent), rgba(2,6,23,.52) 70%); box-shadow:inset 0 1px rgba(255,255,255,.04); }
+.v2113-achievement-icon i { color:var(--achievement-accent); font-style:normal; font-size:21px; text-shadow:0 0 15px color-mix(in srgb,var(--achievement-accent) 45%,transparent); }
+.v2113-achievement-icon span { position:absolute; left:50%; bottom:-7px; transform:translateX(-50%); padding:3px 5px; border:1px solid rgba(148,163,184,.12); border-radius:999px; background:#020617; color:var(--achievement-accent); font-size:4.5px; font-weight:950; letter-spacing:.08em; }
+
+.v2113-achievement-copy>span { color:var(--achievement-accent); font-size:5px; font-weight:900; letter-spacing:.11em; opacity:.72; }
+.v2113-achievement-copy>strong { display:block; margin-top:4px; color:#f8fafc; font-size:8px; letter-spacing:.045em; }
+.v2113-achievement-copy>p { margin:5px 0 0; color:#64748b; font-size:6.5px; line-height:1.4; }
+.v2113-achievement-progress { grid-column:1 / -1; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:7px; align-items:center; }
+.v2113-achievement-progress>i { display:block; height:4px; overflow:hidden; border-radius:99px; background:rgba(255,255,255,.06); }
+.v2113-achievement-progress>i>b { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--achievement-accent),color-mix(in srgb,var(--achievement-accent) 45%,white)); box-shadow:0 0 11px color-mix(in srgb,var(--achievement-accent) 30%,transparent); }
+.v2113-achievement-progress small { color:#475569; font-size:5px; white-space:nowrap; }
+.v2113-achievement>button { grid-column:1 / -1; min-height:28px; border:1px solid color-mix(in srgb,var(--achievement-accent) 18%,transparent); border-radius:8px; background:rgba(2,6,23,.35); color:#64748b; font-size:5.5px; font-weight:900; letter-spacing:.08em; }
+.v2113-achievement>button.active { color:#fef3c7; border-color:rgba(251,191,36,.26); background:rgba(120,53,15,.18); }
+
+.v2113-vault-shell>footer { display:flex; justify-content:space-between; gap:12px; padding:10px 15px; border-top:1px solid rgba(125,211,252,.08); color:#475569; font-size:5.5px; letter-spacing:.07em; }
+.v2113-vault-shell>footer b { color:rgba(103,232,249,.54); }
+
+.v2113-ceremony {
+  position:fixed;
+  z-index:310;
+  left:50%;
+  top:19%;
+  width:min(390px,calc(100vw - 24px));
+  min-height:104px;
+  display:grid;
+  grid-template-columns:74px minmax(0,1fr);
+  align-items:center;
+  gap:12px;
+  padding:13px 15px;
+  opacity:0;
+  transform:translate(-50%,-18px) scale(.94);
+  pointer-events:none;
+  border:1px solid color-mix(in srgb,var(--ceremony-accent,#67e8f9) 28%,transparent);
+  border-radius:19px;
+  background:radial-gradient(circle at 0 50%,color-mix(in srgb,var(--ceremony-accent,#67e8f9) 12%,transparent),transparent 42%),rgba(2,6,23,.94);
+  box-shadow:0 24px 80px rgba(0,0,0,.52),0 0 36px color-mix(in srgb,var(--ceremony-accent,#67e8f9) 10%,transparent),inset 0 1px rgba(255,255,255,.045);
+  backdrop-filter:blur(15px);
+  transition:opacity .22s ease,transform .32s cubic-bezier(.2,.8,.2,1);
+}
+.v2113-ceremony.show { opacity:1; transform:translate(-50%,0) scale(1); }
+.v2113-ceremony.rarity-core { --ceremony-accent:var(--v2113-core); }
+.v2113-ceremony.rarity-rare { --ceremony-accent:var(--v2113-rare); }
+.v2113-ceremony.rarity-epic { --ceremony-accent:var(--v2113-epic); }
+.v2113-ceremony.rarity-mythic { --ceremony-accent:var(--v2113-mythic); }
+.v2113-ceremony-rays { position:absolute; inset:-70px; opacity:.13; background:repeating-conic-gradient(from 0deg,var(--ceremony-accent) 0 3deg,transparent 3deg 22deg); animation:v2113-orbit 11s linear infinite; mask-image:radial-gradient(circle,#000 0 18%,transparent 54%); }
+.v2113-ceremony-medal { position:relative; z-index:2; width:68px; height:68px; display:grid; place-items:center; border:1px solid color-mix(in srgb,var(--ceremony-accent) 36%,transparent); border-radius:50%; background:radial-gradient(circle,color-mix(in srgb,var(--ceremony-accent) 16%,transparent),rgba(2,6,23,.86) 66%); box-shadow:0 0 26px color-mix(in srgb,var(--ceremony-accent) 18%,transparent); }
+.v2113-ceremony-medal i { color:var(--ceremony-accent); font-style:normal; font-size:26px; text-shadow:0 0 16px color-mix(in srgb,var(--ceremony-accent) 60%,transparent); }
+.v2113-ceremony-medal span { position:absolute; bottom:-6px; padding:3px 6px; border-radius:99px; background:#020617; color:var(--ceremony-accent); font-size:4.5px; font-weight:950; letter-spacing:.09em; }
+.v2113-ceremony-copy { position:relative; z-index:2; }
+.v2113-ceremony-copy span { color:var(--ceremony-accent); font-size:5.5px; font-weight:900; letter-spacing:.15em; }
+.v2113-ceremony-copy strong { display:block; margin-top:5px; color:#fff; font-size:13px; letter-spacing:.03em; }
+.v2113-ceremony-copy small { display:block; margin-top:5px; color:#94a3b8; font-size:7px; line-height:1.4; }
+.v2113-ceremony-stars { position:absolute; right:13px; bottom:9px; color:var(--ceremony-accent); font-size:8px; letter-spacing:.25em; opacity:.56; animation:v2113-stars 1.6s ease-in-out infinite; }
+
+@keyframes v2113-orbit { to { transform:rotate(360deg); } }
+@keyframes v2113-scan { 0%,72% { transform:translateX(-120%); } 88%,100% { transform:translateX(120%); } }
+@keyframes v2113-stars { 50% { opacity:1; filter:drop-shadow(0 0 7px currentColor); } }
+
+body.v21-reduced-fx .v2113-featured-badge::after,
+body.v21-reduced-fx .v2113-vault-emblem::before,
+body.v21-reduced-fx .v2113-ceremony-rays,
+body.v21-reduced-fx .v2113-ceremony-stars { animation:none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .v2113-featured-badge::after,.v2113-vault-emblem::before,.v2113-ceremony-rays,.v2113-ceremony-stars { animation:none !important; }
+  .v2113-ceremony { transition:none; }
+}
+
+@media (max-width:760px) {
+  .v2113-vault-shell { max-height:calc(100dvh - 18px); border-radius:21px; }
+  .v2113-vault-head { padding:13px; gap:10px; }
+  .v2113-vault-head p { display:none; }
+  .v2113-vault-emblem { width:46px; height:46px; }
+  .v2113-vault-summary { grid-template-columns:repeat(2,1fr); padding:9px; }
+  .v2113-vault-grid { grid-template-columns:repeat(2,minmax(0,1fr)); padding:9px; gap:7px; }
+  .v2113-achievement { min-height:170px; padding:10px; }
+  .v2113-achievement-icon { width:46px; height:46px; }
+  .v2113-featured-badge { grid-column:1 / -1; }
+}
+
+@media (max-width:480px) {
+  .v2113-vault-grid { grid-template-columns:1fr; }
+  .v2113-achievement { min-height:145px; }
+  .v2113-vault-shell>footer span { display:none; }
+  .v2113-ceremony { top:14%; grid-template-columns:62px minmax(0,1fr); min-height:94px; padding:11px 12px; }
+  .v2113-ceremony-medal { width:58px; height:58px; }
+  .v2113-ceremony-medal i { font-size:22px; }
+}
+
+@media (max-height:620px) and (orientation:landscape) {
+  .v2113-vault { padding:6px; }
+  .v2113-vault-shell { max-height:calc(100dvh - 12px); }
+  .v2113-vault-head { padding:9px 12px; }
+  .v2113-vault-head p { display:none; }
+  .v2113-vault-emblem { width:42px; height:42px; }
+  .v2113-vault-summary { padding:7px 10px; }
+  .v2113-vault-summary article { min-height:54px; }
+  .v2113-vault-grid { grid-template-columns:repeat(4,minmax(190px,1fr)); overflow-x:auto; overflow-y:auto; }
+}
