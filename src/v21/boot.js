@@ -5,5 +5,7 @@ import './premium-polish.css';
 import './controls-refinement.css';
 import './settings-core.css';
 import './control-lab.css';
+import './prestige-fx.css';
 import './settings-core.js';
 import './flight-controls-v2111.js';
+import './prestige-fx.js';
