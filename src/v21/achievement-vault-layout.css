@@ -1,0 +1,7 @@
+/* V21.13 layout guard: featured achievement spans the complete prestige strip. */
+.v2112-prestige-strip > .v2113-featured-badge { grid-column: 1 / -1; width: 100%; }
+#start-screen .start-meta > .v2113-vault-launch { min-width: 0; }
+@media (max-width:560px) {
+  #start-screen .start-meta > .v2113-vault-launch { grid-column: 1 / -1; }
+  .v2113-featured-badge { min-height: 52px; }
+}
