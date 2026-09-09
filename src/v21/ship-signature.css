@@ -1,0 +1,45 @@
+/* WAE Neon Rider V21.15 — Ship Signature */
+
+.v2115-signature-chip {
+  display: grid;
+  grid-template-columns: auto auto minmax(0,1fr);
+  align-items: center;
+  gap: 8px;
+  margin: 8px 14px 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(103,232,249,.12);
+  border-radius: 11px;
+  background: linear-gradient(90deg,rgba(8,47,73,.18),rgba(2,6,23,.18));
+  box-shadow: inset 0 1px rgba(255,255,255,.025);
+}
+.v2115-signature-chip span {
+  color: rgba(186,230,253,.46);
+  font-size: 6px;
+  font-weight: 900;
+  letter-spacing: .13em;
+}
+.v2115-signature-chip strong {
+  color: #e0f2fe;
+  font-size: 8px;
+  letter-spacing: .06em;
+}
+.v2115-signature-chip small {
+  justify-self: end;
+  min-width: 0;
+  overflow: hidden;
+  color: rgba(203,213,225,.54);
+  font-size: 6px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.v2115-signature-chip[data-theme="frame-cobalt"] { border-color: rgba(96,165,250,.22); background: linear-gradient(90deg,rgba(30,64,175,.18),rgba(2,6,23,.18)); }
+.v2115-signature-chip[data-theme="frame-imperium"] { border-color: rgba(192,132,252,.24); background: linear-gradient(90deg,rgba(88,28,135,.20),rgba(2,6,23,.18)); }
+.v2115-signature-chip[data-theme="frame-sovereign"] { border-color: rgba(251,191,36,.28); background: linear-gradient(90deg,rgba(120,53,15,.24),rgba(2,6,23,.18)); box-shadow: inset 0 1px rgba(255,255,255,.035), 0 0 20px rgba(251,191,36,.04); }
+.v2115-signature-chip[data-theme="frame-sovereign"] strong { color: #fde68a; }
+
+@media (max-width: 560px) {
+  .v2115-signature-chip { margin: 7px 10px 0; padding: 7px 8px; gap: 6px; }
+  .v2115-signature-chip span { font-size: 5px; }
+  .v2115-signature-chip strong { font-size: 7px; }
+  .v2115-signature-chip small { font-size: 5px; }
+}
