@@ -1,0 +1,13 @@
+/* WAE Neon Rider V21.14 — Squad Reward Identity */
+.v2114-squad-reward {
+  display:block;
+  margin-top:4px;
+  color:rgba(253,230,138,.76);
+  font-size:5.5px;
+  font-style:normal;
+  font-weight:800;
+  letter-spacing:.07em;
+  text-shadow:0 0 9px rgba(251,191,36,.12);
+}
+.v16-roster-player:has(.v2114-squad-reward) { border-color:rgba(251,191,36,.12); }
+@media (max-width:520px) { .v2114-squad-reward { font-size:5px; } }
