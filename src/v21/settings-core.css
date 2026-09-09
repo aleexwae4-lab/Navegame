@@ -1,0 +1,275 @@
+/* WAE Neon Rider V21.10 — Player Settings Core */
+
+.v21-settings {
+  position: fixed;
+  inset: 0;
+  z-index: 92;
+  display: grid;
+  place-items: center;
+  padding: max(14px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) max(14px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+  background: radial-gradient(circle at 50% 12%, rgba(14,165,233,.12), transparent 34%), rgba(2,6,23,.86);
+  backdrop-filter: blur(18px) saturate(1.08);
+}
+.v21-settings.hidden { display: none !important; }
+
+.v21-settings__panel {
+  width: min(720px, 100%);
+  max-height: min(820px, calc(100dvh - 24px));
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto minmax(0,1fr) auto;
+  border: 1px solid rgba(125,211,252,.20);
+  border-radius: 26px;
+  background: radial-gradient(circle at 12% 0%, rgba(14,165,233,.08), transparent 28%), linear-gradient(180deg, rgba(8,15,31,.98), rgba(2,6,23,.985));
+  box-shadow: 0 34px 120px rgba(0,0,0,.66), inset 0 1px rgba(255,255,255,.045);
+}
+
+.v21-settings__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 22px 22px 17px;
+  border-bottom: 1px solid rgba(125,211,252,.10);
+}
+.v21-settings__head span { color: #67e8f9; font-size: 7px; font-weight: 900; letter-spacing: .2em; }
+.v21-settings__head h2 { margin: 5px 0 0; font-size: clamp(25px,5vw,38px); letter-spacing: -.04em; }
+.v21-settings__head p { margin: 7px 0 0; color: #64748b; font-size: 10px; line-height: 1.45; }
+.v21-settings__close {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(148,163,184,.18);
+  border-radius: 13px;
+  background: rgba(15,23,42,.58);
+  color: #cbd5e1;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.v21-settings__tabs {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 7px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(125,211,252,.08);
+  background: rgba(2,6,23,.34);
+}
+.v21-settings__tabs button {
+  min-height: 38px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #64748b;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  cursor: pointer;
+}
+.v21-settings__tabs button.active {
+  border-color: rgba(103,232,249,.18);
+  background: rgba(8,47,73,.34);
+  color: #cffafe;
+}
+
+.v21-settings__body {
+  overflow-y: auto;
+  padding: 16px;
+  overscroll-behavior: contain;
+}
+
+.v21-setting-section,
+.v21-setting-row {
+  border: 1px solid rgba(148,163,184,.11);
+  border-radius: 17px;
+  background: rgba(15,23,42,.44);
+  box-shadow: inset 0 1px rgba(255,255,255,.02);
+}
+.v21-setting-section { padding: 15px; margin-bottom: 11px; }
+.v21-setting-section.is-muted { opacity: .48; }
+.v21-setting-row {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 15px;
+  margin-bottom: 11px;
+}
+.v21-setting-row strong,
+.v21-setting-title strong { display: block; color: #e2e8f0; font-size: 9px; letter-spacing: .1em; }
+.v21-setting-row span,
+.v21-setting-title span { display: block; margin-top: 4px; color: #64748b; font-size: 8px; line-height: 1.45; }
+.v21-setting-title { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; margin-bottom: 13px; }
+.v21-setting-title b { flex: 0 0 auto; color: #67e8f9; font-size: 8px; letter-spacing: .09em; }
+
+.v21-setting-options { display: grid; gap: 8px; }
+.v21-setting-options--two { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.v21-setting-options--three { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.v21-setting-option {
+  min-height: 74px;
+  padding: 12px;
+  text-align: left;
+  border: 1px solid rgba(148,163,184,.12);
+  border-radius: 14px;
+  background: rgba(2,6,23,.48);
+  color: #94a3b8;
+  cursor: pointer;
+}
+.v21-setting-option strong { display: block; color: #cbd5e1; font-size: 8px; letter-spacing: .06em; }
+.v21-setting-option span { display: block; margin-top: 5px; color: #64748b; font-size: 7px; line-height: 1.4; }
+.v21-setting-option.active {
+  border-color: rgba(103,232,249,.36);
+  background: linear-gradient(145deg, rgba(8,47,73,.48), rgba(15,23,42,.52));
+  box-shadow: inset 0 0 20px rgba(34,211,238,.035), 0 0 0 1px rgba(34,211,238,.025);
+}
+.v21-setting-option.active strong { color: #cffafe; }
+
+.v21-setting-section input[type="range"] { width: 100%; accent-color: #22d3ee; }
+.v21-setting-scale { display: flex; justify-content: space-between; margin-top: 6px; color: #475569; font-size: 6px; font-weight: 800; letter-spacing: .1em; }
+
+.v21-switch {
+  width: 48px;
+  height: 27px;
+  flex: 0 0 auto;
+  padding: 3px;
+  border: 1px solid rgba(148,163,184,.16);
+  border-radius: 999px;
+  background: rgba(15,23,42,.76);
+}
+.v21-switch i {
+  display: block;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #64748b;
+  transform: translateX(0);
+  transition: transform .16s ease, background .16s ease, box-shadow .16s ease;
+}
+.v21-switch.on { border-color: rgba(103,232,249,.28); background: rgba(8,47,73,.62); }
+.v21-switch.on i { transform: translateX(19px); background: #67e8f9; box-shadow: 0 0 13px rgba(34,211,238,.34); }
+
+.v21-settings__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(125,211,252,.08);
+}
+.v21-settings__foot button,
+.v21-settings-pause {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid rgba(148,163,184,.16);
+  border-radius: 10px;
+  background: rgba(15,23,42,.58);
+  color: #94a3b8;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: .09em;
+  cursor: pointer;
+}
+.v21-settings__foot span { color: #475569; font-size: 7px; }
+
+.v21-settings-launch { border-color: rgba(103,232,249,.16) !important; color: #cffafe !important; }
+.v21-settings-launch span { margin-right: 4px; }
+.v21-settings-pause { margin-top: 10px; width: 100%; color: #bae6fd; border-color: rgba(103,232,249,.18); }
+.v21-settings-gear { font-size: 15px; }
+
+.v21-settings-toast {
+  position: fixed;
+  z-index: 99;
+  left: 50%;
+  bottom: max(22px, env(safe-area-inset-bottom,0px) + 14px);
+  transform: translate(-50%,14px);
+  opacity: 0;
+  padding: 9px 13px;
+  border: 1px solid rgba(103,232,249,.20);
+  border-radius: 999px;
+  background: rgba(2,6,23,.88);
+  color: #cffafe;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: .1em;
+  pointer-events: none;
+  transition: opacity .16s ease, transform .16s ease;
+}
+.v21-settings-toast.show { opacity: 1; transform: translate(-50%,0); }
+
+/* Classic controls: restore the original D-pad while preserving the premium action cluster. */
+@media (pointer: coarse), (max-width: 900px) {
+  body.v21-control-classic.v21-touch-flight .v21-flight-surface { display: none !important; }
+  body.v21-control-classic.v21-touch-flight .touch-controls {
+    left: max(10px, env(safe-area-inset-left,0px) + 8px);
+    right: max(10px, env(safe-area-inset-right,0px) + 8px);
+    bottom: max(13px, env(safe-area-inset-bottom,0px) + 10px);
+    width: auto;
+    min-height: 166px;
+    display: grid !important;
+    grid-template-columns: 154px minmax(16px,1fr) 46px 46px 80px;
+    grid-template-rows: 46px 46px;
+    align-content: end;
+    gap: 8px;
+  }
+  body.v21-control-classic.v21-touch-flight .dpad {
+    display: block !important;
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: end;
+    width: 154px;
+    height: 154px;
+    pointer-events: auto;
+  }
+  body.v21-control-classic.v21-touch-flight .control-btn { width: 50px; height: 50px; border-radius: 15px; background: rgba(8,15,30,.62); }
+  body.v21-control-classic.v21-touch-flight .control-btn.up { left: 52px; top: 0; }
+  body.v21-control-classic.v21-touch-flight .control-btn.left { left: 0; top: 52px; }
+  body.v21-control-classic.v21-touch-flight .control-btn.right { right: 0; top: 52px; }
+  body.v21-control-classic.v21-touch-flight .control-btn.down { left: 52px; bottom: 0; }
+  body.v21-control-classic.v21-touch-flight #missile-btn { grid-column: 3; grid-row: 1; }
+  body.v21-control-classic.v21-touch-flight #dash-btn { grid-column: 4; grid-row: 1; }
+  body.v21-control-classic.v21-touch-flight #secondary-btn { grid-column: 3 / 5; grid-row: 2; }
+  body.v21-control-classic.v21-touch-flight #fire-btn { grid-column: 5; grid-row: 1 / 3; }
+
+  body.v21-control-joystick.v21-touch-flight .dpad { display: none !important; }
+}
+
+body.v21-reduced-fx #game-container::after { display: none !important; }
+body.v21-reduced-fx .v21-flight-stick,
+body.v21-reduced-fx .hud-card,
+body.v21-reduced-fx .mission-card,
+body.v21-reduced-fx .side-objective-card { backdrop-filter: none !important; }
+
+@media (max-width: 520px) {
+  .v21-settings { padding: 8px; }
+  .v21-settings__panel { max-height: calc(100dvh - 16px); border-radius: 21px; }
+  .v21-settings__head { padding: 18px 16px 13px; }
+  .v21-settings__body { padding: 12px; }
+  .v21-setting-options--three { grid-template-columns: 1fr; }
+  .v21-setting-options--three .v21-setting-option { min-height: 58px; }
+  .v21-settings__foot span { display: none; }
+  #start-screen .start-meta > .v21-settings-launch { grid-column: 1 / -1; }
+
+  body.v21-control-classic.v21-touch-flight .touch-controls {
+    grid-template-columns: 136px minmax(8px,1fr) 44px 44px 76px;
+    grid-template-rows: 44px 44px;
+    min-height: 140px;
+    gap: 7px;
+  }
+  body.v21-control-classic.v21-touch-flight .dpad { width: 136px; height: 136px; }
+  body.v21-control-classic.v21-touch-flight .control-btn { width: 44px; height: 44px; }
+  body.v21-control-classic.v21-touch-flight .control-btn.up { left: 46px; }
+  body.v21-control-classic.v21-touch-flight .control-btn.left,
+  body.v21-control-classic.v21-touch-flight .control-btn.right { top: 46px; }
+  body.v21-control-classic.v21-touch-flight .control-btn.down { left: 46px; }
+}
+
+@media (max-height: 620px) and (orientation: landscape) {
+  .v21-settings__panel { max-height: calc(100dvh - 12px); }
+  .v21-settings__head { padding: 12px 16px 9px; }
+  .v21-settings__head p { display: none; }
+  .v21-settings__tabs { padding: 6px 10px; }
+  .v21-settings__body { padding: 9px; }
+  .v21-setting-section { padding: 10px; }
+  body.v21-control-classic.v21-touch-flight .touch-controls { transform: scale(.88); transform-origin: bottom left; }
+}
