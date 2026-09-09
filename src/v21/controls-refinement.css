@@ -1,36 +1,77 @@
-/* WAE Neon Rider V21.4 — tighter mobile ergonomics */
+/* WAE Neon Rider V21.5 — adaptive premium joystick */
 
 @media (pointer: coarse), (max-width: 900px) {
+  .v21-flight-surface {
+    overscroll-behavior: none;
+    contain: layout paint style;
+  }
+
   .v21-flight-stick {
-    width: 108px;
-    height: 108px;
-    margin: -54px 0 0 -54px;
-    border-color: rgba(103, 232, 249, .14);
+    --v21-stick-power: 0;
+    width: 104px;
+    height: 104px;
+    margin: -52px 0 0 -52px;
+    border-color: rgba(103, 232, 249, .12);
     background:
-      radial-gradient(circle, rgba(8, 47, 73, .18) 0 19%, rgba(15, 23, 42, .13) 20% 47%, transparent 48%),
-      conic-gradient(from 45deg, rgba(103, 232, 249, .10), transparent 14% 36%, rgba(167, 139, 250, .09) 50%, transparent 64% 86%, rgba(103, 232, 249, .10));
-    box-shadow: inset 0 0 28px rgba(34, 211, 238, .035), 0 10px 28px rgba(0, 0, 0, .14);
-    backdrop-filter: blur(3px);
+      radial-gradient(circle, rgba(8, 47, 73, .17) 0 18%, rgba(15, 23, 42, .115) 19% 47%, transparent 48%),
+      conic-gradient(from 45deg, rgba(103, 232, 249, .08), transparent 14% 36%, rgba(167, 139, 250, .07) 50%, transparent 64% 86%, rgba(103, 232, 249, .08));
+    box-shadow: inset 0 0 24px rgba(34, 211, 238, .028), 0 8px 22px rgba(0, 0, 0, .12);
+    backdrop-filter: blur(2.5px);
+    will-change: transform, opacity, left, top;
+    contain: layout paint style;
+    transition: opacity .08s ease, transform .08s ease, border-color .1s ease, box-shadow .1s ease;
   }
 
   .v21-flight-surface.engaged .v21-flight-stick {
-    opacity: .74;
+    opacity: .66;
     transform: scale(1);
   }
 
-  .v21-flight-ring { inset: 11px; border-color: rgba(125, 211, 252, .16); }
-  .v21-flight-ring::before,
-  .v21-flight-ring::after { background: rgba(103, 232, 249, .12); }
-
-  .v21-flight-knob {
-    width: 38px;
-    height: 38px;
-    margin: -19px 0 0 -19px;
-    border-color: rgba(165, 243, 252, .42);
-    box-shadow: 0 0 0 4px rgba(34, 211, 238, .035), 0 0 20px rgba(34, 211, 238, .15);
+  .v21-flight-stick.is-full {
+    border-color: rgba(125, 211, 252, .30);
+    box-shadow: inset 0 0 28px rgba(34, 211, 238, .05), 0 0 0 1px rgba(103, 232, 249, .055), 0 10px 28px rgba(0, 0, 0, .15);
   }
 
-  .v21-flight-knob b { width: 8px; height: 8px; box-shadow: 0 0 10px rgba(103, 232, 249, .75); }
+  .v21-flight-ring {
+    inset: 10px;
+    border-color: rgba(125, 211, 252, .13);
+    opacity: calc(.52 + var(--v21-stick-power) * .28);
+    transform: scale(calc(.975 + var(--v21-stick-power) * .025));
+    transition: opacity .07s linear, transform .07s linear, border-color .08s ease;
+  }
+
+  .v21-flight-stick.is-full .v21-flight-ring {
+    border-style: solid;
+    border-color: rgba(165, 243, 252, .22);
+  }
+
+  .v21-flight-ring::before,
+  .v21-flight-ring::after { background: rgba(103, 232, 249, .09); }
+
+  .v21-flight-knob {
+    width: 36px;
+    height: 36px;
+    margin: -18px 0 0 -18px;
+    border-color: rgba(165, 243, 252, .38);
+    background:
+      radial-gradient(circle at 34% 28%, rgba(255, 255, 255, .16), transparent 22%),
+      radial-gradient(circle, rgba(8, 145, 178, .44), rgba(8, 47, 73, .72) 58%, rgba(2, 6, 23, .86));
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, .028), 0 0 16px rgba(34, 211, 238, .12);
+    will-change: transform;
+    transition: none;
+  }
+
+  .v21-flight-stick.is-full .v21-flight-knob {
+    border-color: rgba(207, 250, 254, .58);
+    box-shadow: 0 0 0 4px rgba(34, 211, 238, .04), 0 0 22px rgba(34, 211, 238, .18);
+  }
+
+  .v21-flight-knob b {
+    width: 7px;
+    height: 7px;
+    box-shadow: 0 0 8px rgba(103, 232, 249, .68);
+  }
+
   .v21-flight-stick small { display: none; }
 
   body.v21-touch-flight .touch-controls {
@@ -75,9 +116,7 @@
     opacity: .68;
   }
 
-  body.v21-playing #v21-game-identity {
-    opacity: .78;
-  }
+  body.v21-playing #v21-game-identity { opacity: .78; }
 }
 
 @media (max-width: 430px) {
@@ -110,4 +149,9 @@
 
   .v21-flight-stick { transform: scale(.9); }
   .v21-flight-surface.engaged .v21-flight-stick { transform: scale(.9); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v21-flight-stick,
+  .v21-flight-ring { transition: none; }
 }
