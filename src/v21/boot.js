@@ -4,5 +4,6 @@ import './shell.js';
 import './premium-polish.css';
 import './controls-refinement.css';
 import './settings-core.css';
+import './control-lab.css';
 import './settings-core.js';
-import './flight-controls-v2110.js';
+import './flight-controls-v2111.js';
