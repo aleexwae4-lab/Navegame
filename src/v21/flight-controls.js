@@ -20,9 +20,14 @@ const EDGE_SOFT_ZONE = 1.15;
 const EDGE_CONTACT_ZONE = 0.12;
 const ENVELOPE_REFRESH_MS = 160;
 const SHIP_FRAME_MARGIN = 0.26;
+const MIN_X_SPEED = 4.8;
+const MIN_Y_SPEED = 7.2;
+const X_CROSS_SECONDS = 0.52;
+const Y_CROSS_SECONDS = 0.72;
 const SAFE_NDC = Object.freeze({ left: -0.94, right: 0.94, bottom: -0.89, top: 0.88 });
 
 const tmpBox = new THREE.Box3();
+const tmpObjectBox = new THREE.Box3();
 const tmpSize = new THREE.Vector3();
 const tmpNear = new THREE.Vector3();
 const tmpFar = new THREE.Vector3();
@@ -250,6 +255,32 @@ function applyPremiumShipScale(playing) {
   }
 }
 
+function excludedFromShipEnvelope(object, ship) {
+  let node = object;
+  while (node && node !== ship) {
+    if (node.name === 'v8-wingman' || node.userData?.v21IgnoreSafeFrame) return true;
+    node = node.parent;
+  }
+  return false;
+}
+
+function measureShipVisual(ship) {
+  tmpBox.makeEmpty();
+  ship.updateWorldMatrix?.(true, true);
+  ship.traverse?.((object) => {
+    if (!object?.isMesh || !object.visible || excludedFromShipEnvelope(object, ship)) return;
+    const geometry = object.geometry;
+    if (!geometry) return;
+    if (!geometry.boundingBox) geometry.computeBoundingBox?.();
+    if (!geometry.boundingBox) return;
+    tmpObjectBox.copy(geometry.boundingBox).applyMatrix4(object.matrixWorld);
+    tmpBox.union(tmpObjectBox);
+  });
+  if (tmpBox.isEmpty()) tmpBox.setFromObject(ship);
+  tmpBox.getSize(tmpSize);
+  return tmpSize;
+}
+
 function refreshShipEnvelope(g) {
   const ship = g?.ship;
   const now = performance.now();
@@ -257,11 +288,9 @@ function refreshShipEnvelope(g) {
   if (flight.envelope.ship === ship && now - flight.envelope.updatedAt < ENVELOPE_REFRESH_MS) return flight.envelope;
 
   try {
-    ship.updateWorldMatrix?.(true, true);
-    tmpBox.setFromObject(ship);
-    tmpBox.getSize(tmpSize);
-    const halfX = clamp(tmpSize.x * 0.5 + SHIP_FRAME_MARGIN, 0.8, 5.2);
-    const halfY = clamp(tmpSize.y * 0.5 + SHIP_FRAME_MARGIN, 0.62, 3.8);
+    const size = measureShipVisual(ship);
+    const halfX = clamp(size.x * 0.5 + SHIP_FRAME_MARGIN, 0.8, 5.2);
+    const halfY = clamp(size.y * 0.5 + SHIP_FRAME_MARGIN, 0.62, 3.8);
     if (Number.isFinite(halfX) && Number.isFinite(halfY)) {
       flight.envelope = { ship, updatedAt: now, halfX, halfY };
     }
@@ -337,6 +366,16 @@ function edgeAwareAxis(position, axis, min, max) {
   return 0;
 }
 
+function adaptiveAxisSpeeds(bounds, multiplier) {
+  const base = BASE_SHIP_SPEED * multiplier;
+  const spanX = Math.max(0, bounds.xMax - bounds.xMin);
+  const spanY = Math.max(0, bounds.yMax - bounds.yMin);
+  return {
+    x: Math.min(base, Math.max(MIN_X_SPEED, spanX / X_CROSS_SECONDS)),
+    y: Math.min(base, Math.max(MIN_Y_SPEED, spanY / Y_CROSS_SECONDS)),
+  };
+}
+
 function enforceVisibleBounds(g, bounds = cameraFlightBounds(g)) {
   const ship = g?.ship;
   if (!ship?.position) return bounds;
@@ -379,7 +418,7 @@ function installGameHook() {
         for (const direction of ['left', 'right', 'up', 'down']) g.setInput?.(direction, false);
         const ship = g.ship;
         if (ship?.position) {
-          const speed = BASE_SHIP_SPEED * shipSpeedMultiplier(g);
+          const speeds = adaptiveAxisSpeeds(bounds, shipSpeedMultiplier(g));
           let x = flight.currentX;
           let y = flight.currentY;
           const length = Math.hypot(x, y);
@@ -387,8 +426,8 @@ function installGameHook() {
 
           x = edgeAwareAxis(ship.position.x, x, bounds.xMin, bounds.xMax);
           y = edgeAwareAxis(ship.position.y, y, bounds.yMin, bounds.yMax);
-          ship.position.x += x * speed * delta;
-          ship.position.y += y * speed * delta;
+          ship.position.x += x * speeds.x * delta;
+          ship.position.y += y * speeds.y * delta;
           enforceVisibleBounds(g, bounds);
         }
       }
