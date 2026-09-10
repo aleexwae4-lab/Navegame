@@ -31,11 +31,15 @@ jobs:
         run: npx cap add ios
       - name: Sync Capacitor iOS
         run: npx cap sync ios
-      - name: Verify StoreKit native bridge
+      - name: Verify WAE native purchase plugin
         run: |
-          test -d node_modules/capacitor-plugin-cdv-purchase/capacitor/ios
-          grep -R "StoreKit" node_modules/capacitor-plugin-cdv-purchase/capacitor/ios | head -5
-          grep -R "CdvPurchase\|PurchasePlugin" ios/App 2>/dev/null | head -10 || true
+          node - <<'NODE'
+          const pkg = require('./node_modules/capacitor-plugin-cdv-purchase/package.json');
+          if (pkg.version !== '13.18.0') throw new Error(`Unexpected purchase plugin ${pkg.version}`);
+          console.log(`capacitor-plugin-cdv-purchase ${pkg.version}`);
+          NODE
+          test -f node_modules/capacitor-plugin-cdv-purchase/Package.swift
+          test -f ios/App/Package.swift
       - name: Compile simulator build without signing
         run: |
           xcodebuild \
