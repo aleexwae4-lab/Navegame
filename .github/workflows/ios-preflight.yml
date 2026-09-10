@@ -1,0 +1,47 @@
+name: iOS store preflight
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'capacitor.config.json'
+      - 'src/**'
+      - 'public/**'
+      - '.github/workflows/ios-preflight.yml'
+  workflow_dispatch:
+
+jobs:
+  ios-preflight:
+    runs-on: macos-26
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify Xcode
+        run: xcodebuild -version
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build web application
+        run: npm run build
+      - name: Generate iOS shell
+        run: npx cap add ios
+      - name: Sync Capacitor iOS
+        run: npx cap sync ios
+      - name: Compile simulator build without signing
+        run: |
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+      - name: Upload generated iOS project
+        uses: actions/upload-artifact@v4
+        with:
+          name: wae-neon-rider-ios-preflight
+          path: ios
+          retention-days: 7
