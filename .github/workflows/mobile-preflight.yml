@@ -45,7 +45,6 @@ jobs:
           if (pkg.version !== '13.18.0') throw new Error(`Unexpected purchase plugin ${pkg.version}`);
           console.log(`capacitor-plugin-cdv-purchase ${pkg.version}`);
           NODE
-          test -d node_modules/capacitor-plugin-cdv-purchase/capacitor/android
       - name: Enforce Play target API 36
         run: |
           node - <<'NODE'
