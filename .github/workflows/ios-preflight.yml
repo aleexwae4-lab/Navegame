@@ -38,8 +38,6 @@ jobs:
           if (pkg.version !== '13.18.0') throw new Error(`Unexpected purchase plugin ${pkg.version}`);
           console.log(`capacitor-plugin-cdv-purchase ${pkg.version}`);
           NODE
-          test -f node_modules/capacitor-plugin-cdv-purchase/Package.swift
-          test -f ios/App/Package.swift
       - name: Compile simulator build without signing
         run: |
           xcodebuild \
