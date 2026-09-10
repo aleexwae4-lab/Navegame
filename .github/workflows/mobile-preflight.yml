@@ -38,11 +38,14 @@ jobs:
         run: npx cap add android
       - name: Sync Capacitor Android
         run: npx cap sync android
-      - name: Verify WAE native billing bridge
+      - name: Verify WAE native purchase plugin
         run: |
-          test -f node_modules/capacitor-plugin-cdv-purchase/capacitor/android/build.gradle
-          grep -F "com.android.billingclient:billing:9.0.0" node_modules/capacitor-plugin-cdv-purchase/capacitor/android/build.gradle
-          grep -R "capacitor-plugin-cdv-purchase" android/settings.gradle android/app/capacitor.build.gradle android/capacitor.settings.gradle 2>/dev/null || true
+          node - <<'NODE'
+          const pkg = require('./node_modules/capacitor-plugin-cdv-purchase/package.json');
+          if (pkg.version !== '13.18.0') throw new Error(`Unexpected purchase plugin ${pkg.version}`);
+          console.log(`capacitor-plugin-cdv-purchase ${pkg.version}`);
+          NODE
+          test -d node_modules/capacitor-plugin-cdv-purchase/capacitor/android
       - name: Enforce Play target API 36
         run: |
           node - <<'NODE'
@@ -52,13 +55,18 @@ jobs:
           s = s.replace(/compileSdkVersion\s*=\s*\d+/, 'compileSdkVersion = 36');
           s = s.replace(/targetSdkVersion\s*=\s*\d+/, 'targetSdkVersion = 36');
           fs.writeFileSync(p, s);
-          console.log(s);
+          if (!/compileSdkVersion\s*=\s*36/.test(s) || !/targetSdkVersion\s*=\s*36/.test(s)) throw new Error('API 36 enforcement failed');
+          console.log('compileSdkVersion=36 targetSdkVersion=36');
           NODE
-      - name: Build unsigned release AAB
+      - name: Verify resolved Google Play Billing 9
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew bundleRelease --stacktrace
+          ./gradlew :app:dependencies --configuration releaseRuntimeClasspath > ../gradle-release-dependencies.txt
+          grep -F "com.android.billingclient:billing:9.0.0" ../gradle-release-dependencies.txt
+      - name: Build unsigned release AAB
+        working-directory: android
+        run: ./gradlew bundleRelease --stacktrace
       - name: Upload preflight AAB
         uses: actions/upload-artifact@v4
         with:
