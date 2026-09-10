@@ -1,0 +1,21 @@
+sku,store_product_id,type,price_mxn,name
+WAE-SHIP-VIPER-BLK,com.waeproduction.neonrider.ship.viper.blk,non_consumable,49,VIPER R BLACK EDITION
+WAE-SHIP-AEGIS-SOV,com.waeproduction.neonrider.ship.aegis.sov,non_consumable,89,AEGIS SOVEREIGN
+WAE-SHIP-NOVA-IMP,com.waeproduction.neonrider.ship.nova.imp,non_consumable,149,NOVA IMPERIUM
+WAE-SHIP-ECLIPSE-X,com.waeproduction.neonrider.ship.eclipse.x,non_consumable,249,WAE ECLIPSE X
+WAE-SHIP-OBSIDIAN-1,com.waeproduction.neonrider.ship.obsidian.1,non_consumable,399,WAE OBSIDIAN ONE
+WAE-SHIP-CELESTIAL,com.waeproduction.neonrider.ship.celestial,non_consumable,699,WAE CELESTIAL CROWN
+WAE-SHIP-SPECTER-VLK,com.waeproduction.neonrider.ship.specter.vlk,non_consumable,899,WAE SPECTER VALKYRIE
+WAE-SHIP-TITAN-DOM,com.waeproduction.neonrider.ship.titan.dom,non_consumable,1299,WAE TITAN DOMINION
+WAE-SHIP-SERAPH-QNT,com.waeproduction.neonrider.ship.seraph.qnt,non_consumable,1999,WAE SERAPH QUANTUM
+WAE-SHIP-AURELION-OMG,com.waeproduction.neonrider.ship.aurelion.omg,non_consumable,4999,WAE AURELION SOVEREIGN Ω
+WAE-WPN-TRIDENT-VXR,com.waeproduction.neonrider.wpn.trident.vxr,non_consumable,39,TRIDENT VX-R
+WAE-WPN-STORM-OMG,com.waeproduction.neonrider.wpn.storm.omg,non_consumable,69,STORM OMEGA
+WAE-WPN-ECLIPSE-CNN,com.waeproduction.neonrider.wpn.eclipse.cnn,non_consumable,99,ECLIPSE CANNON
+WAE-WPN-HELIX-RG,com.waeproduction.neonrider.wpn.helix.rg,non_consumable,129,HELIX RAILGUN
+WAE-WPN-NOVA-DST,com.waeproduction.neonrider.wpn.nova.dst,non_consumable,179,NOVA DESTROYER
+WAE-WPN-SINGULARITY,com.waeproduction.neonrider.wpn.singularity,non_consumable,249,WAE SINGULARITY
+WAE-WPN-ORION-LNC,com.waeproduction.neonrider.wpn.orion.lnc,non_consumable,349,ORION LANCE
+WAE-WPN-CHRONOS-ARR,com.waeproduction.neonrider.wpn.chronos.arr,non_consumable,499,CHRONOS ARRAY
+WAE-WPN-ABYSS-RPR,com.waeproduction.neonrider.wpn.abyss.rpr,non_consumable,799,ABYSS REAPER
+WAE-WPN-OMEGA-CROWN,com.waeproduction.neonrider.wpn.omega.crown,non_consumable,1499,OMEGA CROWN ARSENAL
