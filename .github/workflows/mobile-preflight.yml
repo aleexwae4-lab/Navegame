@@ -8,6 +8,7 @@ on:
       - 'capacitor.config.json'
       - 'src/**'
       - 'public/**'
+      - 'store/**'
       - '.github/workflows/mobile-preflight.yml'
   workflow_dispatch:
 
@@ -37,6 +38,11 @@ jobs:
         run: npx cap add android
       - name: Sync Capacitor Android
         run: npx cap sync android
+      - name: Verify WAE native billing bridge
+        run: |
+          test -f node_modules/capacitor-plugin-cdv-purchase/capacitor/android/build.gradle
+          grep -F "com.android.billingclient:billing:9.0.0" node_modules/capacitor-plugin-cdv-purchase/capacitor/android/build.gradle
+          grep -R "capacitor-plugin-cdv-purchase" android/settings.gradle android/app/capacitor.build.gradle android/capacitor.settings.gradle 2>/dev/null || true
       - name: Enforce Play target API 36
         run: |
           node - <<'NODE'
