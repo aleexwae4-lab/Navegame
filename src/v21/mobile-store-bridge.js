@@ -49,6 +49,24 @@ function closeNotice() {
   document.body.classList.remove('v2121-native-commerce-open');
 }
 
+function decorateCompetitionForNative() {
+  if (!NATIVE) return;
+  const arena = $('#v2115-competition-arena');
+  const gate = $('.v2115-money-gate', arena || document);
+  if (gate) gate.hidden = true;
+  const copy = $('.v2115-arena-head p', arena || document);
+  if (copy) copy.textContent = 'Competencias gratuitas basadas en habilidad. Sin depósitos, apuestas ni cuota de entrada.';
+  const footer = $('.v2115-arena-shell footer', arena || document);
+  if (footer && !footer.querySelector('[data-v2121-rules]')) {
+    const link = document.createElement('a');
+    link.dataset.v2121Rules = 'true';
+    link.href = '/founders-circuit-rules.html';
+    link.textContent = 'REGLAS OFICIALES';
+    link.style.marginLeft = '12px';
+    footer.append(link);
+  }
+}
+
 function decorateNativeStore() {
   if (!NATIVE) return;
   document.documentElement.dataset.waeNative = PLATFORM;
@@ -59,6 +77,7 @@ function decorateNativeStore() {
     button.dataset.v2121NativePurchase = 'blocked';
     button.setAttribute('aria-label', `Compra móvil mediante ${storeLabel()}`);
   }
+  decorateCompetitionForNative();
 }
 
 function installNativePurchaseGate() {
