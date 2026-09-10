@@ -8,6 +8,7 @@ on:
       - 'capacitor.config.json'
       - 'src/**'
       - 'public/**'
+      - 'store/**'
       - '.github/workflows/ios-preflight.yml'
   workflow_dispatch:
 
@@ -30,6 +31,11 @@ jobs:
         run: npx cap add ios
       - name: Sync Capacitor iOS
         run: npx cap sync ios
+      - name: Verify StoreKit native bridge
+        run: |
+          test -d node_modules/capacitor-plugin-cdv-purchase/capacitor/ios
+          grep -R "StoreKit" node_modules/capacitor-plugin-cdv-purchase/capacitor/ios | head -5
+          grep -R "CdvPurchase\|PurchasePlugin" ios/App 2>/dev/null | head -10 || true
       - name: Compile simulator build without signing
         run: |
           xcodebuild \
