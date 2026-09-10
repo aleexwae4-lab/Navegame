@@ -1,0 +1,16 @@
+{
+  "appId": "com.waeproduction.neonrider",
+  "appName": "WAE Neon Rider",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#020617",
+    "allowMixedContent": false
+  },
+  "ios": {
+    "backgroundColor": "#020617",
+    "contentInset": "automatic"
+  }
+}
