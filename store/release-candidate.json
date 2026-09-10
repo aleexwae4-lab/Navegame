@@ -1,0 +1,34 @@
+{
+  "release": "V21.22",
+  "name": "Store Commerce & Release Candidate",
+  "appId": "com.waeproduction.neonrider",
+  "catalog": {
+    "type": "non_consumable",
+    "products": 20,
+    "manifest": "store/mobile-products.csv"
+  },
+  "android": {
+    "targetApi": 36,
+    "billingLibrary": "9.0.0",
+    "purchaseProvider": "Google Play Billing",
+    "verification": "wae-mobile-commerce"
+  },
+  "ios": {
+    "purchaseProvider": "StoreKit 2",
+    "minimumPluginOs": "iOS 15+",
+    "verification": "wae-mobile-commerce"
+  },
+  "entitlementAuthority": "Supabase commerce_entitlements",
+  "webCommerce": "Stripe",
+  "nativeExternalCheckout": false,
+  "failClosed": true,
+  "productionBlockers": [
+    "Create/activate the 20 product IDs in Google Play Console",
+    "Create/activate the 20 in-app purchase IDs in App Store Connect",
+    "Configure GOOGLE_PLAY_SERVICE_ACCOUNT_JSON in Supabase",
+    "Configure APPLE_IAP_ISSUER_ID, APPLE_IAP_KEY_ID and APPLE_IAP_PRIVATE_KEY in Supabase",
+    "Sign Android AAB with the owner's Play upload key",
+    "Archive/sign iOS with the owner's Apple Developer team",
+    "Run sandbox/license-tester purchase and restore tests before store review"
+  ]
+}
