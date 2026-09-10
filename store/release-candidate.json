@@ -2,7 +2,7 @@
   "release": "V21.22",
   "name": "Store Commerce & Release Candidate",
   "appId": "com.waeproduction.neonrider",
-  "rcGateRevision": 2,
+  "rcGateRevision": 3,
   "catalog": {
     "type": "non_consumable",
     "products": 20,
@@ -13,13 +13,13 @@
     "billingLibrary": "9.0.0",
     "purchaseProvider": "Google Play Billing",
     "verification": "wae-mobile-commerce",
-    "ciGate": "resolved releaseRuntimeClasspath + unsigned AAB"
+    "ciGate": "Capacitor sync + resolved releaseRuntimeClasspath Billing 9 + unsigned AAB"
   },
   "ios": {
     "purchaseProvider": "StoreKit 2",
     "minimumPluginOs": "iOS 15+",
     "verification": "wae-mobile-commerce",
-    "ciGate": "Swift package presence + Xcode simulator compile"
+    "ciGate": "Capacitor sync + Xcode simulator compile with native purchase plugin"
   },
   "entitlementAuthority": "Supabase commerce_entitlements",
   "webCommerce": "Stripe",
